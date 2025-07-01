@@ -11,15 +11,15 @@ export default {
   ],
   theme: {
     extend: {
-      backgroundColor: {
-        Primary100: "#926bf4",
-        Primary200: "#7c3aed",
-        Secondary100: "#f9fafb",
-        Secondary200: "#e0e0e1",
-        Accent100: "#34d399",
-        Accent200: "#10b981",
-        Hightlight: "#f59e0b",
-        Text: "#111827",
+      colors: {
+        mainColor: "#926bf4",
+        mainColor200: "#7c3aed",
+        assistColor100: "#f9fafb",
+        assistColor200: "#e0e0e1",
+        accent100: "#34d399",
+        accent200: "#10b981",
+        hightlight: "#f59e0b",
+        text: "#111827",
       },
     },
   },
