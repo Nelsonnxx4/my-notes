@@ -1,9 +1,15 @@
+import Header from "@/components/Header";
+import NavFooter from "@/components/NavFooter";
+import NotesContainer from "@/components/NotesContainer";
+
 interface IHomePageProps {}
 
 const HomePage: React.FC<IHomePageProps> = () => {
   return (
     <main>
-      <h1>helloe</h1>
+      <Header />
+      <NotesContainer />
+      <NavFooter />
     </main>
   );
 };
