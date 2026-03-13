@@ -1,6 +1,6 @@
-import { NoteInfo } from "@/types";
+import { NoteType } from "@/types/noteType";
 
-export const DummyNotes = <NoteInfo[]>[
+export const DummyNotes = <NoteType[]>[
   {
     id: 1,
     name: "nelson",

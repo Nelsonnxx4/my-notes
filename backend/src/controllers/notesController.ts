@@ -1,0 +1,1 @@
+import {query} from "../db/notes.db.ts"

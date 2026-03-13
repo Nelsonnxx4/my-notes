@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./pages/ProtectedRoute/ProtectedRoute";
 import SingleNotePage from "./pages/SingleNotePage";
+import CreateNotesPage from "./pages/CreateNotePage";
 
 export const router = createBrowserRouter([
   {
@@ -11,10 +12,18 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
+    path: "/create",
+    element: (
+      // <ProtectedRoute>
+      <CreateNotesPage />
+      // </ProtectedRoute>
+    ),
+  },
+  {
     path: "/",
     element: (
       // <ProtectedRoute>
-        <HomePage />
+      <HomePage />
       // </ProtectedRoute>
     ),
   },

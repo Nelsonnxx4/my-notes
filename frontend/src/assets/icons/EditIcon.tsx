@@ -8,7 +8,7 @@ export const EditIcon = (props: SVGProps<SVGSVGElement>) => (
       stroke="#6b7280"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
+      strokeWidth="1"
     />
   </svg>
 );
