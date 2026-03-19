@@ -1,24 +1,30 @@
 import express from "express";
-import http from "http";
-import bodyParser from "body-parser";
 import cors from "cors";
-import cookieParser from "cookie-parser";
-import compression from "compression";
+import dotenv from "dotenv";
+
+import authRoutes from "./routes/auth.routes";
+import notesRoutes from "./routes/notes.routes";
+import tagsRoutes from "./routes/tags.routes";
+
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    credentials: true,
-  })
-);
+// Middleware
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(express.json());
 
-app.use(compression());
-app.use(cookieParser());
-app.use(bodyParser.json());
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/notes", notesRoutes);
+app.use("/api/tags", tagsRoutes);
 
-const server = http.createServer(app);
+// Health check
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-server.listen(8080, () => {
-  console.log(`serving runing on http://localhost:8080`);
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
