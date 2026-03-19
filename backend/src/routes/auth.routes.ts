@@ -1,10 +1,30 @@
-// backend/src/routes/auth.routes.ts
 import { Router, Request, Response } from "express";
 import { registerUser, loginUser, getUserById } from "../services/auth.service";
 import { protect } from "../middleware/auth";
+import { googleSignIn } from "../services/google.service";
 
 const router = Router();
 
+// POST /api/auth/google
+router.post("/google", async (req: Request, res: Response) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      res.status(400).json({ message: "Google ID token is required" });
+      return;
+    }
+
+    const result = await googleSignIn(idToken);
+
+    res.status(200).json(result);
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Google sign-in failed";
+
+    res.status(401).json({ message });
+  }
+});
 // POST /api/auth/register
 router.post("/register", async (req: Request, res: Response) => {
   try {
