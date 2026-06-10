@@ -26,6 +26,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
     "@types/pg": "^8.18.0",
     "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.0",
@@ -37,6 +38,8 @@
     "google-auth-library": "^10.6.2",
     "jsonwebtoken": "^9.0.3",
     "passport": "^0.7.0",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "redis": "^6.0.0"
   }
 }

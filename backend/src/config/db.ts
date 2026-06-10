@@ -1,24 +1,23 @@
-import { Pool } from "pg";
-import dotenv from "dotenv";
-
-dotenv.config();
+const { Pool } = require("pg");
+require("dotenv").config();
 
 const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+	connectionString: process.env.DATABASE_URL,
+	ssl: {
+		rejectUnauthorized: false,
+	},
+	max: 20,
+	idleTimeoutMillis: 30000,
+	connectionTimeoutMillis: 2000,
 });
 
-// Test connection on startup
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error("❌ Database connection failed:", err.message);
-  } else {
-    console.log("✅ Connected to PostgreSQL");
-    release();
-  }
+// Test the connection
+pool.on("connect", () => {
+	console.log("✅ Connected to Neon database");
 });
 
-export default pool;
+pool.on("error", (err: Error) => {
+	console.error("❌ Unexpected database error:", err);
+});
+
+module.exports = { pool };
