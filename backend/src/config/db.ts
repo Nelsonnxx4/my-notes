@@ -13,11 +13,11 @@ const pool = new Pool({
 
 // Test the connection
 pool.on("connect", () => {
-	console.log("✅ Connected to Neon database");
+	console.log("Connected to Neon db");
 });
 
 pool.on("error", (err: Error) => {
-	console.error("❌ Unexpected database error:", err);
+	console.error("Unexpected database error:", err);
 });
 
 module.exports = { pool };

@@ -1,70 +1,79 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import pool from "../config/db";
+import prisma from "../config/prisma";
 import type { RegisterDTO, LoginDTO } from "../types";
+import redisClient from "../config/redis";
 
+// Register User
 export const registerUser = async ({ email, password }: RegisterDTO) => {
-  // Check if email already exists
-  const existing = await pool.query("SELECT id FROM users WHERE email = $1", [
-    email,
-  ]);
+	const existing = await prisma.user.findUnique({
+		where: { email },
+	});
 
-  if (existing.rows.length > 0) {
-    throw new Error("Email already in use");
-  }
+	if (existing) {
+		throw new Error("Email already in use");
+	}
 
-  const hashedPassword = await bcrypt.hash(password, 12);
+	const hashedPassword = await bcrypt.hash(password, 12);
 
-  const { rows } = await pool.query(
-    `INSERT INTO users (email, password)
-     VALUES ($1, $2)
-     RETURNING id, email, created_at`,
-    [email, hashedPassword]
-  );
+	const user = await prisma.user.create({
+		data: { email, password: hashedPassword },
+		select: { id: true, email: true, created_at: true },
+	});
 
-  const user = rows[0];
-  const token = jwt.sign(
-    { id: user.id, email: user.email },
-    process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
-  );
+	const token = jwt.sign(
+		{ id: user.id, email: user.email },
+		process.env.JWT_SECRET!,
+		{ expiresIn: process.env.JWT_EXPIRES_IN || "1h" },
+	);
 
-  return { user, token };
+	return { user, token };
 };
 
+// Login user
 export const loginUser = async ({ email, password }: LoginDTO) => {
-  const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [
-    email,
-  ]);
+	const user = await prisma.user.findUnique({ where: { email } });
+	if (!user) {
+		throw new Error("Invalid email or password");
+	}
 
-  if (rows.length === 0) {
-    throw new Error("Invalid email or password");
-  }
+	const isMatch = await bcrypt.compare(password, user.password);
+	if (!isMatch) {
+		throw new Error("Invalid email or password");
+	}
 
-  const user = rows[0];
-  const isMatch = await bcrypt.compare(password, user.password);
+	const token = jwt.sign(
+		{ id: user.id, email: user.email },
+		process.env.JWT_SECRET!,
+		{ expiresIn: process.env.JWT_EXPIRES_IN },
+	);
 
-  if (!isMatch) {
-    throw new Error("Invalid email or password");
-  }
+	const { password: _, ...safeUser } = user;
 
-  const token = jwt.sign(
-    { id: user.id, email: user.email },
-    process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
-  );
-
-  // Never return the password
-  const { password: _pw, ...safeUser } = user;
-
-  return { user: safeUser, token };
+	return { user: safeUser, token };
 };
 
+// Get user by ID
 export const getUserById = async (id: string) => {
-  const { rows } = await pool.query(
-    "SELECT id, email, created_at FROM users WHERE id = $1",
-    [id]
-  );
+	const user = await prisma.user.findUnique({
+		where: { id },
+		select: { id: true, email: true, created_at: true },
+	});
 
-  return rows[0] || null;
+	return user;
+};
+
+// Logout: blacklist the token with its remaining TTL
+export const logoutUser = async (token: string) => {
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+			exp: number;
+		};
+		const ttl = Math.floor(decoded.exp - Date.now() / 1000);
+		if (ttl > 0) {
+			await redisClient.setEx(`blacklist:${token}`, ttl, "true");
+		}
+	} catch (err) {
+		console.error("Error blacklisting token:", err);
+	}
 };

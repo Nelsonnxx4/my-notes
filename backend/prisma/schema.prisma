@@ -7,9 +7,14 @@ datasource db {
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String @unique
-  notes Note[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // hashed; for Google users store a placeholder like "GOOGLE_OAUTH_<googleId>"
+  googleId  String?  @unique // optional, for Google OAuth
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
 }
 
 model Note {
