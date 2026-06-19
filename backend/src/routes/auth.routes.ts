@@ -1,101 +1,52 @@
 import { Router, Request, Response } from "express";
-import {
-	registerUser,
-	loginUser,
-	getUserById,
-	logoutUser,
-} from "../services/auth.service";
 import { protect } from "../middleware/auth";
+import { validate } from "../middleware/validate";
+import { registerUser, loginUser, getUserById } from "../services/auth.service";
 import { googleSignIn } from "../services/google.service";
+import { registerSchema, loginSchema, googleAuthSchema } from "../schemas";
 
 const router = Router();
 
 // POST /api/auth/google
-router.post("/google", async (req: Request, res: Response) => {
-	try {
-		const { idToken } = req.body;
-
-		if (!idToken) {
-			res.status(400).json({ message: "Google ID token is required" });
-			return;
-		}
-
-		const result = await googleSignIn(idToken);
-
+router.post(
+	"/google",
+	validate(googleAuthSchema),
+	async (req: Request, res: Response) => {
+		const result = await googleSignIn(req.body.idToken);
 		res.status(200).json(result);
-	} catch (err: unknown) {
-		const message =
-			err instanceof Error ? err.message : "Google sign-in failed";
+	},
+);
 
-		res.status(401).json({ message });
-	}
-});
 // POST /api/auth/register
-router.post("/register", async (req: Request, res: Response) => {
-	try {
-		const { email, password } = req.body;
-
-		if (!email || !password) {
-			res.status(400).json({ message: "Email and password are required" });
-			return;
-		}
-
-		const result = await registerUser({ email, password });
-
+router.post(
+	"/register",
+	validate(registerSchema),
+	async (req: Request, res: Response) => {
+		const result = await registerUser(req.body);
 		res.status(201).json(result);
-	} catch (err: unknown) {
-		const message = err instanceof Error ? err.message : "Registration failed";
-
-		res.status(400).json({ message });
-	}
-});
+	},
+);
 
 // POST /api/auth/login
-router.post("/login", async (req: Request, res: Response) => {
-	try {
-		const { email, password } = req.body;
-
-		if (!email || !password) {
-			res.status(400).json({ message: "Email and password are required" });
-			return;
-		}
-
-		const result = await loginUser({ email, password });
-
+router.post(
+	"/login",
+	validate(loginSchema),
+	async (req: Request, res: Response) => {
+		const result = await loginUser(req.body);
 		res.status(200).json(result);
-	} catch (err: unknown) {
-		const message = err instanceof Error ? err.message : "Login failed";
+	},
+);
 
-		res.status(401).json({ message });
-	}
-});
-
-// Logout
-router.post("/logout", protect, async (req: Request, res: Response) => {
-	const token = req.headers.authorization?.split(" ")[1]!;
-	await logoutUser(token);
-	res.json({ message: "Logged out successfully" });
-});
-
-// GET /api/auth/me  — get current logged in user
+// GET /api/auth/me
 router.get("/me", protect, async (req: Request, res: Response) => {
-	try {
-		const user = await getUserById(req.user!.id);
+	const user = await getUserById(req.user!.id);
 
-		if (!user) {
-			res.status(404).json({ message: "User not found" });
-			return;
-		}
-
-		res.status(200).json(user);
-	} catch {
-		res.status(500).json({ message: "Server error" });
+	if (!user) {
+		res.status(404).json({ message: "User not found" });
+		return;
 	}
-});
 
-// Test endpoint to check if the auth routes are working
-router.get("/test", protect, (req: Request, res: Response) => {
-	res.json({ message: "Authenticated successfully", user: req.user });
+	res.status(200).json(user);
 });
 
 export default router;
