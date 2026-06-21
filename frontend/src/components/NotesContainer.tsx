@@ -10,7 +10,7 @@ import {
   useCreateNote,
   useDeleteNote,
   usePinNote,
-} from "@/hooks/useNotes";
+} from "@/hooks/queries/useNotes";
 import { useTags } from "@/hooks/useTags";
 import DefaultLayout from "@/layouts/default";
 
@@ -31,7 +31,7 @@ export default function NotesPage() {
   const handleCreateNote = () => {
     createNote.mutate(
       { title: "Untitled", content: "" },
-      { onSuccess: (note) => dispatch(selectNote(note.id)) }
+      { onSuccess: (note) => dispatch(selectNote(note.id)) },
     );
   };
 
