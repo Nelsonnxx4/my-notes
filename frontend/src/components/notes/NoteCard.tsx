@@ -3,22 +3,29 @@
 interface Props {
   title: string;
   content: string;
-  color: string;
+  colorClass: string;
 }
 
-const NoteCard = ({ title, content, color }: Props) => {
+const NoteCard = ({ title, content, colorClass }: Props) => {
   return (
     <article
-      className="rounded-[28px] p-5 shadow-sm"
-      style={{
-        backgroundColor: color,
-      }}
+      className={`overflow-hidden rounded-[32px] p-5 shadow-[0_20px_40px_rgba(37,45,75,0.08)] transition hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(37,45,75,0.12)] ${colorClass}`}
     >
-      <h3 className="mb-3 text-lg font-bold">{title}</h3>
+      <div className="mb-4 flex items-center justify-between">
+        <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
+          Note
+        </span>
+        <div className="h-10 w-10 rounded-3xl bg-white/80 shadow-sm" />
+      </div>
 
-      <p className="line-clamp-5 text-sm text-gray-700">{content}</p>
+      <h3 className="mb-3 text-lg font-semibold text-slate-900">{title}</h3>
 
-      <div className="mt-4 text-xs text-gray-500">2h ago</div>
+      <p className="line-clamp-5 text-sm leading-6 text-slate-700">{content}</p>
+
+      <div className="mt-5 flex items-center justify-between text-xs text-slate-600">
+        <span>2h ago</span>
+        <span className="rounded-full bg-white/80 px-3 py-1">Updated</span>
+      </div>
     </article>
   );
 };

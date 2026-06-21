@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "react-redux";
 import { store } from "./stores/store";
 import App from "./App";
+import "./styles/globals.scss";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,5 +24,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </Provider>
       <ReactQueryDevtools />
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );
