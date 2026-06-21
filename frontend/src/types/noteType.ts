@@ -1,6 +1,10 @@
-export type NoteType = {
-  id: number;
-  name: string;
-  heading: string;
-  text: string;
-};
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  color: string;
+  isPinned: boolean;
+  folderId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
