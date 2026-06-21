@@ -1,5 +1,3 @@
-// app/router/index.tsx
-
 import { createBrowserRouter } from "react-router-dom";
 
 import HomePage from "@/pages/HomePage";
@@ -7,8 +5,8 @@ import NotesPage from "@/pages/NotesPage";
 import SearchPage from "@/pages/SearchPage";
 import FolderPage from "@/pages/FolderPage";
 import ProfilePage from "@/pages/ProfilePage";
-
-import MobileLayout from "../layouts/MobileLayout";
+import NoteDetailsPage from "@/pages/NoteDetailsPage";
+import MobileLayout from "@/app/layouts/MobileLayout";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "notes/:id",
+        element: <NoteDetailsPage />,
       },
     ],
   },
