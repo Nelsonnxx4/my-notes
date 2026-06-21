@@ -1,5 +1,3 @@
-// components/notes/NoteCard.tsx
-
 interface Props {
   title: string;
   content: string;
