@@ -1,7 +1,5 @@
-// pages/NotesPage.tsx
-
-import ResponsiveMasonry from "react-responsive-masonry";
-import Masonry from "react-responsive-masonry";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { motion } from "framer-motion";
 
 import NoteCard from "@/components/notes/NoteCard";
 import FloatingButton from "@/components/ui/FloatingButton";
@@ -37,7 +35,19 @@ export default function NotesPage() {
       >
         <Masonry gutter="16px">
           {notes.map((note) => (
-            <NoteCard key={note.title} {...note} />
+            <motion.div
+              key={note.title}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+            >
+              <NoteCard {...note} />
+            </motion.div>
           ))}
         </Masonry>
       </ResponsiveMasonry>

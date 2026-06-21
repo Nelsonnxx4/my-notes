@@ -1,11 +1,10 @@
-// components/ui/FloatingButton.tsx
-
 import { Plus } from "lucide-react";
 
 const FloatingButton = () => {
-	return (
-		<button
-			className="
+  return (
+    <button
+      aria-label="add"
+      className="
       fixed
       bottom-28
       right-5
@@ -19,9 +18,10 @@ const FloatingButton = () => {
       text-white
       shadow-xl
     "
-		>
-			<Plus size={28} />
-		</button>
-	);
+    >
+      <Plus size={28} />
+    </button>
+  );
 };
+
 export default FloatingButton;
