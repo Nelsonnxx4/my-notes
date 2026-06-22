@@ -1,5 +1,5 @@
 import { Input, Breadcrumbs, Select } from "@heroui/react";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, LayoutListIcon, LayoutGridIcon } from "lucide-react";
 
 import { FilterIcon } from "@/assets/icons";
 
@@ -23,6 +23,10 @@ const Header: React.FC<IHeaderProps> = () => {
           <div>
             <FilterIcon />
             <Select />
+          </div>
+          <div>
+            <LayoutListIcon />
+            <LayoutGridIcon />
           </div>
         </div>
       </section>

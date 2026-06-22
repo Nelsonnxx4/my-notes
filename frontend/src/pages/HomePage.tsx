@@ -31,7 +31,7 @@ const notes = [
 
 const HomePage = () => {
   return (
-    <main className="min-h-screen bg-[#F4F6FB] px-5 pb-28 pt-10">
+    <main className=" bg-white/70 px-5 pb-28 pt-10">
       <section className="rounded-[40px] bg-white p-6 shadow-[0_20px_50px_rgba(60,64,82,0.08)]">
         <div className="flex items-start justify-between gap-4">
           <div>

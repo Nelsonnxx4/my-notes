@@ -1,12 +1,14 @@
 import { Outlet } from "react-router-dom";
 
-import BottomNavbar from "@/components/navigation/ButtonNavbar";
+import BottomNavbar from "@/components/navigation/BottomNavbar";
 
-export default function MobileLayout() {
+const MobileLayout = () => {
   return (
-    <div className="min-h-screen bg-[#F7F7FA] pb-24">
+    <div className="min-h-screen ">
       <Outlet />
       <BottomNavbar />
     </div>
   );
-}
+};
+
+export default MobileLayout;

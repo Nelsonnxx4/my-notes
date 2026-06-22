@@ -24,9 +24,9 @@ const links = [
   // },
 ];
 
-export default function BottomNavbar() {
+const BottomNavbar = () => {
   return (
-    <div className="fixed bottom-2 left-1/2 z-50 w-[95%] max-w-md -translate-x-1/2 rounded-full bg-white/95 px-2 py-2 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+    <div className="fixed block md:hidden bottom-2 left-1/2 z-50 w-[95%] max-w-md -translate-x-1/2 rounded-full bg-gray-100 px-2 py-2 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl">
       <div className="flex items-center justify-between">
         {links.map(({ path, icon: Icon }) => (
           <NavLink
@@ -44,4 +44,6 @@ export default function BottomNavbar() {
       </div>
     </div>
   );
-}
+};
+
+export default BottomNavbar;

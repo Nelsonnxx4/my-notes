@@ -6,12 +6,12 @@ import SearchPage from "@/pages/SearchPage";
 import FolderPage from "@/pages/FolderPage";
 import ProfilePage from "@/pages/ProfilePage";
 import NoteDetailsPage from "@/pages/NoteDetailsPage";
-import MobileLayout from "@/app/layouts/MobileLayout";
+import ResponsiveLayout from "@/app/layouts/ResponsiveLayout";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <MobileLayout />,
+    element: <ResponsiveLayout />,
     children: [
       {
         index: true,
