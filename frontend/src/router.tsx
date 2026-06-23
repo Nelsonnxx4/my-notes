@@ -1,5 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import { Provider } from "./provider";
+import LoginPage from "./pages/LoginPage";
+
 import HomePage from "@/pages/HomePage";
 import NotesPage from "@/pages/NotesPage";
 import SearchPage from "@/pages/SearchPage";
@@ -14,28 +17,60 @@ export const router = createBrowserRouter([
     element: <ResponsiveLayout />,
     children: [
       {
+        path: "/login",
+        element: (
+          <Provider>
+            <LoginPage />
+          </Provider>
+        ),
+      },
+      {
         index: true,
-        element: <HomePage />,
+        element: (
+          <Provider>
+            <HomePage />,
+          </Provider>
+        ),
       },
       {
         path: "notes",
-        element: <NotesPage />,
+        element: (
+          <Provider>
+            <NotesPage />,
+          </Provider>
+        ),
       },
       {
         path: "search",
-        element: <SearchPage />,
+        element: (
+          <Provider>
+            <SearchPage />,
+          </Provider>
+        ),
       },
       {
         path: "folders",
-        element: <FolderPage />,
+        element: (
+          <Provider>
+            <FolderPage />,
+          </Provider>
+        ),
       },
       {
         path: "profile",
-        element: <ProfilePage />,
+        element: (
+          <Provider>
+            <ProfilePage />,
+          </Provider>
+        ),
       },
       {
         path: "notes/:id",
-        element: <NoteDetailsPage />,
+        element: (
+          <Provider>
+            <NoteDetailsPage />,
+          </Provider>
+        ),
       },
     ],
   },

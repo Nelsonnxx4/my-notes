@@ -3,22 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light;
-}
-
-html {
-  min-height: 100%;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  min-height: 100%;
   font-family: "Raleway", Roboto, sans-serif;
+  background-color: #fff;
   overscroll-behavior: none;
-  background: #ffff;
-  color: #0f172a;
-}
-
-* {
-  box-sizing: border-box;
 }

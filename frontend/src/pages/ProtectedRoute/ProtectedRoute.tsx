@@ -5,12 +5,15 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  //   const { user, isLoading } = authStore;
+  // TODO: replace with your real auth check (e.g. from a store or context)
+  // e.g. const { user, isLoading } = useAuthStore();
+  // if (isLoading) return <LoadingScreen />;
 
-  //   if (isLoading) return <LoadingScreen />;
+  const token = localStorage.getItem("token"); // swap with your actual auth source
 
-  // if (!user)
-  return <Navigate to={"/login"} />;
+  if (!token) {
+    return <Navigate replace to="/login" />;
+  }
 
   return <>{children}</>;
 };
