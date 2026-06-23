@@ -1,75 +1,75 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 
 import { Provider } from "./provider";
+import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./pages/ProtectedRoute/ProtectedRoute";
+import NoteDetailsPage from "./pages/NoteDetailsPage";
+import ProfilePage from "./pages/ProfilePage";
+import SearchPage from "./pages/SearchPage";
+import CreateNotesPage from "./pages/CreateNotePage";
+import NotesPage from "./pages/NotesPage";
 
-import HomePage from "@/pages/HomePage";
-import NotesPage from "@/pages/NotesPage";
-import SearchPage from "@/pages/SearchPage";
-import FolderPage from "@/pages/FolderPage";
-import ProfilePage from "@/pages/ProfilePage";
-import NoteDetailsPage from "@/pages/NoteDetailsPage";
-import ResponsiveLayout from "@/app/layouts/ResponsiveLayout";
+const RootLayout = () => (
+  <Provider>
+    <Outlet />
+  </Provider>
+);
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <ResponsiveLayout />,
+    element: <RootLayout />,
     children: [
       {
         path: "/login",
+        element: <LoginPage />,
+      },
+      {
+        path: "/",
         element: (
-          <Provider>
-            <LoginPage />
-          </Provider>
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
         ),
       },
       {
-        index: true,
+        path: "/profile",
         element: (
-          <Provider>
-            <HomePage />,
-          </Provider>
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
         ),
       },
       {
-        path: "notes",
+        path: "/search",
         element: (
-          <Provider>
-            <NotesPage />,
-          </Provider>
+          <ProtectedRoute>
+            <SearchPage />
+          </ProtectedRoute>
         ),
       },
       {
-        path: "search",
+        path: "/create",
         element: (
-          <Provider>
-            <SearchPage />,
-          </Provider>
+          <ProtectedRoute>
+            <CreateNotesPage />
+          </ProtectedRoute>
         ),
       },
       {
-        path: "folders",
+        path: "/notes",
         element: (
-          <Provider>
-            <FolderPage />,
-          </Provider>
+          <ProtectedRoute>
+            <NotesPage />
+          </ProtectedRoute>
         ),
       },
       {
-        path: "profile",
+        path: "/notes/:id",
         element: (
-          <Provider>
-            <ProfilePage />,
-          </Provider>
-        ),
-      },
-      {
-        path: "notes/:id",
-        element: (
-          <Provider>
-            <NoteDetailsPage />,
-          </Provider>
+          <ProtectedRoute>
+            <NoteDetailsPage />
+          </ProtectedRoute>
         ),
       },
     ],

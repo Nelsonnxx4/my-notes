@@ -34,4 +34,7 @@ export default {
   },
   darkMode: "class",
   plugins: [heroui()],
+  corePlugins: {
+    preflight: false,
+  },
 };
