@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* Tailwind v4: single import replaces @tailwind base/components/utilities */
+@import "tailwindcss";
+
+/* 
+  Custom design tokens — v4 uses @theme instead of tailwind.config.js.
+  These become utility classes automatically:
+  bg-note-yellow, bg-note-pink, text-primary, etc.
+*/
+@theme {
+  /* Note card colors */
+  --color-note-yellow: #fdf1d1;
+  --color-note-pink: #f7cbe9;
+  --color-note-blue: #cfefff;
+  --color-note-green: #d1f5e0;
+
+  /* Brand colors */
+  --color-primary: #7c3aed;
+  --color-primary-100: #926bf4;
+  --color-primary-200: #7c3aed;
+  --color-secondary-100: #f9fafb;
+  --color-secondary-200: #e0e0e1;
+  --color-accent-100: #34d399;
+  --color-accent-200: #10b981;
+  --color-highlight: #f59e0b;
+
+  /* Typography */
+  --font-sans: "Raleway", Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-secondary-200);
+  overscroll-behavior: none;
+}
