@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="sticky top-0 w-65 h-screen border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
+    <aside className="sticky top-0 xl:w-65 md:w-50  h-screen border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
       <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0">
         <img
           alt="profile pic"

@@ -22,7 +22,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 md:left-65 z-50 w-full md:w-[calc(100%-260px)] bg-white flex items-start gap-3 flex-col px-4 md:px-16 py-6 border-b border-gray-200 h-28">
+    <header className="fixed top-0 left-0 right-0 md:left-50 lg:left-50 xl:left-65 z-50 w-full lg:w-[81%] md:w-[74%] xl:w-[83%] bg-white flex items-start gap-3 flex-col px-4 md:px-4 lg:px-10 py-6 border-b border-gray-200 h-28">
       <Breadcrumbs className="flex justify-between items-center">
         <Breadcrumbs.Item className="flex items-center text-gray-500" href="#">
           Home
@@ -31,7 +31,7 @@ const Header: React.FC = () => {
       </Breadcrumbs>
 
       <section className="w-full flex justify-between items-center">
-        <div className="flex items-center bg-gray-100 w-[30%] h-7.5 px-2 py-1 rounded-md border border-gray-200 transition-all duration-200 focus-within:bg-gray-50 focus-within:border-gray-400 focus-within:shadow-sm">
+        <div className="flex items-center bg-gray-100 w-[30%] md:w-[40%] h-7.5 px-2 py-1 rounded-md border border-gray-200 transition-all duration-200 focus-within:bg-gray-50 focus-within:border-gray-400 focus-within:shadow-sm">
           <SearchIcon
             className="text-gray-400 transition-colors duration-200 focus-within:text-gray-600"
             size={20}
@@ -43,9 +43,9 @@ const Header: React.FC = () => {
           />
         </div>
 
-        <div className="flex justify-between items-center w-[25%] ">
+        <div className="flex justify-between items-center gap-2 w-[25%] md:w-[37%] lg:w-[37%] xl:w-max">
           <Select
-            className="w-50 text-gray-700 text-xs"
+            className="w-full lg:w-55 text-gray-700 text-xs"
             placeholder="Filter"
             selectionMode="multiple"
           >
@@ -75,7 +75,7 @@ const Header: React.FC = () => {
 
             <Select.Popover
               className="
-      z-50 mt-1.5 w-55
+      z-50 mt-1.5 w-45 lg:w-55
       rounded-xl
       bg-white
       border border-slate-200
@@ -128,7 +128,7 @@ const Header: React.FC = () => {
               </ListBox>
             </Select.Popover>
           </Select>
-          <div className="flex justify-between items-center gap-2  bg-gray-100 p-1 rounded-sm border border-gray-200">
+          <div className="flex justify-between items-center gap-2  bg-gray-100 p-1 rounded-sm border border-gray-200 ">
             <Grid3x2Icon
               className="text-gray-400 cursor-pointer hover:text-gray-800 transition-all"
               strokeWidth={1.5}

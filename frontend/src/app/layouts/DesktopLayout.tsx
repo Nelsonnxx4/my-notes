@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 
 const DesktopLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col ">
       <Header />
       <div className="flex flex-1">
         <Sidebar />
