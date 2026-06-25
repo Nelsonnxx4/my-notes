@@ -1,13 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 
-/* Tailwind v4: single import replaces @tailwind base/components/utilities */
 @import "tailwindcss";
 
-/* 
-  Custom design tokens — v4 uses @theme instead of tailwind.config.js.
-  These become utility classes automatically:
-  bg-note-yellow, bg-note-pink, text-primary, etc.
-*/
 @theme {
   /* Note card colors */
   --color-note-yellow: #fdf1d1;
@@ -31,6 +25,6 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-secondary-200);
+  background-color: #fff;
   overscroll-behavior: none;
 }

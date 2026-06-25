@@ -21,8 +21,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="sticky top-0 w-[260px] h-screen border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
-      {/* Profile */}
+    <aside className="sticky top-0 w-65 h-screen border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
       <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0">
         <img
           alt="profile pic"
@@ -31,7 +30,9 @@ const Sidebar: React.FC = () => {
         />
         <div className="flex flex-col leading-5 -space-y-1">
           <h3 className="font-semibold text-md text-gray-800">Nelson</h3>
-          <span className="text-gray-500 text-sm">nelson@gmail.co</span>
+          <span className="text-gray-500 text-sm underline underline-offset-2">
+            nelson@gmail.co
+          </span>
         </div>
       </section>
 
@@ -47,10 +48,10 @@ const Sidebar: React.FC = () => {
               className="flex items-center gap-2 mb-1 w-[80%] mx-3 px-4 py-2 hover:bg-gray-100 hover:border hover:border-gray-300 cursor-pointer transition-all rounded-md group"
             >
               <Icon
-                className="h-4 w-4 text-gray-500 group-hover:text-gray-700"
+                className="h-4 w-4 text-gray-500 group-hover:text-gray-800"
                 strokeWidth={1.5}
               />
-              <span className="text-gray-600 group-hover:text-gray-700">
+              <span className="text-gray-600 group-hover:text-gray-800">
                 {sidebaroption.name}
               </span>
             </div>
@@ -70,10 +71,10 @@ const Sidebar: React.FC = () => {
               className="flex items-center gap-2 mb-1 w-[80%] mx-3 px-4 py-2 hover:bg-gray-100 hover:border hover:border-gray-300 cursor-pointer transition-all rounded-md group"
             >
               <Icon
-                className="h-4 w-4 text-gray-400 group-hover:text-gray-700"
+                className="h-4 w-4 text-gray-500 group-hover:text-gray-800"
                 strokeWidth={1.5}
               />
-              <span className="text-gray-500 group-hover:text-gray-700">
+              <span className="text-gray-600 group-hover:text-gray-800">
                 {sidebarSetting.name}
               </span>
             </div>
