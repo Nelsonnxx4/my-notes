@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 
 import { Provider } from "./provider";
 import ProtectedRoute from "./pages/ProtectedRoute/ProtectedRoute";
-import LoginPage from "./pages/LoginPage";
+import AuthPage from "./pages/AuthPage";
 import NoteDetailsPage from "./pages/NoteDetailsPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreateNotesPage from "./pages/CreateNotePage";
@@ -30,8 +30,12 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: "/login",
-        element: <LoginPage />,
+        path: "/auth/login",
+        element: <AuthPage mode="login" />,
+      },
+      {
+        path: "/auth/signup",
+        element: <AuthPage mode="signup" />,
       },
 
       {
