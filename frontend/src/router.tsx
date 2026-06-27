@@ -10,6 +10,8 @@ import NotesPage from "./pages/NotesPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import ArchivePage from "./pages/ArchivePage";
 import TagsPage from "./pages/TagsPage";
+import HomePage from "./pages/HomePage";
+import FolderPage from "./pages/FolderPage";
 
 import ResponsiveLayout from "@/app/layouts/ResponsiveLayout";
 
@@ -41,6 +43,8 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
+          { path: "/home", element: <HomePage /> },
+          { path: "/folders", element: <FolderPage /> },
           { path: "/notes", element: <NotesPage /> },
           { path: "/notes/:id", element: <NoteDetailsPage /> },
           { path: "/create", element: <CreateNotesPage /> },

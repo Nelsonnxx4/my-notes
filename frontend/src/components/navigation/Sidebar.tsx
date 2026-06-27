@@ -5,14 +5,18 @@ import {
   PenIcon,
   SettingsIcon,
   TagIcon,
+  FoldersIcon,
+  HomeIcon,
 } from "lucide-react";
 
 const Sidebar: React.FC = () => {
   const SidebarOptions = [
-    { id: 1, icon: PenIcon, name: "All notes" },
-    { id: 2, icon: BookmarkIcon, name: "Favourites" },
-    { id: 3, icon: ArchiveIcon, name: "Archive" },
-    { id: 4, icon: TagIcon, name: "Tags" },
+    { id: 1, icon: HomeIcon, name: "Home" },
+    { id: 2, icon: PenIcon, name: "All notes" },
+    { id: 3, icon: BookmarkIcon, name: "Favourites" },
+    { id: 4, icon: ArchiveIcon, name: "Archive" },
+    { id: 5, icon: FoldersIcon, name: "Folders" },
+    { id: 6, icon: TagIcon, name: "Tags" },
   ];
 
   const SidebarSettings = [
