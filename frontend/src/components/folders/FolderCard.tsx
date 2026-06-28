@@ -1,22 +1,32 @@
+import { FolderIcon, MoreHorizontalIcon } from "lucide-react";
+
 interface Props {
-  name: string;
-
+  title: string;
   count: number;
-
   color: string;
+  date: string;
 }
 
-export default function FolderCard({ name, count, color }: Props) {
+const FolderCard = ({ title, count, color, date }: Props) => {
   return (
     <div
-      className="rounded-[24px] p-5"
-      style={{
-        backgroundColor: color,
-      }}
+      className={`flex flex-col justify-between md:min-w-55 min-h-55 rounded-md p-4
+ ${color}`}
     >
-      <h3 className="font-bold text-lg">{name}</h3>
+      <div>
+        <div className="flex justify-between items-center text-gray-600">
+          <FolderIcon className="cursor-pointer" size={30} strokeWidth={1} />
+          <MoreHorizontalIcon className="cursor-pointer" strokeWidth={1} />
+        </div>
+        <h3 className="font-semibold text-md ">{title}</h3>
 
-      <p className="mt-1 text-sm text-gray-600">{count} Notes</p>
+        <p className="mt-1 text-sm text-gray-700">{count} Notes</p>
+      </div>
+      <div className="flex justify-start items-baseline">
+        <span className="text-sm text-gray-900">{date}</span>
+      </div>
     </div>
   );
-}
+};
+
+export default FolderCard;
