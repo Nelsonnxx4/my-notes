@@ -1,29 +1,50 @@
-import { FolderIcon, MoreHorizontalIcon } from "lucide-react";
+import { FolderIcon } from "lucide-react";
 
-interface Props {
-  title: string;
-  count: number;
-  color: string;
-  date: string;
+export interface FolderColorScheme {
+  bg: string;
+  text: string;
+  border: string;
+  icon: string;
 }
 
-const FolderCard = ({ title, count, color, date }: Props) => {
+interface FolderCardProps {
+  title: string;
+  count: number;
+  colorScheme: FolderColorScheme;
+}
+
+const FolderCard: React.FC<FolderCardProps> = ({
+  title,
+  count,
+  colorScheme,
+}) => {
+  const { bg, text, border, icon } = colorScheme;
+
   return (
     <div
-      className={`flex flex-col justify-between md:min-w-55 min-h-55 rounded-md p-4
- ${color}`}
+      className={`
+        group flex flex-col justify-between gap-3
+        md:min-w-50 md:min-h-50 p-4 rounded-md
+        border cursor-pointer
+        transition-all duration-150 hover:shadow-sm hover:brightness-95
+        ${bg} ${border}
+      `}
     >
-      <div>
-        <div className="flex justify-between items-center text-gray-600">
-          <FolderIcon className="cursor-pointer" size={30} strokeWidth={1} />
-          <MoreHorizontalIcon className="cursor-pointer" strokeWidth={1} />
-        </div>
-        <h3 className="font-semibold text-md ">{title}</h3>
+      {/* Folder icon — colored */}
+      <FolderIcon
+        className={`${icon} transition-transform duration-150 group-hover:scale-105`}
+        size={40}
+        strokeWidth={1.2}
+      />
 
-        <p className="mt-1 text-sm text-gray-700">{count} Notes</p>
-      </div>
-      <div className="flex justify-start items-baseline">
-        <span className="text-sm text-gray-900">{date}</span>
+      {/* Title + note count */}
+      <div className="flex flex-col gap-0.5">
+        <span className={`font-semibold text-sm leading-tight ${text}`}>
+          {title}
+        </span>
+        <span className="text-xs text-gray-400">
+          {count} {count === 1 ? "note" : "notes"}
+        </span>
       </div>
     </div>
   );
