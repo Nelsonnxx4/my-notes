@@ -4,7 +4,7 @@ import { Provider } from "./provider";
 import ProtectedRoute from "./pages/ProtectedRoute/ProtectedRoute";
 import AuthPage from "./pages/AuthPage";
 import NoteDetailsPage from "./pages/NoteDetailsPage";
-import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import CreateNotesPage from "./pages/CreateNotePage";
 import NotesPage from "./pages/NotesPage";
 import FavoritesPage from "./pages/FavoritesPage";
@@ -51,7 +51,7 @@ export const router = createBrowserRouter([
           { path: "/favorites", element: <FavoritesPage /> },
           { path: "/archive", element: <ArchivePage /> },
           { path: "/tags", element: <TagsPage /> },
-          { path: "/profile", element: <ProfilePage /> },
+          { path: "/settings", element: <SettingsPage /> },
         ],
       },
     ],
