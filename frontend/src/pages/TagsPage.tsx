@@ -1,15 +1,9 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Tag, Plus, X, Search } from "lucide-react";
+import { Tag, Plus, X, Search, Loader2 } from "lucide-react";
 import { Input } from "@heroui/react";
 
-interface TagItem {
-  id: string;
-  name: string;
-  color: string;
-  count: number;
-  isCustom?: boolean;
-}
+import { useTags, useCreateTag, useDeleteTag } from "@/hooks/useTags";
 
 const TAG_COLORS = [
   {
@@ -62,77 +56,58 @@ const TAG_COLORS = [
   },
 ];
 
-function randomColor() {
-  return TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
-}
+const tagColor = (name: string) => {
+  let hash = 0;
 
-const INITIAL_TAGS: TagItem[] = [
-  { id: "1", name: "Work", color: "0", count: 12 },
-  { id: "2", name: "Personal", color: "1", count: 7 },
-  { id: "3", name: "Ideas", color: "2", count: 5 },
-  { id: "4", name: "Reading list", color: "3", count: 9 },
-  { id: "5", name: "Projects", color: "4", count: 3 },
-  { id: "6", name: "Learning", color: "5", count: 6 },
-  { id: "7", name: "Recipes", color: "6", count: 2 },
-  { id: "8", name: "Travel", color: "7", count: 4 },
-];
+  for (let i = 0; i < name.length; i++) {
+    const c = name.charCodeAt(i);
+
+    hash = (hash << 5) - hash + c;
+    hash = hash & hash;
+  }
+
+  return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length];
+};
 
 const TagsPage: React.FC = () => {
-  const [tags, setTags] = useState<TagItem[]>(INITIAL_TAGS);
-  const [search, setSearch] = useState("");
-  const [newTagName, setNewTagName] = useState("");
-  const [selectedColorIdx, setSelectedColorIdx] = useState(0);
-  const [showInput, setShowInput] = useState(false);
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const { data: tags = [], isLoading } = useTags();
+  const { mutate: createTag, isPending: isCreating } = useCreateTag();
+  const { mutate: deleteTag } = useDeleteTag();
+
+  const [search, setSearch] = useState<string>("");
+  const [newTagName, setNewTagName] = useState<string>("");
+  const [selectedColorIdx, setSelectedColorIdx] = useState<number>(0);
+  const [showInput, setShowInput] = useState<boolean>(false);
+  const [activeTagId, setActiveTagId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const filteredTags = tags.filter((t) =>
     t.name.toLowerCase().includes(search.toLowerCase()),
   );
 
-  function addTag() {
+  const addTag = () => {
     const name = newTagName.trim();
 
     if (!name) return;
-    if (tags.some((t) => t.name.toLowerCase() === name.toLowerCase())) {
-      inputRef.current?.setCustomValidity("Tag already exists");
-      inputRef.current?.reportValidity();
+    createTag(name, {
+      onSuccess: () => {
+        setNewTagName("");
+        setShowInput(false);
+        setSelectedColorIdx(0);
+      },
+    });
+  };
 
-      return;
-    }
-    const newTag: TagItem = {
-      id: Date.now().toString(),
-      name,
-      color: String(selectedColorIdx),
-      count: 0,
-      isCustom: true,
-    };
-
-    setTags((prev) => [newTag, ...prev]);
-    setNewTagName("");
-    setShowInput(false);
-    setSelectedColorIdx(0);
-  }
-
-  function deleteTag(id: string) {
-    setTags((prev) => prev.filter((t) => t.id !== id));
-    if (activeTag === id) setActiveTag(null);
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") addTag();
     if (e.key === "Escape") {
       setShowInput(false);
       setNewTagName("");
     }
-  }
-
-  const getColor = (colorStr: string) =>
-    TAG_COLORS[Number(colorStr) % TAG_COLORS.length];
+  };
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20">
-      {/* Header */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -155,7 +130,7 @@ const TagsPage: React.FC = () => {
             strokeWidth={1.5}
           />
           <Input
-            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent transition"
+            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm"
             placeholder="Search tags…"
             type="text"
             value={search}
@@ -174,7 +149,6 @@ const TagsPage: React.FC = () => {
         </button>
       </div>
 
-      {/* New tag input panel */}
       <AnimatePresence>
         {showInput && (
           <motion.div
@@ -187,40 +161,31 @@ const TagsPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50">
               <input
                 ref={inputRef}
-                className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-transparent transition"
+                className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
                 maxLength={30}
                 placeholder="Tag name…"
                 type="text"
                 value={newTagName}
-                onChange={(e) => {
-                  setNewTagName(e.target.value);
-                  inputRef.current?.setCustomValidity("");
-                }}
+                onChange={(e) => setNewTagName(e.target.value)}
                 onKeyDown={handleKeyDown}
               />
-
-              {/* Color picker */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 {TAG_COLORS.map((c, i) => (
                   <button
                     key={i}
                     aria-label="color button"
-                    className={`h-6 w-6 rounded-full ${c.dot} transition-all ${
-                      selectedColorIdx === i
-                        ? "ring-2 ring-offset-1 ring-gray-500 scale-110"
-                        : "opacity-60 hover:opacity-100"
-                    }`}
+                    className={`h-6 w-6 rounded-full ${c.dot} transition-all ${selectedColorIdx === i ? "ring-2 ring-offset-1 ring-gray-500 scale-110" : "opacity-60 hover:opacity-100"}`}
                     onClick={() => setSelectedColorIdx(i)}
                   />
                 ))}
               </div>
-
               <div className="flex gap-2">
                 <button
-                  className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white text-sm font-medium transition"
-                  disabled={!newTagName.trim()}
+                  className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white text-sm font-medium transition flex items-center gap-1.5"
+                  disabled={!newTagName.trim() || isCreating}
                   onClick={addTag}
                 >
+                  {isCreating && <Loader2 className="animate-spin" size={12} />}
                   Add
                 </button>
                 <button
@@ -238,8 +203,17 @@ const TagsPage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Tags grid */}
-      {filteredTags.length === 0 ? (
+      {isLoading && (
+        <div className="flex justify-center py-24">
+          <Loader2
+            className="animate-spin text-green-400"
+            size={28}
+            strokeWidth={1.5}
+          />
+        </div>
+      )}
+
+      {!isLoading && filteredTags.length === 0 && (
         <motion.div
           animate={{ opacity: 1 }}
           className="flex flex-col items-center justify-center py-20 text-center"
@@ -252,45 +226,39 @@ const TagsPage: React.FC = () => {
               : "No tags yet. Create your first one!"}
           </p>
         </motion.div>
-      ) : (
+      )}
+
+      {!isLoading && filteredTags.length > 0 && (
         <motion.div
           layout
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
         >
           <AnimatePresence>
             {filteredTags.map((tag) => {
-              const c = getColor(tag.color);
-              const isActive = activeTag === tag.id;
+              const c = tagColor(tag.name);
+              const isActive = activeTagId === tag.id;
 
               return (
                 <motion.div
                   key={tag.id}
                   layout
                   animate={{ opacity: 1, scale: 1 }}
-                  className={`relative group flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all select-none ${c.bg} ${c.border} ${
-                    isActive
-                      ? "ring-2 ring-offset-1 ring-green-400 shadow-md"
-                      : "hover:shadow-sm"
-                  }`}
+                  className={`relative group flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all select-none ${c.bg} ${c.border} ${isActive ? "ring-2 ring-offset-1 ring-green-400 shadow-md" : "hover:shadow-sm"}`}
                   exit={{ opacity: 0, scale: 0.88 }}
                   initial={{ opacity: 0, scale: 0.92 }}
                   transition={{ duration: 0.2 }}
-                  onClick={() => setActiveTag(isActive ? null : tag.id)}
+                  onClick={() => setActiveTagId(isActive ? null : tag.id)}
                 >
-                  {/* Delete button — custom tags only */}
-                  {tag.isCustom && (
-                    <button
-                      aria-label="delete custom tag"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition h-5 w-5 flex items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-500 hover:text-red-500"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteTag(tag.id);
-                      }}
-                    >
-                      <X size={11} strokeWidth={2.5} />
-                    </button>
-                  )}
-
+                  <button
+                    aria-label="delete tag"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition h-5 w-5 flex items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-500 hover:text-red-500"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteTag(tag.id);
+                    }}
+                  >
+                    <X size={11} strokeWidth={2.5} />
+                  </button>
                   <div className={`h-2 w-2 rounded-full ${c.dot}`} />
                   <span
                     className={`text-sm font-semibold leading-tight ${c.text}`}
@@ -298,14 +266,9 @@ const TagsPage: React.FC = () => {
                     {tag.name}
                   </span>
                   <span className="text-xs text-gray-400">
-                    {tag.count} {tag.count === 1 ? "note" : "notes"}
+                    {tag.noteCount ?? 0}{" "}
+                    {(tag.noteCount ?? 0) === 1 ? "note" : "notes"}
                   </span>
-
-                  {tag.isCustom && (
-                    <span className="text-[10px] text-gray-400 italic">
-                      custom
-                    </span>
-                  )}
                 </motion.div>
               );
             })}

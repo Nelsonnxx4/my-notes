@@ -1,32 +1,25 @@
-const colorOptions = [
-  { value: "#FCEAA8", className: "bg-[#FCEAA8]" },
-  { value: "#F7CBE9", className: "bg-[#F7CBE9]" },
-  { value: "#CFEFFF", className: "bg-[#CFEFFF]" },
-  { value: "#D8F5C8", className: "bg-[#D8F5C8]" },
-  { value: "#FADFCF", className: "bg-[#FADFCF]" },
-];
+import { colorOptions } from "@/constant/colorPickerOptions";
 
-const ColorPicker = () => {
+interface Props {
+  value: string;
+  onChange: (color: string) => void;
+}
+
+const ColorPicker = ({ value, onChange }: Props) => {
   return (
     <div className="mb-8 flex gap-3">
       {colorOptions.map((color) => (
         <button
           key={color.value}
           aria-label={`Select color ${color.value}`}
-          className={`
-            h-10
-            w-10
-            rounded-full
-            border-2
-            border-white
-            shadow-sm
-            ${color.className}
-          `}
-          title={`Select color ${color.value}`}
+          className={`h-10 w-10 rounded-full shadow-sm transition-transform ${color.className} ${
+            value === color.value
+              ? "ring-2 ring-offset-1 ring-gray-500 scale-110"
+              : "hover:scale-105"
+          }`}
           type="button"
-        >
-          <span className="sr-only">{`Select color ${color.value}`}</span>
-        </button>
+          onClick={() => onChange(color.value)}
+        />
       ))}
     </div>
   );

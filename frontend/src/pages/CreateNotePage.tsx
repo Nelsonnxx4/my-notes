@@ -1,97 +1,74 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
-import { createNote } from "@/noteSlice";
-
-interface NoteFormData {
-  name: string;
-  heading: string;
-  text: string;
-}
+import { useCreateNote } from "@/hooks/mutations/useCreateNote";
 
 const CreateNotesPage: React.FC = () => {
-  const [noteData, setNoteData] = useState<NoteFormData>({
-    name: "",
-    heading: "",
-    text: "",
-  });
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { mutate: createNote, isPending } = useCreateNote();
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
-    setNoteData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleCreateNote = (e: React.FormEvent) => {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!title.trim()) {
+      setError("Title is required.");
 
-    if (noteData.name && noteData.heading && noteData.text) {
-      dispatch(createNote(noteData));
-
-      setNoteData({
-        name: "",
-        heading: "",
-        text: "",
-      });
-
-      navigate("/");
-    } else {
-      alert("Please fill in all fields");
+      return;
     }
-  };
+    setError(null);
+    createNote({ title: title.trim(), content: content.trim() });
+  }
 
   return (
-    <main>
-      <h1>Create Notes</h1>
+    <main className="min-h-screen bg-[#F7F7FA] pb-36">
+      <header className="flex items-center justify-between p-5">
+        <button
+          aria-label="Go back"
+          className="rounded-full bg-white p-3 shadow-sm"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft size={20} />
+        </button>
 
-      <form onSubmit={handleCreateNote}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            id="name"
-            name="name"
-            placeholder="Enter your name"
-            type="text"
-            value={noteData.name}
-            onChange={handleInputChange}
-          />
-        </div>
+        <button
+          className="flex items-center gap-2 rounded-full bg-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-600/85 disabled:opacity-50 transition cursor-pointer"
+          disabled={isPending || !title.trim()}
+          onClick={handleSubmit}
+        >
+          {isPending && <Loader2 className="animate-spin" size={14} />}
+          Save
+        </button>
+      </header>
 
-        <div>
-          <label htmlFor="heading">Heading:</label>
-          <input
-            id="heading"
-            name="heading"
-            placeholder="Enter note heading"
-            type="text"
-            value={noteData.heading}
-            onChange={handleInputChange}
-          />
-        </div>
+      <div className="px-5 space-y-4">
+        {error && (
+          <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+            {error}
+          </p>
+        )}
 
-        <div>
-          <label htmlFor="text">Note Text:</label>
-          <textarea
-            id="text"
-            name="text"
-            placeholder="Enter your note"
-            rows={5}
-            value={noteData.text}
-            onChange={handleInputChange}
-          />
-        </div>
+        <textarea
+          className="w-full resize-none bg-transparent text-4xl font-bold outline-none leading-tight"
+          placeholder="Untitled Note"
+          rows={2}
+          value={title}
+          onChange={(e) => {
+            setError(null);
+            setTitle(e.target.value);
+          }}
+        />
 
-        <button type="submit">Create Note</button>
-      </form>
+        <textarea
+          className="w-full min-h-[60vh] resize-none bg-transparent text-base leading-8 outline-none"
+          placeholder="Start writing..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+      </div>
     </main>
   );
 };

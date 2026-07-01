@@ -1,14 +1,12 @@
+// src/pages/AuthPage.tsx
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
-import { Button, Form, Input, Separator } from "@heroui/react";
+import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Button, Form, Input } from "@heroui/react";
 
-// import { ToastContainer } from "@/components/Toast";
-// import { useAuth } from "@/contexts/AuthContext";
 import { GoogleIcon } from "@/assets/icons";
-// import { usePopToast } from "@/hooks/useToast";
-// import { useSignUp, useSignIn, useGoogleSignIn } from "@/hooks/useAuthMutation";
-// import { getAuthErrorMessage, validateAuthForm } from "@/services/validation";
+import { loginApi, registerApi } from "@/api/auth.api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthPageProps {
   mode: "login" | "signup";
@@ -17,99 +15,59 @@ interface AuthPageProps {
 const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
   const isSignUp = mode === "signup";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
 
-  // const { user } = useAuth();
+  const { setCredentials } = useAuth();
   const navigate = useNavigate();
-  // const { toasts, addToast, removeToast } = usePopToast();
 
-  // const signUpMutation = useSignUp();
-  // const signInMutation = useSignIn();
-  // const googleMutation = useGoogleSignIn();
+  const validate = (): boolean => {
+    if (!email.trim()) {
+      setFormError("Email is required.");
 
-  // const isLoading =
-  //   signUpMutation.isPending ||
-  //   signInMutation.isPending ||
-  //   googleMutation.isPending;
+      return false;
+    }
+    if (!password || password.length < 6) {
+      setFormError("Password must be at least 6 characters.");
 
-  // const activeAuthError = isSignUp
-  //   ? signUpMutation.error
-  //   : signInMutation.error;
-  // const authError =
-  //   formError ||
-  //   (activeAuthError instanceof Error
-  //     ? getAuthErrorMessage(activeAuthError)
-  //     : null) ||
-  //   (googleMutation.error instanceof Error
-  //     ? getAuthErrorMessage(googleMutation.error)
-  //     : null);
+      return false;
+    }
 
-  // const clearAuthErrors = () => {
-  //   setFormError(null);
-  //   signUpMutation.reset();
-  //   signInMutation.reset();
-  //   googleMutation.reset();
-  // };
+    return true;
+  };
 
-  // useEffect(() => {
-  //   const oauthError = searchParams.get("error");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    if (!validate()) return;
 
-  //   if (oauthError) {
-  //     addToast({
-  //       description:
-  //         "Something went wrong with Google sign-in. Please try again.",
-  //       title: "Sign in failed",
-  //       variant: "destructive",
-  //     });
-  //   }
-  // }, [searchParams]);
+    setIsLoading(true);
+    try {
+      const result = isSignUp
+        ? await registerApi({ email, password })
+        : await loginApi({ email, password });
 
-  // useEffect(() => {
-  //   if (user) navigate("/home", { replace: true });
-  // }, [user, navigate]);
-
-  // const validate = (): boolean => {
-  //   const result = validateAuthForm({ email, password });
-
-  //   if (!result.success) {
-  //     const message = result.error.issues[0]?.message ?? "Invalid input";
-
-  //     setFormError(message);
-  //     addToast({
-  //       description: message,
-  //       title: "Validation Error",
-  //       variant: "destructive",
-  //     });
-
-  //     return false;
-  //   }
-
-  //   return true;
-  // };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   clearAuthErrors();
-  //   if (!validate()) return;
-  //   if (isSignUp) {
-  //     signUpMutation.mutate({ email, password });
-  //   } else {
-  //     signInMutation.mutate({ email, password });
-  //   }
-  // };
+      setCredentials(result);
+      navigate("/home", { replace: true });
+    } catch (err: any) {
+      setFormError(
+        err?.response?.data?.message ??
+          "Something went wrong. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="grid min-h-screen md:grid-cols-2">
-      {/* <ToastContainer toasts={toasts} onRemove={removeToast} /> */}
-
       {/* ── Left: form column ── */}
       <section className="flex flex-col items-center justify-center px-8 py-12 bg-white">
-        {/* Logo */}
-        <div className=" w-full max-w-sm mb-4">
+        <div className="w-full max-w-sm mb-4">
           <div className="flex flex-col items-start justify-between">
             <video
               aria-label="Not-lify bee animation"
@@ -122,7 +80,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           </div>
         </div>
 
-        {/* Heading */}
         <div className="flex flex-col items-start justify-start w-full max-w-sm">
           <h1 className="text-2xl font-semibold text-gray-900 mb-1">
             {isSignUp ? "Create your account" : "Welcome back"}
@@ -133,7 +90,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
               : "Sign in to continue to your notes."}
           </p>
 
-          {/* OAuth error banner */}
           {searchParams.get("error") && (
             <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-5">
               <AlertCircle className="shrink-0" size={16} />
@@ -141,87 +97,71 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             </div>
           )}
 
-          {/* Google */}
           <Button
-            className="
-              w-full flex items-center justify-center gap-2
-              border border-gray-200 rounded-xl
-              bg-white text-gray-700 text-sm font-medium
-               py-2.5
-              transition-all duration-200
-              hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm cursor-pointer "
-            // isLoading={googleMutation.isPending}
-            // variant="bordered"
-            // onPress={() => {
-            //   clearAuthErrors();
-            //   googleMutation.mutate();
-            // }}
+            isDisabled
+            className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl bg-white text-gray-700 text-sm font-medium py-2.5 transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm cursor-pointer"
           >
             <GoogleIcon />
             Continue with Google
           </Button>
 
-          {/* Divider */}
-          <div className="flex justify-center items-center  my-6">
-            {/* <Separator className="flex-1" /> */}
-            <span className="text-sm  text-gray-400 whitespace-nowrap">
+          <div className="flex justify-center items-center my-6">
+            <span className="text-sm text-gray-400 whitespace-nowrap">
               or continue with email
             </span>
-            {/* <Separator className="flex-1" /> */}
           </div>
 
-          {/* Auth error */}
-          {/* {authError && (
+          {formError && (
             <div
               aria-live="polite"
-              className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4"
+              className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4 w-full"
             >
               <AlertCircle className="mt-0.5 shrink-0" size={16} />
-              <span>{authError}</span>
+              <span>{formError}</span>
             </div>
-          )} */}
+          )}
 
-          {/* Form */}
-          <Form
-            className="w-full flex flex-col gap-4"
-            // onSubmit={handleSubmit}
-          >
+          <Form className="w-full flex flex-col gap-4" onSubmit={handleSubmit}>
             <Input
               required
-              className="border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-300 focus:bg-gray-50 outline-none p-2"
-              // label="Email address"
+              className="border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-300 outline-none p-2"
               placeholder="you@example.com"
               type="email"
               value={email}
-              // onValueChange={(val) => {
-              //   clearAuthErrors();
-              //   setEmail(val);
-              // }}
+              onChange={(e) => {
+                setFormError(null);
+                setEmail(e.target.value);
+              }}
             />
 
-            <div className="flex justify-between items-center w-full">
-              <div className="relative w-full">
-                <label className="sr-only">Password</label>
-                <input
-                  required
-                  className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 focus:bg-gray-50 outline-none p-2 pr-11"
-                  placeholder={
-                    isSignUp ? "At least 6 characters" : "Your password"
-                  }
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                >
-                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                </button>
-              </div>
+            <div className="relative w-full">
+              <label className="sr-only" htmlFor="password">
+                Password
+              </label>
+              <input
+                required
+                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2 pr-11"
+                id="password"
+                placeholder={
+                  isSignUp ? "At least 6 characters" : "Your password"
+                }
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => {
+                  setFormError(null);
+                  setPassword(e.target.value);
+                }}
+              />
+              <button
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
             </div>
+
             {!isSignUp && (
               <div className="text-right mt-1.5">
                 <a
@@ -234,21 +174,15 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             )}
 
             <Button
-              className="
-                w-full rounded-md outline-2 outline-offset-1 outline-accent-100 py-2.5
-                bg-green-600 text-white text-sm font-semibold
-                shadow-sm transition-all duration-150
-                hover:bg-green-600/85 hover:shadow-md
-                disabled:opacity-50 cursor-pointer
-              "
-              // isLoading={isLoading}
+              className="w-full rounded-md py-2.5 bg-green-600 text-white text-sm font-semibold shadow-sm transition-all duration-150 hover:bg-green-600/85 hover:shadow-md disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+              isDisabled={isLoading}
               type="submit"
             >
+              {isLoading && <Loader2 className="animate-spin" size={15} />}
               {isSignUp ? "Create account" : "Sign in"}
             </Button>
           </Form>
 
-          {/* Switch mode */}
           <p className="text-center text-sm text-gray-500 mt-6">
             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <Link
@@ -259,7 +193,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             </Link>
           </p>
 
-          {/* Legal */}
           {isSignUp && (
             <p className="text-center text-xs text-gray-400 leading-relaxed mt-4">
               By signing up you agree to our{" "}

@@ -7,24 +7,26 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 export interface Tag {
   id: number;
   name: string;
-  user_id: string;
+  userId?: string;
+  noteCount?: number;
 }
 
 export interface Note {
   id: string;
-  user_id: string;
+  userId: string;
   title: string;
-  content: string;
-  is_pinned: boolean;
-  is_archived: boolean;
-  created_at: string;
-  updated_at: string;
+  content: string | null;
+  isPinned: boolean;
+  isArchived: boolean;
+  isFavorite: boolean;
+  createdAt: string;
+  updatedAt: string;
   tags: Tag[];
 }
 
 export interface CreateNotePayload {
   title: string;
-  content: string;
+  content?: string;
   tag_ids?: number[];
 }
 

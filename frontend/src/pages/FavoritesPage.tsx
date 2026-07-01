@@ -1,7 +1,92 @@
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Star, Loader2 } from "lucide-react";
+
+import NoteCard from "@/components/notes/NoteCard";
+import { useNotes } from "@/hooks/queries/useNotes";
+
+const NOTE_COLORS = [
+  "bg-[#fc843e96]",
+  "bg-[#D7B0CB96]",
+  "bg-[#34d39996]",
+  "bg-[#D1F5E096]",
+  "bg-[#FFE4D696]",
+  "bg-[#f6ec3396]",
+  "bg-[#926bf496]",
+  "bg-[#E03F4096]",
+];
+
+const hashColor = (str: string) => {
+  let hash = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+
+    hash = (hash << 5) - hash + c;
+    hash = hash & hash;
+  }
+
+  return NOTE_COLORS[Math.abs(hash) % NOTE_COLORS.length];
+};
+
 const FavoritesPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { data: allNotes = [], isLoading } = useNotes();
+  const notes = allNotes.filter((n) => n.isPinned);
+
   return (
-    <main>
-      <p>favorites</p>
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 pb-28">
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+        initial={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.35 }}
+      >
+        <div className="flex items-center gap-2 mb-1">
+          <Star className="h-5 w-5 text-green-600" strokeWidth={1.5} />
+          <h1 className="text-2xl font-bold text-gray-800">Favourites</h1>
+        </div>
+        <p className="text-gray-500 text-sm">Your pinned notes.</p>
+      </motion.div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-24">
+          <Loader2
+            className="animate-spin text-green-400"
+            size={28}
+            strokeWidth={1.5}
+          />
+        </div>
+      ) : notes.length === 0 ? (
+        <div className="flex flex-col items-center py-24 text-center">
+          <Star className="text-gray-200 mb-4" size={48} strokeWidth={1} />
+          <p className="text-gray-400 text-sm">No pinned notes yet.</p>
+          <p className="text-gray-400 text-xs mt-1">
+            Open any note and tap the pin icon to add it here.
+          </p>
+        </div>
+      ) : (
+        <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+          {notes.map((note, i) => (
+            <motion.div
+              key={note.id}
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.3, delay: i * 0.04 }}
+              onClick={() => navigate(`/notes/${note.id}`)}
+            >
+              <NoteCard
+                color={hashColor(note.title)}
+                content={note.content ?? ""}
+                isPinned={note.isPinned}
+                tags={note.tags}
+                title={note.title}
+                updatedAt={note.updatedAt}
+              />
+            </motion.div>
+          ))}
+        </section>
+      )}
     </main>
   );
 };
