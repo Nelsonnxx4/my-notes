@@ -1,23 +1,52 @@
-import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import prisma from "../config/prisma";
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+interface GoogleTokenInfo {
+	aud: string;
+	expires_in: number;
+	scope: string;
+}
 
-export const googleSignIn = async (idToken: string) => {
-	const ticket = await client.verifyIdToken({
-		idToken,
-		audience: process.env.GOOGLE_CLIENT_ID,
-	});
+interface GoogleUserInfo {
+	sub: string;
+	email?: string;
+	email_verified?: boolean;
+	name?: string;
+}
 
-	const payload = ticket.getPayload();
-	if (!payload || !payload.email) {
+export const googleSignIn = async (accessToken: string) => {
+	const tokenInfoRes = await fetch(
+		`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(accessToken)}`,
+	);
+
+	if (!tokenInfoRes.ok) {
 		throw new Error("Invalid Google token");
 	}
 
-	const { email, sub: googleId, name } = payload;
+	const tokenInfo = (await tokenInfoRes.json()) as GoogleTokenInfo;
 
-	let user = await prisma.user.findUnique({ where: { email } });
+	if (tokenInfo.aud !== process.env.GOOGLE_CLIENT_ID) {
+		throw new Error("Invalid Google token audience");
+	}
+
+	const userInfoRes = await fetch(
+		"https://www.googleapis.com/oauth2/v3/userinfo",
+		{ headers: { Authorization: `Bearer ${accessToken}` } },
+	);
+
+	if (!userInfoRes.ok) {
+		throw new Error("Invalid Google token");
+	}
+
+	const profile = (await userInfoRes.json()) as GoogleUserInfo;
+
+	if (!profile.email || !profile.email_verified) {
+		throw new Error("Invalid Google account");
+	}
+
+	const { email, sub: googleId, name } = profile;
+
+  let user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
     user = await prisma.user.create({
@@ -26,10 +55,9 @@ export const googleSignIn = async (idToken: string) => {
         password: googleId,
         googleId
       },
-      select: { id: true, email: true, created_at: true }
     })
-  } else if (!user.googleId) { 
-    await prisma.user.update({
+  } else if (!user.googleId) {
+    user = await prisma.user.update({
       where: { email },
       data: { googleId }
     })
@@ -39,8 +67,10 @@ export const googleSignIn = async (idToken: string) => {
   const token = jwt.sign(
     { id: user.id, email: user.email },
     process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRES_IN },
+    { expiresIn: process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"] },
   );
 
-  return { user, token, name };
+  const { password: _password, ...safeUser } = user;
+
+  return { user: safeUser, token, name };
 };

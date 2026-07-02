@@ -1,11 +1,11 @@
-// src/pages/AuthPage.tsx
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button, Form, Input } from "@heroui/react";
+import { useGoogleLogin } from "@react-oauth/google";
 
 import { GoogleIcon } from "@/assets/icons";
-import { loginApi, registerApi } from "@/api/auth.api";
+import { loginApi, registerApi, googleAuthApi } from "@/api/auth.api";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthPageProps {
@@ -63,6 +63,26 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
     }
   };
 
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setFormError(null);
+      setIsLoading(true);
+      try {
+        const result = await googleAuthApi(tokenResponse.access_token);
+
+        setCredentials(result);
+        navigate("/home", { replace: true });
+      } catch {
+        setFormError("Google sign-in failed. Please try again or use email.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: () => {
+      setFormError("Google sign-in failed. Please try again or use email.");
+    },
+  });
+
   return (
     <main className="grid min-h-screen md:grid-cols-2">
       {/* ── Left: form column ── */}
@@ -98,8 +118,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           )}
 
           <Button
-            isDisabled
             className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl bg-white text-gray-700 text-sm font-medium py-2.5 transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm cursor-pointer"
+            isDisabled={isLoading}
+            onPress={() => handleGoogleLogin()}
           >
             <GoogleIcon />
             Continue with Google
@@ -128,7 +149,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
               placeholder="you@example.com"
               type="email"
               value={email}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setFormError(null);
                 setEmail(e.target.value);
               }}
@@ -147,7 +168,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
                 }
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setFormError(null);
                   setPassword(e.target.value);
                 }}

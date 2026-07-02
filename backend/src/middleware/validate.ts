@@ -9,7 +9,7 @@ export const validate =
 			next();
 		} catch (err) {
 			if (err instanceof ZodError) {
-				const errors = err.errors.map((e) => ({
+				const errors = err.issues.map((e: any) => ({
 					field: e.path.join("."),
 					message: e.message,
 				}));

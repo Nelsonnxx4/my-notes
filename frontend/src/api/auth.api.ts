@@ -28,8 +28,12 @@ export const loginApi = async (payload: {
   return data;
 };
 
-export const googleAuthApi = async (idToken: string): Promise<AuthResponse> => {
-  const { data } = await api.post<AuthResponse>("/auth/google", { idToken });
+export const googleAuthApi = async (
+  accessToken: string,
+): Promise<AuthResponse> => {
+  const { data } = await api.post<AuthResponse>("/auth/google", {
+    accessToken,
+  });
 
   return data;
 };

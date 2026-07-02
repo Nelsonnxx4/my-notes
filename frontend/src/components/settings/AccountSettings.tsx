@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, LogOut, Shield } from "lucide-react";
-import { Label, Input } from "@heroui/react";
+import { Input } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,22 +47,28 @@ const AccountSettings = () => {
 
         <div className="md:w-80 space-y-3">
           <div className="flex flex-col gap-1">
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-              Display name
-            </Label>
             <Input
-              className="px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300 transition"
+              classNames={{
+                label: "text-xs font-medium text-gray-500 uppercase tracking-wide",
+                inputWrapper:
+                  "px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
+                input: "text-sm",
+              }}
+              label="Display name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1">
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-              Email
-            </Label>
             <Input
-              className="px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300 transition"
+              classNames={{
+                label: "text-xs font-medium text-gray-500 uppercase tracking-wide",
+                inputWrapper:
+                  "px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
+                input: "text-sm",
+              }}
+              label="Email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -16,7 +16,7 @@ export const loginSchema = z.object({
 });
 
 export const googleAuthSchema = z.object({
-	idToken: z.string().min(1, "Google ID token is required"),
+	accessToken: z.string().min(1, "Google access token is required"),
 });
 
 export const createNoteSchema = z.object({

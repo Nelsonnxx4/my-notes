@@ -18,13 +18,13 @@ export const registerUser = async ({ email, password }: RegisterDTO) => {
 
 	const user = await prisma.user.create({
 		data: { email, password: hashedPassword },
-		select: { id: true, email: true, created_at: true },
+		select: { id: true, email: true, createdAt: true },
 	});
 
 	const token = jwt.sign(
 		{ id: user.id, email: user.email },
 		process.env.JWT_SECRET!,
-		{ expiresIn: process.env.JWT_EXPIRES_IN || "1h" },
+		{ expiresIn: (process.env.JWT_EXPIRES_IN || "1h") as jwt.SignOptions["expiresIn"] },
 	);
 
 	return { user, token };
@@ -45,7 +45,7 @@ export const loginUser = async ({ email, password }: LoginDTO) => {
 	const token = jwt.sign(
 		{ id: user.id, email: user.email },
 		process.env.JWT_SECRET!,
-		{ expiresIn: process.env.JWT_EXPIRES_IN },
+		{ expiresIn: process.env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"] },
 	);
 
 	const { password: _, ...safeUser } = user;
@@ -57,7 +57,7 @@ export const loginUser = async ({ email, password }: LoginDTO) => {
 export const getUserById = async (id: string) => {
 	const user = await prisma.user.findUnique({
 		where: { id },
-		select: { id: true, email: true, created_at: true },
+		select: { id: true, email: true, createdAt: true },
 	});
 
 	return user;

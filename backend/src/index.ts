@@ -1,9 +1,12 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes";
 import notesRoutes from "./routes/notes.routes";
@@ -11,8 +14,6 @@ import tagsRoutes from "./routes/tags.routes";
 import foldersRoutes from "./routes/folders.routes";
 import favoritesRoutes from "./routes/favorites.routes";
 import { errorHandler } from "./middleware/errorHandler";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

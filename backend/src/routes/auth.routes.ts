@@ -12,7 +12,7 @@ router.post(
 	"/google",
 	validate(googleAuthSchema),
 	async (req: Request, res: Response) => {
-		const result = await googleSignIn(req.body.idToken);
+		const result = await googleSignIn(req.body.accessToken);
 		res.status(200).json(result);
 	},
 );
