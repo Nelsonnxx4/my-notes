@@ -9,20 +9,74 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String   // hashed; for Google users store a placeholder like "GOOGLE_OAUTH_<googleId>"
-  googleId  String?  @unique // optional, for Google OAuth
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  password  String
+  googleId  String?  @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  notes     Notes[]
+  tags      Tags[]
+  folders   Folder[]
 
   @@index([email])
+  @@map("users")
 }
 
-model Note {
+model Notes {
+  id         String   @id @default(cuid())
+  title      String
+  content    String?
+  isPinned   Boolean  @default(false) @map("is_pinned")
+  isArchived Boolean  @default(false) @map("is_archived")
+  isFavorite Boolean  @default(false) @map("is_favorite")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  userId     String   @map("user_id")
+  folderId   String?  @map("folder_id")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder   Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  noteTags NoteTag[]
+
+  @@index([userId])
+  @@map("notes")
+}
+
+model Tags {
+  id     Int    @id @default(autoincrement())
+  name   String
+  userId String @map("user_id")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  noteTags NoteTag[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("tags")
+}
+
+model NoteTag {
+  noteId String @map("note_id")
+  tagId  Int    @map("tag_id")
+
+  note Notes @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  tag  Tags  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([noteId, tagId])
+  @@map("note_tags")
+}
+
+model Folder {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes Notes[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("folders")
 }

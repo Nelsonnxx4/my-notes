@@ -8,6 +8,8 @@ const noteWithTags = {
 	content: true,
 	isPinned: true,
 	isArchived: true,
+	isFavorite: true,
+	folderId: true,
 	createdAt: true,
 	updatedAt: true,
 	noteTags: {
@@ -40,65 +42,77 @@ export const getNotesByUser = async (
 					{ content: { contains: search, mode: "insensitive" } },
 				],
 			}),
-			// Filter by tag if provided
-			...(tagId && {
-				noteTags: { some: { tagId } },
-			}),
+			...(tagId && { noteTags: { some: { tagId } } }),
 		},
 		select: noteWithTags,
 		orderBy: [{ isPinned: "desc" }, { updatedAt: "desc" }],
 	});
-
 	return notes.map(formatNote);
 };
 
-export const getNoteById = async (userId: string) => {
-	const notes = await prisma.notes.findMany({
-		where: {
-			userId,
-			isArchived: true,
-		},
+// FIXED: was using userId as noteId
+export const getNoteById = async (noteId: string) => {
+	const note = await prisma.notes.findUnique({
+		where: { id: noteId },
 		select: noteWithTags,
-		orderBy: {
-			updatedAt: "desc",
-		},
 	});
+	if (!note) return null;
+	return formatNote(note);
+};
 
+export const getArchivedNotes = async (userId: string) => {
+	const notes = await prisma.notes.findMany({
+		where: { userId, isArchived: true },
+		select: noteWithTags,
+		orderBy: { updatedAt: "desc" },
+	});
 	return notes.map(formatNote);
 };
 
-// Create a note and optionally attach tags in one transaction
+export const getFavoriteNotes = async (userId: string) => {
+	const notes = await prisma.notes.findMany({
+		where: { userId, isFavorite: true, isArchived: false },
+		select: noteWithTags,
+		orderBy: { updatedAt: "desc" },
+	});
+	return notes.map(formatNote);
+};
+
 export const createNote = async (
 	userId: string,
-	{ title, content, tag_ids }: CreateNoteDTO,
+	{ title, content, tag_ids, folder_id }: CreateNoteDTO,
 ) => {
 	const note = await prisma.notes.create({
 		data: {
 			userId,
 			title,
 			content,
+			...(folder_id && { folderId: folder_id }),
 			...(tag_ids?.length && {
-				noteTags: {
-					create: tag_ids.map((tagId) => ({ tagId })),
-				},
+				noteTags: { create: tag_ids.map((tagId) => ({ tagId })) },
 			}),
 		},
 		select: noteWithTags,
 	});
-
 	return formatNote(note);
 };
 
-// Update note fields and/or replace tags
 export const updateNote = async (
 	noteId: string,
 	userId: string,
-	{ title, content, is_pinned, is_archived, tag_ids }: UpdateNoteDTO,
+	{
+		title,
+		content,
+		is_pinned,
+		is_archived,
+		is_favorite,
+		tag_ids,
+		folder_id,
+	}: UpdateNoteDTO,
 ) => {
 	const existing = await prisma.notes.findFirst({
 		where: { id: noteId, userId },
 	});
-
 	if (!existing) return null;
 
 	const note = await prisma.notes.update({
@@ -108,6 +122,8 @@ export const updateNote = async (
 			...(content !== undefined && { content }),
 			...(is_pinned !== undefined && { isPinned: is_pinned }),
 			...(is_archived !== undefined && { isArchived: is_archived }),
+			...(is_favorite !== undefined && { isFavorite: is_favorite }),
+			...(folder_id !== undefined && { folderId: folder_id }),
 			...(tag_ids !== undefined && {
 				noteTags: {
 					deleteMany: {},
@@ -117,28 +133,15 @@ export const updateNote = async (
 		},
 		select: noteWithTags,
 	});
-
 	return formatNote(note);
 };
 
-// delete a note
 export const deleteNote = async (noteId: string, userId: string) => {
-	const existingNote = await prisma.notes.findFirst({ where: noteId, userId });
-
-	if (!existingNote) return false;
+	const existing = await prisma.notes.findFirst({
+		where: { id: noteId, userId },
+	});
+	if (!existing) return false;
 
 	await prisma.notes.delete({ where: { id: noteId } });
-
 	return true;
-};
-
-// Get archived notes separately
-export const getArchivedNotes = async (userId: string) => {
-	const notes = await prisma.notes.findMany({
-		where: { userId, isArchived: true },
-		select: noteWithTags,
-		orderBy: { updatedAt: "desc" },
-	});
-
-	return notes.map(formatNote);
 };

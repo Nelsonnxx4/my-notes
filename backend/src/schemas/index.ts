@@ -1,3 +1,4 @@
+// backend/src/schemas/index.ts
 import { z } from "zod";
 
 export const registerSchema = z.object({
@@ -22,6 +23,7 @@ export const createNoteSchema = z.object({
 	title: z.string().min(1, "Title is required").max(255, "Title is too long"),
 	content: z.string().optional(),
 	tag_ids: z.array(z.number().int().positive()).optional(),
+	folder_id: z.string().optional(),
 });
 
 export const updateNoteSchema = z
@@ -30,7 +32,9 @@ export const updateNoteSchema = z
 		content: z.string().optional(),
 		is_pinned: z.boolean().optional(),
 		is_archived: z.boolean().optional(),
+		is_favorite: z.boolean().optional(),
 		tag_ids: z.array(z.number().int().positive()).optional(),
+		folder_id: z.string().nullable().optional(),
 	})
 	.refine((data) => Object.keys(data).length > 0, {
 		message: "At least one field must be provided",
@@ -49,5 +53,21 @@ export const updateTagSchema = z.object({
 		.string()
 		.min(1, "Tag name is required")
 		.max(50, "Tag name is too long")
+		.trim(),
+});
+
+export const createFolderSchema = z.object({
+	name: z
+		.string()
+		.min(1, "Folder name is required")
+		.max(100, "Folder name is too long")
+		.trim(),
+});
+
+export const updateFolderSchema = z.object({
+	name: z
+		.string()
+		.min(1, "Folder name is required")
+		.max(100, "Folder name is too long")
 		.trim(),
 });
