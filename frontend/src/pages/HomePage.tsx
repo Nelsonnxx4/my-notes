@@ -8,30 +8,7 @@ import { folders } from "@/constant/folderConstants";
 import { FOLDER_COLORS } from "@/pages/FolderPage";
 import { useNotes } from "@/hooks/queries/useNotes";
 import { useAuth } from "@/contexts/AuthContext";
-
-const NOTE_COLORS = [
-  "bg-[#fc843e96]",
-  "bg-[#D7B0CB96]",
-  "bg-[#34d39996]",
-  "bg-[#D1F5E096]",
-  "bg-[#FFE4D696]",
-  "bg-[#f6ec3396]",
-  "bg-[#926bf496]",
-  "bg-[#E03F4096]",
-];
-
-const hashIndex = (str: string, len: number): number => {
-  let hash = 0;
-
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash;
-  }
-
-  return Math.abs(hash) % len;
-};
+import { hashColor, hashIndex } from "@/utils/noteColors";
 
 const recentFolders = folders.slice(0, 4).map((folder) => ({
   ...folder,
@@ -65,7 +42,7 @@ const HomePage: React.FC = () => {
 
   const recentNotes = notes.slice(0, 6).map((note) => ({
     ...note,
-    color: NOTE_COLORS[hashIndex(note.title, NOTE_COLORS.length)],
+    color: hashColor(note.title),
   }));
 
   const displayName = user?.email?.split("@")[0] ?? "there";

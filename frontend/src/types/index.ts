@@ -1,8 +1,6 @@
 import { SVGProps } from "react";
 
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
-  size?: number;
-};
+export type IconSvgProps = SVGProps<SVGSVGElement> & { size?: number };
 
 export interface Tag {
   id: number;
@@ -19,6 +17,7 @@ export interface Note {
   isPinned: boolean;
   isArchived: boolean;
   isFavorite: boolean;
+  folderId: string | null;
   createdAt: string;
   updatedAt: string;
   tags: Tag[];
@@ -28,6 +27,7 @@ export interface CreateNotePayload {
   title: string;
   content?: string;
   tag_ids?: number[];
+  folder_id?: string;
 }
 
 export interface UpdateNotePayload {
@@ -35,5 +35,7 @@ export interface UpdateNotePayload {
   content?: string;
   is_pinned?: boolean;
   is_archived?: boolean;
+  is_favorite?: boolean;
   tag_ids?: number[];
+  folder_id?: string | null;
 }

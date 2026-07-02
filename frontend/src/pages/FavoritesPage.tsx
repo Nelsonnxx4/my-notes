@@ -3,36 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Star, Loader2 } from "lucide-react";
 
 import NoteCard from "@/components/notes/NoteCard";
-import { useNotes } from "@/hooks/queries/useNotes";
-
-const NOTE_COLORS = [
-  "bg-[#fc843e96]",
-  "bg-[#D7B0CB96]",
-  "bg-[#34d39996]",
-  "bg-[#D1F5E096]",
-  "bg-[#FFE4D696]",
-  "bg-[#f6ec3396]",
-  "bg-[#926bf496]",
-  "bg-[#E03F4096]",
-];
-
-const hashColor = (str: string) => {
-  let hash = 0;
-
-  for (let i = 0; i < str.length; i++) {
-    const c = str.charCodeAt(i);
-
-    hash = (hash << 5) - hash + c;
-    hash = hash & hash;
-  }
-
-  return NOTE_COLORS[Math.abs(hash) % NOTE_COLORS.length];
-};
+import { useFavorites, useToggleFavorite } from "@/hooks/useFavorites";
+import { hashColor } from "@/utils/noteColors";
 
 const FavoritesPage: React.FC = () => {
   const navigate = useNavigate();
-  const { data: allNotes = [], isLoading } = useNotes();
-  const notes = allNotes.filter((n) => n.isPinned);
+  const { data: notes = [], isLoading } = useFavorites();
+  const { mutate: toggleFavorite } = useToggleFavorite();
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 pb-28">
@@ -46,7 +23,9 @@ const FavoritesPage: React.FC = () => {
           <Star className="h-5 w-5 text-green-600" strokeWidth={1.5} />
           <h1 className="text-2xl font-bold text-gray-800">Favourites</h1>
         </div>
-        <p className="text-gray-500 text-sm">Your pinned notes.</p>
+        <p className="text-gray-500 text-sm">
+          {notes.length} favourited note{notes.length !== 1 ? "s" : ""}
+        </p>
       </motion.div>
 
       {isLoading ? (
@@ -60,9 +39,9 @@ const FavoritesPage: React.FC = () => {
       ) : notes.length === 0 ? (
         <div className="flex flex-col items-center py-24 text-center">
           <Star className="text-gray-200 mb-4" size={48} strokeWidth={1} />
-          <p className="text-gray-400 text-sm">No pinned notes yet.</p>
+          <p className="text-gray-400 text-sm">No favourites yet.</p>
           <p className="text-gray-400 text-xs mt-1">
-            Open any note and tap the pin icon to add it here.
+            Open any note and tap the star to add it here.
           </p>
         </div>
       ) : (
@@ -71,6 +50,7 @@ const FavoritesPage: React.FC = () => {
             <motion.div
               key={note.id}
               animate={{ opacity: 1, y: 0 }}
+              className="cursor-pointer"
               initial={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, delay: i * 0.04 }}
               onClick={() => navigate(`/notes/${note.id}`)}
@@ -78,10 +58,18 @@ const FavoritesPage: React.FC = () => {
               <NoteCard
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
+                isFavorite={note.isFavorite}
                 isPinned={note.isPinned}
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}
+                onToggleFavorite={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation();
+                  toggleFavorite({
+                    noteId: note.id,
+                    isFavorite: note.isFavorite,
+                  });
+                }}
               />
             </motion.div>
           ))}

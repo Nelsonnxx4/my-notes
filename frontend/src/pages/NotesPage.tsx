@@ -5,34 +5,11 @@ import { Plus, Search, Loader2, NotebookText } from "lucide-react";
 
 import NoteCard from "@/components/notes/NoteCard";
 import { useNotes } from "@/hooks/queries/useNotes";
-
-const NOTE_COLORS = [
-  "bg-[#fc843e96]",
-  "bg-[#D7B0CB96]",
-  "bg-[#34d39996]",
-  "bg-[#D1F5E096]",
-  "bg-[#FFE4D696]",
-  "bg-[#f6ec3396]",
-  "bg-[#926bf496]",
-  "bg-[#E03F4096]",
-];
-
-const hashColor = (str: string) => {
-  let hash = 0;
-
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash;
-  }
-
-  return NOTE_COLORS[Math.abs(hash) % NOTE_COLORS.length];
-};
+import { hashColor } from "@/utils/noteColors";
 
 const NotesPage = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const { data: notes = [], isLoading } = useNotes(
     search ? { q: search } : undefined,
   );

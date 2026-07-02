@@ -1,4 +1,4 @@
-import { Pin, MoreHorizontalIcon } from "lucide-react";
+import { Pin, MoreHorizontalIcon, Star } from "lucide-react";
 
 import { Tag } from "@/types";
 
@@ -8,6 +8,7 @@ interface NoteCardProps {
   color: string;
   tags?: Tag[];
   isPinned?: boolean;
+  isFavorite?: boolean;
   updatedAt?: string;
 }
 
@@ -30,6 +31,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
   color,
   tags,
   isPinned,
+  isFavorite,
   updatedAt,
 }) => {
   return (
@@ -42,7 +44,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
         </h3>
         <div className="flex items-center gap-1 text-gray-700">
           {isPinned && (
-            <Pin size={14} strokeWidth={1.5} className="text-slate-600" />
+            <Pin className="text-slate-600" size={14} strokeWidth={1.5} />
+          )}
+          {isFavorite && (
+            <Star className="text-yellow-500" size={14} strokeWidth={1.5} />
           )}
           <MoreHorizontalIcon className="cursor-pointer" strokeWidth={1.5} />
         </div>
