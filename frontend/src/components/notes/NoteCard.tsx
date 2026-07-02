@@ -8,7 +8,7 @@ interface NoteCardProps {
   color: string;
   tags?: Tag[];
   isPinned?: boolean;
-  isFavorite?: boolean;
+  isFavorite: boolean;
   updatedAt?: string;
 }
 

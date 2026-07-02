@@ -9,7 +9,7 @@ import { hashColor } from "@/utils/noteColors";
 
 const NotesPage = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState("");
   const { data: notes = [], isLoading } = useNotes(
     search ? { q: search } : undefined,
   );
@@ -92,6 +92,7 @@ const NotesPage = () => {
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
                 isPinned={note.isPinned}
+                isFavorite={note.isFavorite}
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}

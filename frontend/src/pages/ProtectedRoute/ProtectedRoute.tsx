@@ -9,9 +9,9 @@ type ProtectedRouteProps = {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
-  // if (!isAuthenticated) {
-  return <Navigate replace to="/auth/login" />;
-  // }
+  if (!isAuthenticated) {
+    return <Navigate replace to="/auth/login" />;
+  }
 
   return <>{children}</>;
 };

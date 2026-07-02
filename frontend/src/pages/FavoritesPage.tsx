@@ -1,3 +1,4 @@
+// frontend/src/pages/FavoritesPage.tsx
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Star, Loader2 } from "lucide-react";
@@ -50,10 +51,8 @@ const FavoritesPage: React.FC = () => {
             <motion.div
               key={note.id}
               animate={{ opacity: 1, y: 0 }}
-              className="cursor-pointer"
               initial={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, delay: i * 0.04 }}
-              onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
                 color={hashColor(note.title)}
@@ -63,7 +62,8 @@ const FavoritesPage: React.FC = () => {
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}
-                onToggleFavorite={(e: React.MouseEvent<HTMLButtonElement>) => {
+                onClick={() => navigate(`/notes/${note.id}`)}
+                onToggleFavorite={(e) => {
                   e.stopPropagation();
                   toggleFavorite({
                     noteId: note.id,

@@ -47,7 +47,6 @@
 		"express-rate-limit": "^8.5.2",
 		"google-auth-library": "^10.7.0",
 		"jsonwebtoken": "^9.0.3",
-		"my-notes": "file:..",
 		"passport": "^0.7.0",
 		"pg": "^8.20.0",
 		"prisma": "^7.8.0",

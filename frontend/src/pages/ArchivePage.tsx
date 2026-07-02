@@ -4,6 +4,7 @@ import { Archive, Loader2 } from "lucide-react";
 
 import NoteCard from "@/components/notes/NoteCard";
 import { useArchivedNotes } from "@/hooks/queries/useNotes";
+import { Note } from "@/types";
 import { hashColor } from "@/utils/noteColors";
 
 const ArchivePage: React.FC = () => {
@@ -40,7 +41,7 @@ const ArchivePage: React.FC = () => {
         </div>
       ) : (
         <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
-          {notes.map((note, i) => (
+          {notes.map((note: Note, i: number) => (
             <motion.div
               key={note.id}
               animate={{ opacity: 1, y: 0 }}
@@ -51,6 +52,7 @@ const ArchivePage: React.FC = () => {
               <NoteCard
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
+                isFavorite={note.isFavorite}
                 isPinned={note.isPinned}
                 tags={note.tags}
                 title={note.title}

@@ -129,6 +129,7 @@ const HomePage: React.FC = () => {
               <NoteCard
                 color={note.color}
                 content={note.content ?? ""}
+                isFavorite={note.isFavorite}
                 isPinned={note.isPinned}
                 tags={note.tags}
                 title={note.title}
