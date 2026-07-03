@@ -51,11 +51,11 @@ app.get("/", (_req, res) => {
 	res.json({ status: "ok", message: "my-notes API is running" });
 });
 
-app.use("/api/auth", authLimiter, authRoutes);
-app.use("/api/notes", notesRoutes);
-app.use("/api/tags", tagsRoutes);
-app.use("/api/folders", foldersRoutes);
-app.use("/api/favorites", favoritesRoutes);
+app.use("/auth", authLimiter, authRoutes);
+app.use("/notes", notesRoutes);
+app.use("/tags", tagsRoutes);
+app.use("/folders", foldersRoutes);
+app.use("/favorites", favoritesRoutes);
 
 app.use((_req, res) => {
 	res.status(404).json({ message: "Route not found" });

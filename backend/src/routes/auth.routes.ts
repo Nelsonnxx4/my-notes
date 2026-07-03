@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { protect } from "../middleware/auth";
 import { validate } from "../middleware/validate";
-import { registerUser, loginUser, getUserById } from "../services/auth.service";
+import { signupUser, loginUser, getUserById } from "../services/auth.service";
 import { googleSignIn } from "../services/google.service";
 import { registerSchema, loginSchema, googleAuthSchema } from "../schemas";
 
@@ -19,10 +19,10 @@ router.post(
 
 // POST /api/auth/register
 router.post(
-	"/register",
+	"/signup",
 	validate(registerSchema),
 	async (req: Request, res: Response) => {
-		const result = await registerUser(req.body);
+		const result = await signupUser(req.body);
 		res.status(201).json(result);
 	},
 );

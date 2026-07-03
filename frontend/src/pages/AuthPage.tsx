@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
-import { Button, Form, Input } from "@heroui/react";
+import { Button, Form } from "@heroui/react";
 import { useGoogleLogin } from "@react-oauth/google";
 
 import { GoogleIcon } from "@/assets/icons";
@@ -143,17 +143,23 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           )}
 
           <Form className="w-full flex flex-col gap-4" onSubmit={handleSubmit}>
-            <Input
-              required
-              className="border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-300 outline-none p-2"
-              placeholder="you@example.com"
-              type="email"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setFormError(null);
-                setEmail(e.target.value);
-              }}
-            />
+            <div className="relative w-full">
+              <label className="sr-only" htmlFor="email">
+                Email
+              </label>
+              <input
+                required
+                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2"
+                id="email"
+                placeholder="you@example.com"
+                type="email"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormError(null);
+                  setEmail(e.target.value);
+                }}
+              />
+            </div>
 
             <div className="relative w-full">
               <label className="sr-only" htmlFor="password">

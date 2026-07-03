@@ -5,7 +5,7 @@ import type { RegisterDTO, LoginDTO } from "../types";
 import redisClient from "../config/redis";
 
 // Register User
-export const registerUser = async ({ email, password }: RegisterDTO) => {
+export const signupUser = async ({ email, password }: RegisterDTO) => {
 	const existing = await prisma.user.findUnique({
 		where: { email },
 	});
@@ -24,7 +24,10 @@ export const registerUser = async ({ email, password }: RegisterDTO) => {
 	const token = jwt.sign(
 		{ id: user.id, email: user.email },
 		process.env.JWT_SECRET!,
-		{ expiresIn: (process.env.JWT_EXPIRES_IN || "1h") as jwt.SignOptions["expiresIn"] },
+		{
+			expiresIn: (process.env.JWT_EXPIRES_IN ||
+				"1h") as jwt.SignOptions["expiresIn"],
+		},
 	);
 
 	return { user, token };

@@ -29,10 +29,12 @@ export const protect = async (
 
 	const token = authHeader.split(" ")[1];
 
-	const isBlacklisted = await redisClient.get(`blacklist:${token}`);
-	if (isBlacklisted) {
-		res.status(401).json({ message: "Token has been revoked" });
-		return;
+	if (redisClient.isOpen) {
+		const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+		if (isBlacklisted) {
+			res.status(401).json({ message: "Token has been revoked" });
+			return;
+		}
 	}
 
 	try {
