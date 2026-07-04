@@ -38,8 +38,8 @@ export const errorHandler = (
 		return;
 	}
 
-	// JWT or custom app errors
-	if (err.message) {
+	// Explicitly thrown app errors (new Error("...")) — user-facing messages
+	if (err.constructor === Error && err.message) {
 		res.status(400).json({ message: err.message });
 		return;
 	}

@@ -68,7 +68,7 @@ const NoteDetailsPage = () => {
   }
 
   return (
-    <main className="min-h-screen pb-36" style={{ backgroundColor: bgColor }}>
+    <main className="min-h-screen py-20" style={{ backgroundColor: bgColor }}>
       <EditorHeader isSaving={isSaving} note={note} />
 
       <div className="px-5">
@@ -77,7 +77,7 @@ const NoteDetailsPage = () => {
         <NoteContentEditor value={content} onChange={handleContentChange} />
       </div>
 
-      <EditorToolbar />
+      <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />
     </main>
   );
 };

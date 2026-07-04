@@ -2,13 +2,13 @@ import type { Tag } from "@/types";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import apiClient from "@/lib/apiClient";
+import { api } from "@/api/axios";
 
 export const useTags = () =>
   useQuery<Tag[]>({
     queryKey: ["tags"],
     queryFn: async () => {
-      const { data } = await apiClient.get("/tags");
+      const { data } = await api.get("/tags");
 
       return data;
     },
@@ -19,7 +19,7 @@ export const useCreateTag = () => {
 
   return useMutation({
     mutationFn: async (name: string) => {
-      const { data } = await apiClient.post("/tags", { name });
+      const { data } = await api.post("/tags", { name });
 
       return data;
     },
@@ -34,7 +34,7 @@ export const useDeleteTag = () => {
 
   return useMutation({
     mutationFn: async (tagId: number) => {
-      const { data } = await apiClient.delete(`/tags/${tagId}`);
+      const { data } = await api.delete(`/tags/${tagId}`);
 
       return data;
     },

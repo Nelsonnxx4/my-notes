@@ -15,7 +15,7 @@ const NotesPage = () => {
   );
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 pb-28">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 ">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">All Notes</h1>

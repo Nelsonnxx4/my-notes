@@ -1,28 +1,91 @@
+import { useState, useEffect, useRef } from "react";
 import {
   ArchiveIcon,
   BookmarkIcon,
-  CloudIcon,
   PenIcon,
   SettingsIcon,
   TagIcon,
   FolderIcon,
   HomeIcon,
+  PlusIcon,
+  RefreshCw,
+  CheckCircle,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import {
+  useQueryClient,
+  useIsFetching,
+  useIsMutating,
+} from "@tanstack/react-query";
+
+const SyncButton: React.FC = () => {
+  const queryClient = useQueryClient();
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
+  const isSyncing = isFetching > 0 || isMutating > 0;
+
+  const [justSynced, setJustSynced] = useState(false);
+  const wasSyncing = useRef(false);
+
+  useEffect(() => {
+    if (isSyncing) {
+      wasSyncing.current = true;
+      setJustSynced(false);
+
+      return;
+    }
+
+    if (wasSyncing.current) {
+      wasSyncing.current = false;
+      setJustSynced(true);
+      const timer = setTimeout(() => setJustSynced(false), 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isSyncing]);
+
+  const handleSync = () => {
+    queryClient.invalidateQueries({ queryKey: ["notes"] });
+    queryClient.invalidateQueries({ queryKey: ["folders"] });
+    queryClient.invalidateQueries({ queryKey: ["tags"] });
+  };
+
+  return (
+    <button
+      className="flex items-center gap-2 mb-2 w-[80%] mx-3 px-4 py-2 cursor-pointer transition-all rounded-md group border-none hover:bg-gray-100/85 hover:border hover:border-gray-300"
+      title={isSyncing ? "Syncing…" : "Click to sync"}
+      type="button"
+      onClick={handleSync}
+    >
+      {justSynced && !isSyncing ? (
+        <CheckCircle
+          className="h-4 w-4 text-green-500 transition-all"
+          strokeWidth={1.5}
+        />
+      ) : (
+        <RefreshCw
+          className={`h-4 w-4 text-gray-500 group-hover:text-gray-800 transition-all ${
+            isSyncing ? "animate-spin" : ""
+          }`}
+          strokeWidth={1.5}
+        />
+      )}
+      <span className="text-gray-600 group-hover:text-gray-800 text-sm">
+        {isSyncing ? "Syncing…" : justSynced ? "Synced" : "Sync"}
+      </span>
+    </button>
+  );
+};
 
 const Sidebar: React.FC = () => {
   const SidebarOptions = [
     { id: 1, icon: HomeIcon, name: "Home", path: "/home" },
-    { id: 2, icon: PenIcon, name: "All notes", path: "/notes" },
-    { id: 3, icon: BookmarkIcon, name: "Favorites", path: "/favorites" },
-    { id: 4, icon: ArchiveIcon, name: "Archive", path: "/archive" },
-    { id: 5, icon: FolderIcon, name: "Folders", path: "/folders" },
-    { id: 6, icon: TagIcon, name: "Tags", path: "/tags" },
-  ];
-
-  const SidebarSettings = [
-    { id: 1, icon: SettingsIcon, name: "Settings", path: "/settings" },
-    { id: 2, icon: CloudIcon, name: "Sync", path: "/sync" },
+    { id: 2, icon: PlusIcon, name: "New Note", path: "/create" },
+    { id: 3, icon: PenIcon, name: "All notes", path: "/notes" },
+    { id: 4, icon: BookmarkIcon, name: "Favorites", path: "/favorites" },
+    { id: 5, icon: ArchiveIcon, name: "Archive", path: "/archive" },
+    { id: 6, icon: FolderIcon, name: "Folders", path: "/folders" },
+    { id: 7, icon: TagIcon, name: "Tags", path: "/tags" },
   ];
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -87,35 +150,28 @@ const Sidebar: React.FC = () => {
       {/* Settings — pinned to bottom */}
       <section className="flex flex-col justify-start items-start py-5 pb-10 mt-auto shrink-0">
         <h3 className="px-4 text-gray-500 text-lg mb-2">Settings</h3>
-        {SidebarSettings.map((setting) => {
-          const Icon = setting.icon;
 
-          return (
-            <NavLink
-              key={setting.id}
-              className={navLinkClass}
-              to={setting.path}
-            >
-              {({ isActive }) => (
-                <>
-                  <Icon
-                    className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-800"}`}
-                    strokeWidth={1.5}
-                  />
-                  <span
-                    className={
-                      isActive
-                        ? "text-white font-medium"
-                        : "text-gray-600 group-hover:text-gray-800"
-                    }
-                  >
-                    {setting.name}
-                  </span>
-                </>
-              )}
-            </NavLink>
-          );
-        })}
+        <NavLink className={navLinkClass} to="/settings">
+          {({ isActive }) => (
+            <>
+              <SettingsIcon
+                className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-800"}`}
+                strokeWidth={1.5}
+              />
+              <span
+                className={
+                  isActive
+                    ? "text-white font-medium"
+                    : "text-gray-600 group-hover:text-gray-800"
+                }
+              >
+                Settings
+              </span>
+            </>
+          )}
+        </NavLink>
+
+        <SyncButton />
       </section>
     </aside>
   );

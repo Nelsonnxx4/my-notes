@@ -4,16 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 import NoteCard from "@/components/notes/NoteCard";
 import FolderCard from "@/components/folders/FolderCard";
-import { folders } from "@/constant/folderConstants";
 import { FOLDER_COLORS } from "@/pages/FolderPage";
 import { useNotes } from "@/hooks/queries/useNotes";
+import { useFolders } from "@/hooks/useFolder";
 import { useAuth } from "@/contexts/AuthContext";
 import { hashColor, hashIndex } from "@/utils/noteColors";
-
-const recentFolders = folders.slice(0, 4).map((folder) => ({
-  ...folder,
-  colorScheme: FOLDER_COLORS[hashIndex(folder.title, FOLDER_COLORS.length)],
-}));
 
 const now = new Date();
 const hour = now.getHours();
@@ -39,10 +34,16 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: notes = [], isLoading } = useNotes();
+  const { data: folders = [] } = useFolders();
 
   const recentNotes = notes.slice(0, 6).map((note) => ({
     ...note,
     color: hashColor(note.title),
+  }));
+
+  const recentFolders = folders.slice(0, 4).map((folder) => ({
+    ...folder,
+    colorScheme: FOLDER_COLORS[hashIndex(folder.id, FOLDER_COLORS.length)],
   }));
 
   const displayName = user?.email?.split("@")[0] ?? "there";
@@ -80,20 +81,24 @@ const HomePage: React.FC = () => {
 
       <SectionHeader label="Recent Folders" to="/folders" />
       <section className="flex flex-wrap gap-3 mb-10">
-        {recentFolders.map((folder, i) => (
-          <motion.div
-            key={folder.title}
-            animate={{ opacity: 1, y: 0 }}
-            initial={{ opacity: 0, y: 5 }}
-            transition={{ duration: 0.3, delay: i * 0.06 }}
-          >
-            <FolderCard
-              count={2}
-              {...folder}
-              colorScheme={folder.colorScheme}
-            />
-          </motion.div>
-        ))}
+        {recentFolders.length === 0 ? (
+          <p className="text-sm text-gray-400 py-2">No folders yet.</p>
+        ) : (
+          recentFolders.map((folder, i) => (
+            <motion.div
+              key={folder.id}
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 5 }}
+              transition={{ duration: 0.3, delay: i * 0.06 }}
+            >
+              <FolderCard
+                colorScheme={folder.colorScheme}
+                count={folder.noteCount}
+                title={folder.name}
+              />
+            </motion.div>
+          ))
+        )}
       </section>
 
       <SectionHeader label="Recent Notes" to="/notes" />
