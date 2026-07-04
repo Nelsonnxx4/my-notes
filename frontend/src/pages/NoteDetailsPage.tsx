@@ -9,6 +9,7 @@ import EditorToolbar from "@/components/editor/EditorToolbar";
 import ColorPicker from "@/components/editor/ColorPicker";
 import { useNote } from "@/hooks/queries/useNotes";
 import { useAutoSaveNote } from "@/hooks/mutations/useAutoSaveNote";
+import { useEditorActions } from "@/hooks/useEditorActions";
 
 const AUTOSAVE_MS = 800;
 
@@ -18,13 +19,14 @@ const NoteDetailsPage = () => {
   const { mutate: autoSave, isPending: isSaving } = useAutoSaveNote();
 
   const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
   const [bgColor, setBgColor] = useState<string>("#FFFFFF");
+
+  const editorRef = useRef<HTMLDivElement>(null);
+  const { execFormat, insertImage } = useEditorActions(editorRef);
 
   useEffect(() => {
     if (note) {
       setTitle(note.title);
-      setContent(note.content ?? "");
     }
   }, [note?.id]);
 
@@ -43,12 +45,11 @@ const NoteDetailsPage = () => {
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    scheduleSave(val, content);
+    scheduleSave(val, editorRef.current?.innerHTML ?? "");
   };
 
-  const handleContentChange = (val: string) => {
-    setContent(val);
-    scheduleSave(title, val);
+  const handleContentChange = (html: string) => {
+    scheduleSave(title, html);
   };
 
   if (isLoading) {
@@ -74,7 +75,11 @@ const NoteDetailsPage = () => {
       <div className="px-5">
         <ColorPicker value={bgColor} onChange={setBgColor} />
         <NoteTitleInput value={title} onChange={handleTitleChange} />
-        <NoteContentEditor value={content} onChange={handleContentChange} />
+        <NoteContentEditor
+          ref={editorRef}
+          defaultContent={note.content ?? ""}
+          onChange={handleContentChange}
+        />
       </div>
 
       <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />

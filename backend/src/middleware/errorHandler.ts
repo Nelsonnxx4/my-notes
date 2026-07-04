@@ -38,6 +38,16 @@ export const errorHandler = (
 		return;
 	}
 
+	// Network / connectivity errors — pg "Connection terminated" or Node ENOTFOUND etc.
+	const networkCodes = new Set(["ENOTFOUND", "ECONNREFUSED", "ECONNRESET", "ETIMEDOUT", "EPIPE"]);
+	if (
+		networkCodes.has((err as NodeJS.ErrnoException).code ?? "") ||
+		err.message === "Connection terminated unexpectedly"
+	) {
+		res.status(503).json({ message: "Database temporarily unavailable. Please try again." });
+		return;
+	}
+
 	// Explicitly thrown app errors (new Error("...")) — user-facing messages
 	if (err.constructor === Error && err.message) {
 		res.status(400).json({ message: err.message });

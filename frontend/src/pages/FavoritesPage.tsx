@@ -4,13 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Star, Loader2 } from "lucide-react";
 
 import NoteCard from "@/components/notes/NoteCard";
-import { useFavorites, useToggleFavorite } from "@/hooks/useFavorites";
+import { useFavorites } from "@/hooks/useFavorites";
 import { hashColor } from "@/utils/noteColors";
 
 const FavoritesPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: notes = [], isLoading } = useFavorites();
-  const { mutate: toggleFavorite } = useToggleFavorite();
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 pb-28">
@@ -53,8 +52,10 @@ const FavoritesPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               initial={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, delay: i * 0.04 }}
+              onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
+                noteId={note.id}
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
                 isFavorite={note.isFavorite}
@@ -62,14 +63,7 @@ const FavoritesPage: React.FC = () => {
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}
-                onClick={() => navigate(`/notes/${note.id}`)}
-                onToggleFavorite={(e) => {
-                  e.stopPropagation();
-                  toggleFavorite({
-                    noteId: note.id,
-                    isFavorite: note.isFavorite,
-                  });
-                }}
+                onEdit={() => navigate(`/notes/${note.id}`)}
               />
             </motion.div>
           ))}

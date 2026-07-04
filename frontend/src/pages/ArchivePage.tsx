@@ -50,13 +50,16 @@ const ArchivePage: React.FC = () => {
               onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
+                noteId={note.id}
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
                 isFavorite={note.isFavorite}
+                isArchived={note.isArchived}
                 isPinned={note.isPinned}
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}
+                onEdit={() => navigate(`/notes/${note.id}`)}
               />
             </motion.div>
           ))}

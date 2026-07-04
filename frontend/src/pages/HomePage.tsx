@@ -132,6 +132,7 @@ const HomePage: React.FC = () => {
               onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
+                noteId={note.id}
                 color={note.color}
                 content={note.content ?? ""}
                 isFavorite={note.isFavorite}
@@ -139,6 +140,7 @@ const HomePage: React.FC = () => {
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}
+                onEdit={() => navigate(`/notes/${note.id}`)}
               />
             </motion.div>
           ))}

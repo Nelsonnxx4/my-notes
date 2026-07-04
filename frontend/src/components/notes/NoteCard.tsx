@@ -1,15 +1,21 @@
-import { Pin, MoreHorizontalIcon, Star } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Archive, ArchiveRestore, MoreHorizontalIcon, Pencil, Pin, Star, StarOff, Trash2 } from "lucide-react";
 
+import { useDeleteNote, useArchiveNote, useUnarchiveNote } from "@/hooks/mutations/useNoteActions";
+import { useToggleFavorite } from "@/hooks/useFavorites";
 import { Tag } from "@/types";
 
 interface NoteCardProps {
+  noteId: string;
   title: string;
   content: string;
   color: string;
   tags?: Tag[];
   isPinned?: boolean;
   isFavorite: boolean;
+  isArchived?: boolean;
   updatedAt?: string;
+  onEdit: () => void;
 }
 
 function timeAgo(iso: string): string {
@@ -26,14 +32,34 @@ function timeAgo(iso: string): string {
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({
+  noteId,
   title,
   content,
   color,
   tags,
   isPinned,
   isFavorite,
+  isArchived = false,
   updatedAt,
+  onEdit,
 }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const { mutate: deleteNote } = useDeleteNote();
+  const { mutate: archiveNote } = useArchiveNote();
+  const { mutate: unarchiveNote } = useUnarchiveNote();
+  const { mutate: toggleFavorite } = useToggleFavorite();
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
+
   return (
     <article
       className={`min-w-60 h-90 overflow-hidden rounded-2xl border border-gray-300 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-pointer ${color}`}
@@ -42,14 +68,102 @@ const NoteCard: React.FC<NoteCardProps> = ({
         <h3 className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700">
           {tags && tags.length > 0 ? `#${tags[0].name}` : "Note"}
         </h3>
-        <div className="flex items-center gap-1 text-gray-700">
+
+        <div ref={menuRef} className="relative flex items-center gap-1 text-gray-700">
           {isPinned && (
             <Pin className="text-slate-600" size={14} strokeWidth={1.5} />
           )}
           {isFavorite && (
             <Star className="text-yellow-500" size={14} strokeWidth={1.5} />
           )}
-          <MoreHorizontalIcon className="cursor-pointer" strokeWidth={1.5} />
+
+          <button
+            aria-label="Note options"
+            className="rounded-full p-1 hover:bg-black/10 transition"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen((v) => !v);
+            }}
+          >
+            <MoreHorizontalIcon size={18} strokeWidth={1.5} />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute top-8 right-0 z-30 min-w-36 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+              <button
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  onEdit();
+                }}
+              >
+                <Pencil size={14} strokeWidth={1.5} />
+                Edit
+              </button>
+
+              <button
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  toggleFavorite({ noteId, isFavorite });
+                }}
+              >
+                {isFavorite ? (
+                  <>
+                    <StarOff size={14} strokeWidth={1.5} />
+                    Unfavorite
+                  </>
+                ) : (
+                  <>
+                    <Star size={14} strokeWidth={1.5} />
+                    Favorite
+                  </>
+                )}
+              </button>
+
+              <button
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  isArchived ? unarchiveNote(noteId) : archiveNote(noteId);
+                }}
+              >
+                {isArchived ? (
+                  <>
+                    <ArchiveRestore size={14} strokeWidth={1.5} />
+                    Unarchive
+                  </>
+                ) : (
+                  <>
+                    <Archive size={14} strokeWidth={1.5} />
+                    Archive
+                  </>
+                )}
+              </button>
+
+              <div className="my-1 border-t border-gray-100" />
+
+              <button
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                  deleteNote(noteId);
+                }}
+              >
+                <Trash2 size={14} strokeWidth={1.5} />
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

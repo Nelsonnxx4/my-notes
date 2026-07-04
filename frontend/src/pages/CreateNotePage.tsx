@@ -1,11 +1,13 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, FolderOpen, Tag, X, Plus } from "lucide-react";
 
 import { useCreateNote } from "@/hooks/mutations/useCreateNote";
 import { useFolders, useCreateFolder } from "@/hooks/useFolder";
 import { useTags, useCreateTag } from "@/hooks/useTags";
+import { useEditorActions } from "@/hooks/useEditorActions";
 import EditorToolbar from "@/components/editor/EditorToolbar";
+import NoteContentEditor from "@/components/editor/NoteContentEditor";
 
 const CreateNotesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,6 +30,8 @@ const CreateNotesPage: React.FC = () => {
   const folderPickerRef = useRef<HTMLDivElement>(null);
   const tagPickerRef = useRef<HTMLDivElement>(null);
 
+  const { execFormat, insertImage } = useEditorActions(editorRef);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -47,33 +51,6 @@ const CreateNotesPage: React.FC = () => {
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const execFormat = useCallback((command: string, value?: string) => {
-    document.execCommand(command, false, value);
-    editorRef.current?.focus();
-  }, []);
-
-  const insertImage = useCallback(() => {
-    const input = document.createElement("input");
-
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = () => {
-      const file = input.files?.[0];
-
-      if (!file) return;
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-
-        editorRef.current?.focus();
-        document.execCommand("insertImage", false, dataUrl);
-      };
-      reader.readAsDataURL(file);
-    };
-    input.click();
   }, []);
 
   const toggleTag = (tagId: number) => {
@@ -364,38 +341,7 @@ const CreateNotesPage: React.FC = () => {
         />
 
         {/* Rich text editor */}
-        <div
-          ref={editorRef}
-          contentEditable
-          suppressContentEditableWarning
-          aria-multiline="true"
-          className="w-full min-h-[60vh] bg-transparent text-base leading-8 outline-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2"
-          data-placeholder="Start writing..."
-          role="textbox"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              const sel = window.getSelection();
-              const anchorNode = sel?.anchorNode;
-              const anchorElement =
-                anchorNode instanceof Element
-                  ? anchorNode
-                  : anchorNode?.parentElement;
-
-              if (anchorElement?.tagName === "LI") {
-                return;
-              }
-            }
-          }}
-        />
-
-        <style>{`
-          [contenteditable]:empty:before {
-            content: attr(data-placeholder);
-            color: #9ca3af;
-            pointer-events: none;
-          }
-        `}</style>
+        <NoteContentEditor ref={editorRef} onChange={() => {}} />
       </div>
 
       <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />

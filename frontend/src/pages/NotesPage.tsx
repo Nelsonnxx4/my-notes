@@ -89,6 +89,7 @@ const NotesPage = () => {
               onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
+                noteId={note.id}
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
                 isPinned={note.isPinned}
@@ -96,6 +97,7 @@ const NotesPage = () => {
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}
+                onEdit={() => navigate(`/notes/${note.id}`)}
               />
             </motion.div>
           ))}
