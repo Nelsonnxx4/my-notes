@@ -18,6 +18,8 @@ import {
   useIsMutating,
 } from "@tanstack/react-query";
 
+import { useAuth } from "@/contexts/AuthContext";
+
 const SyncButton: React.FC = () => {
   const queryClient = useQueryClient();
   const isFetching = useIsFetching();
@@ -78,6 +80,10 @@ const SyncButton: React.FC = () => {
 };
 
 const Sidebar: React.FC = () => {
+  const { user } = useAuth();
+  const displayName = user?.email?.split("@")[0] ?? "User";
+  const avatarLetter = displayName.charAt(0).toUpperCase();
+
   const SidebarOptions = [
     { id: 1, icon: HomeIcon, name: "Home", path: "/home" },
     { id: 2, icon: PlusIcon, name: "New Note", path: "/create" },
@@ -99,15 +105,18 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="sticky top-0 xl:w-65 md:w-50 h-screen border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
       <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0">
-        <img
-          alt="profile pic"
-          className="h-12 w-12 rounded-full object-cover"
-          src="/images/prfpic.jpg"
-        />
-        <div className="flex flex-col leading-5 -space-y-1">
-          <h3 className="font-semibold text-md text-gray-800">Nelson</h3>
-          <span className="text-gray-500 text-sm underline underline-offset-2">
-            nelson@gmail.co
+        <div className="relative shrink-0">
+          <div className="h-11 w-11 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-base font-bold select-none">
+            {avatarLetter}
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-green-400 border-2 border-white" />
+        </div>
+        <div className="flex flex-col leading-5 min-w-0">
+          <h3 className="font-semibold text-sm text-gray-800 truncate">
+            {displayName}
+          </h3>
+          <span className="text-gray-500 text-xs truncate">
+            {user?.email ?? ""}
           </span>
         </div>
       </section>

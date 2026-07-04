@@ -49,12 +49,13 @@ const AccountSettings = () => {
           <div className="flex flex-col gap-1">
             <Input
               classNames={{
-                label: "text-xs font-medium text-gray-500 uppercase tracking-wide",
+                label:
+                  "text-xs font-medium text-gray-500 uppercase tracking-wide",
                 inputWrapper:
-                  "px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
+                  "outline-none px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
                 input: "text-sm",
               }}
-              label="Display name"
+              placeholder="Display name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -63,12 +64,13 @@ const AccountSettings = () => {
           <div className="flex flex-col gap-1">
             <Input
               classNames={{
-                label: "text-xs font-medium text-gray-500 uppercase tracking-wide",
+                label:
+                  "text-xs font-medium text-gray-500 uppercase tracking-wide",
                 inputWrapper:
-                  "px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
+                  "outline-none px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
                 input: "text-sm",
               }}
-              label="Email"
+              placeholder="Email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

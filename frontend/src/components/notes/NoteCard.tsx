@@ -62,7 +62,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
 
   return (
     <article
-      className={`min-w-60 h-90 overflow-hidden rounded-2xl border border-gray-300 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-pointer ${color}`}
+      className={`relative flex flex-col min-w-60 h-[22.5rem] rounded-2xl border border-gray-300 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-default ${color}`}
     >
       <div className="mb-4 flex items-center justify-between">
         <h3 className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700">
@@ -167,7 +167,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
         </div>
       </div>
 
-      <div className="relative flex flex-col bg-white rounded-2xl p-4 h-[88%]">
+      <div className="relative flex flex-col bg-white rounded-2xl p-4 flex-1 overflow-hidden">
         <h3 className="mb-3 text-lg font-semibold text-slate-900 line-clamp-2">
           {title}
         </h3>
