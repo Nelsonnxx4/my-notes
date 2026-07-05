@@ -1,21 +1,34 @@
 import { useState } from "react";
-import { Check, LogOut, Shield } from "lucide-react";
+import { Check, LogOut } from "lucide-react";
 import { Input } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
 
+const DISPLAY_NAME_KEY = "app:displayName";
+
+const inputClasses = {
+  label: "text-xs font-medium text-gray-500 uppercase tracking-wide",
+  inputWrapper:
+    "outline-none px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
+  input: "text-sm",
+};
+
 const AccountSettings = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const emailPrefix = user?.email?.split("@")[0] ?? "User";
+
   const [name, setName] = useState<string>(
-    user?.email?.split("@")[0] ?? "User",
+    () => localStorage.getItem(DISPLAY_NAME_KEY) ?? emailPrefix,
   );
-  const [email, setEmail] = useState<string>(user?.email ?? "");
-  const [saved, setSaved] = useState<boolean>(false);
+  const [saved, setSaved] = useState(false);
 
   function save() {
+    const trimmed = name.trim() || emailPrefix;
+    localStorage.setItem(DISPLAY_NAME_KEY, trimmed);
+    setName(trimmed);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -32,50 +45,29 @@ const AccountSettings = () => {
 
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
-            <div className="h-16 w-16 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-xl font-bold">
+            <div className="h-16 w-16 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-xl font-bold select-none">
               {name.charAt(0).toUpperCase()}
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-green-400 border-2 border-white" />
           </div>
-          <div>
-            <button className="text-sm text-green-600 font-medium hover:underline">
-              Change photo
-            </button>
-            <p className="text-xs text-gray-400 mt-0.5">JPG or PNG, max 2 MB</p>
-          </div>
         </div>
 
         <div className="md:w-80 space-y-3">
-          <div className="flex flex-col gap-1">
-            <Input
-              classNames={{
-                label:
-                  "text-xs font-medium text-gray-500 uppercase tracking-wide",
-                inputWrapper:
-                  "outline-none px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
-                input: "text-sm",
-              }}
-              placeholder="Display name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Input
-              classNames={{
-                label:
-                  "text-xs font-medium text-gray-500 uppercase tracking-wide",
-                inputWrapper:
-                  "outline-none px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
-                input: "text-sm",
-              }}
-              placeholder="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          <Input
+            classNames={inputClasses}
+            label="Display name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            classNames={inputClasses}
+            description="Your sign-in email — cannot be changed here."
+            isReadOnly
+            // label="Email"
+            type="email"
+            value={user?.email ?? ""}
+          />
         </div>
 
         <button
@@ -96,10 +88,6 @@ const AccountSettings = () => {
       <div>
         <h3 className="text-base font-semibold text-gray-800 mb-3">Account</h3>
         <div className="md:w-60 space-y-1">
-          <button className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition cursor-pointer">
-            <Shield className="text-gray-400" size={15} strokeWidth={1.5} />
-            Change password
-          </button>
           <button
             className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50 transition cursor-pointer"
             onClick={handleSignOut}

@@ -46,7 +46,8 @@ const HomePage: React.FC = () => {
     colorScheme: FOLDER_COLORS[hashIndex(folder.id, FOLDER_COLORS.length)],
   }));
 
-  const displayName = user?.email?.split("@")[0] ?? "there";
+  const emailPrefix = user?.email?.split("@")[0] ?? "there";
+  const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 pb-28">

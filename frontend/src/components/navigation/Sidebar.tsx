@@ -81,7 +81,8 @@ const SyncButton: React.FC = () => {
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
-  const displayName = user?.email?.split("@")[0] ?? "User";
+  const emailPrefix = user?.email?.split("@")[0] ?? "User";
+  const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   const SidebarOptions = [
