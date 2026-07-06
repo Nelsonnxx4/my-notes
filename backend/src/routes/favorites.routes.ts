@@ -21,7 +21,7 @@ router.post("/:noteId", async (req: Request, res: Response) => {
 		is_favorite: true,
 	});
 	if (!note) {
-		res.status(404).json({ message: "ahhh Note not found" });
+		res.status(404).json({ message: "Note not found" });
 		return;
 	}
 	res.status(200).json({ message: "Added to favorites", note });
@@ -36,7 +36,7 @@ router.delete("/:noteId", async (req: Request, res: Response) => {
 		is_favorite: false,
 	});
 	if (!note) {
-		res.status(404).json({ message: "ahhh Note not found" });
+		res.status(404).json({ message: "Note not found" });
 		return;
 	}
 	res.status(200).json({ message: "Removed from favorites", note });

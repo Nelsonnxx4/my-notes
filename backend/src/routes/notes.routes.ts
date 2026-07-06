@@ -37,7 +37,7 @@ router.get("/archived", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
 	const note = await getNoteById(req.params["id"] as string);
 
-	if (!note) {
+	if (!note || (note as unknown as { userId: string }).userId !== req.user!.id) {
 		res.status(404).json({ message: "Note not found" });
 		return;
 	}
