@@ -8,10 +8,9 @@ import { useAuth } from "@/contexts/AuthContext";
 const DISPLAY_NAME_KEY = "app:displayName";
 
 const inputClasses = {
-  label: "text-xs font-medium text-gray-500 uppercase tracking-wide",
   inputWrapper:
     "outline-none px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus-within:ring-1 focus-within:ring-gray-300 transition",
-  input: "text-sm",
+  input: "text-sm outline-none",
 };
 
 const AccountSettings = () => {
@@ -55,7 +54,7 @@ const AccountSettings = () => {
         <div className="md:w-80 space-y-3">
           <Input
             classNames={inputClasses}
-            label="Display name"
+            placeholder="Display name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -64,7 +63,7 @@ const AccountSettings = () => {
             classNames={inputClasses}
             description="Your sign-in email — cannot be changed here."
             isReadOnly
-            // label="Email"
+            placeholder="Email"
             type="email"
             value={user?.email ?? ""}
           />
