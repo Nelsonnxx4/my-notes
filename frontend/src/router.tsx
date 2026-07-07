@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 
 import { Provider } from "./provider";
 import ProtectedRoute from "./pages/ProtectedRoute/ProtectedRoute";
@@ -12,6 +12,7 @@ import ArchivePage from "./pages/ArchivePage";
 import TagsPage from "./pages/TagsPage";
 import HomePage from "./pages/HomePage";
 import FolderPage from "./pages/FolderPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import ResponsiveLayout from "@/app/layouts/ResponsiveLayout";
 
@@ -31,6 +32,8 @@ export const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
+      { path: "/", element: <Navigate replace to="/home" /> },
+
       {
         path: "/auth/login",
         element: <AuthPage mode="login" />,
@@ -54,6 +57,8 @@ export const router = createBrowserRouter([
           { path: "/settings", element: <SettingsPage /> },
         ],
       },
+
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);
