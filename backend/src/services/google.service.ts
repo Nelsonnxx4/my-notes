@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import prisma from "../config/prisma";
 
 interface GoogleTokenInfo {
-	audience: string;
+	aud: string;
 	expires_in: number;
 	scope: string;
 }
@@ -25,7 +25,7 @@ export const googleSignIn = async (accessToken: string) => {
 
 	const tokenInfo = (await tokenInfoRes.json()) as GoogleTokenInfo;
 
-	if (tokenInfo.audience !== process.env.GOOGLE_CLIENT_ID) {
+	if (tokenInfo.aud !== process.env.GOOGLE_CLIENT_ID) {
 		throw new Error("Invalid Google token audience");
 	}
 
