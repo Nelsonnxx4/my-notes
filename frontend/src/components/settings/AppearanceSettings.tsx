@@ -35,7 +35,7 @@ const AppearanceSettings: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="w-full  space-y-6">
       <div>
         <h3 className="text-base font-semibold text-gray-800 mb-3">Theme</h3>
         <div className="grid grid-cols-3 gap-2">
@@ -84,7 +84,9 @@ const AppearanceSettings: React.FC = () => {
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-400 mt-2">Applies to the note editor.</p>
+        <p className="text-xs text-gray-400 mt-2">
+          Applies to the note editor.
+        </p>
       </div>
 
       <hr className="border-gray-100" />

@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle, RefreshCw } from "lucide-react";
-import { useQueryClient, useIsFetching, useIsMutating } from "@tanstack/react-query";
+import {
+  useQueryClient,
+  useIsFetching,
+  useIsMutating,
+} from "@tanstack/react-query";
 
 import SettingField from "./ui/SettingsField";
 import Toggle from "./ui/Toggle";
@@ -35,8 +39,8 @@ const SyncSettings: React.FC = () => {
   const [syncOnWifi, setSyncOnWifi] = useState(
     () => localStorage.getItem("app:syncOnWifi") !== "false",
   );
-  const [lastSynced, setLastSynced] = useState<string | null>(
-    () => localStorage.getItem(LAST_SYNCED_KEY),
+  const [lastSynced, setLastSynced] = useState<string | null>(() =>
+    localStorage.getItem(LAST_SYNCED_KEY),
   );
   const [justSynced, setJustSynced] = useState(false);
   const wasSyncing = useRef(false);
@@ -76,7 +80,7 @@ const SyncSettings: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       <div
         className={`flex items-center gap-3 p-4 rounded-xl border transition-colors ${
           justSynced

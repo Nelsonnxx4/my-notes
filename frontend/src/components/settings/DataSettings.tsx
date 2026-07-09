@@ -1,13 +1,16 @@
+import type { Note } from "@/types";
+
 import { useState } from "react";
 import { Download, Loader2, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useNotes } from "@/hooks/queries/useNotes";
 import { deleteNote } from "@/api/notes.api";
-import type { Note } from "@/types";
 
 function stripHtml(html: string): string {
-  return new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
+  return (
+    new DOMParser().parseFromString(html, "text/html").body.textContent ?? ""
+  );
 }
 
 function noteToMarkdown(note: Note): string {
@@ -26,6 +29,7 @@ function download(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
+
   a.href = url;
   a.download = filename;
   a.click();
@@ -40,6 +44,7 @@ const DataSettings = () => {
 
   function exportMarkdown() {
     const content = notes.map(noteToMarkdown).join("\n\n---\n\n");
+
     download("my-notes.md", content, "text/markdown");
   }
 
@@ -47,6 +52,7 @@ const DataSettings = () => {
     const content = notes
       .map((n) => `${n.title}\n\n${stripHtml(n.content ?? "")}`)
       .join("\n\n---\n\n");
+
     download("my-notes.txt", content, "text/plain");
   }
 
@@ -62,7 +68,12 @@ const DataSettings = () => {
       createdAt: n.createdAt,
       updatedAt: n.updatedAt,
     }));
-    download("my-notes.json", JSON.stringify(payload, null, 2), "application/json");
+
+    download(
+      "my-notes.json",
+      JSON.stringify(payload, null, 2),
+      "application/json",
+    );
   }
 
   async function handleDeleteAll() {
@@ -83,7 +94,7 @@ const DataSettings = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="w-full  space-y-6">
       <div>
         <h3 className="text-base font-semibold text-gray-800 mb-3">Export</h3>
         <p className="text-xs text-gray-400 mb-3">
@@ -156,7 +167,8 @@ const DataSettings = () => {
         ) : (
           <div className="p-4 rounded-xl border border-red-200 bg-red-50 space-y-3">
             <p className="text-sm text-red-600 font-medium">
-              Are you sure? This will permanently delete all {notes.length} notes.
+              Are you sure? This will permanently delete all {notes.length}{" "}
+              notes.
             </p>
             <div className="flex gap-2">
               <button
@@ -174,7 +186,11 @@ const DataSettings = () => {
                 onClick={handleDeleteAll}
               >
                 {deleting && (
-                  <Loader2 className="animate-spin" size={14} strokeWidth={1.5} />
+                  <Loader2
+                    className="animate-spin"
+                    size={14}
+                    strokeWidth={1.5}
+                  />
                 )}
                 {deleting ? "Deleting…" : "Yes, delete all"}
               </button>
