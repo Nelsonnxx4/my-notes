@@ -12,7 +12,7 @@ const ArchivePage: React.FC = () => {
   const { data: notes = [], isLoading } = useArchivedNotes();
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 py-20 pb-28">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"

@@ -40,7 +40,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
   }, []);
 
   return (
-    <div className="fixed bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full bg-white px-3 py-2 shadow-xl border border-gray-100">
+    <div className="fixed bottom-20 md:bottom-8 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full bg-white px-3 py-2 shadow-xl border border-gray-100">
       {tools.map(({ label, icon: Icon, command }) => {
         const isActive = activeCommands.has(command);
 

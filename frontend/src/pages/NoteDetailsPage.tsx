@@ -69,7 +69,10 @@ const NoteDetailsPage = () => {
   }
 
   return (
-    <main className="min-h-screen py-20" style={{ backgroundColor: bgColor }}>
+    <main
+      className="min-h-screen pt-4 pb-32 md:py-20"
+      style={{ backgroundColor: bgColor }}
+    >
       <EditorHeader isSaving={isSaving} note={note} />
 
       <div className="px-5">

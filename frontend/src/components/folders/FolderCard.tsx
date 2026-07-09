@@ -24,7 +24,7 @@ const FolderCard: React.FC<FolderCardProps> = ({
     <div
       className={`
         group flex flex-col justify-between gap-3
-        md:min-w-50 md:min-h-50 p-4 rounded-md
+        min-w-35 min-h-35 md:min-w-50 md:min-h-50 p-4 rounded-md
         border cursor-pointer
         transition-all duration-150 hover:shadow-sm hover:brightness-95
         ${bg} ${border}
