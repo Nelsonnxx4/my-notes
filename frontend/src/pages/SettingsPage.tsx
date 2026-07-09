@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Palette, Cloud, Trash2, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+  User,
+  Palette,
+  Cloud,
+  Trash2,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 
 import AccountSettings from "@/components/settings/AccountSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
@@ -139,7 +146,7 @@ const SettingsPage: React.FC = () => {
         <motion.section
           key={active}
           animate={{ opacity: 1, y: 0 }}
-          className={`flex-1 min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-5 md:p-6 shadow-sm -mx-4 md:mx-0 ${
+          className={`flex-1 w-full md:min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-5 md:p-6 shadow-sm -mx-4 md:mx-0 ${
             showPanel ? "block" : "hidden md:block"
           }`}
           initial={{ opacity: 0, y: 6 }}
