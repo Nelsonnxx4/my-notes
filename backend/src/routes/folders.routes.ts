@@ -15,13 +15,11 @@ const router = Router();
 
 router.use(protect);
 
-// GET /api/folders
 router.get("/", async (req: Request, res: Response) => {
 	const folders = await getFoldersByUser(req.user!.id);
 	res.status(200).json(folders);
 });
 
-// GET /api/folders/:id
 router.get("/:id", async (req: Request, res: Response) => {
 	const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 	if (!id) {
@@ -36,7 +34,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 	res.status(200).json(folder);
 });
 
-// POST /api/folders
 router.post(
 	"/",
 	validate(createFolderSchema),
@@ -50,7 +47,6 @@ router.post(
 	},
 );
 
-// PATCH /api/folders/:id
 router.patch(
 	"/:id",
 	validate(updateFolderSchema),
@@ -69,7 +65,6 @@ router.patch(
 	},
 );
 
-// DELETE /api/folders/:id
 router.delete("/:id", async (req: Request, res: Response) => {
 	const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 	if (!id) {
@@ -84,7 +79,6 @@ router.delete("/:id", async (req: Request, res: Response) => {
 	res.status(200).json({ message: "Folder deleted successfully" });
 });
 
-// PATCH /api/folders/move/:noteId
 router.patch("/move/:noteId", async (req: Request, res: Response) => {
 	const noteId = Array.isArray(req.params.noteId)
 		? req.params.noteId[0]

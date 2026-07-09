@@ -63,7 +63,6 @@ export const googleSignIn = async (accessToken: string) => {
     })
   }
 
-  // Issue your own app JWT — same as regular login
   const token = jwt.sign(
     { id: user.id, email: user.email },
     process.env.JWT_SECRET!,

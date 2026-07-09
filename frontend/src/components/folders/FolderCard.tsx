@@ -30,14 +30,12 @@ const FolderCard: React.FC<FolderCardProps> = ({
         ${bg} ${border}
       `}
     >
-      {/* Folder icon — colored */}
       <FolderIcon
         className={`${icon} transition-transform duration-150 group-hover:scale-105`}
         size={40}
         strokeWidth={1.2}
       />
 
-      {/* Title + note count */}
       <div className="flex flex-col gap-0.5">
         <span className={`font-semibold text-sm leading-tight ${text}`}>
           {title}

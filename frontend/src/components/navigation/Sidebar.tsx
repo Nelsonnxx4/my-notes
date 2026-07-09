@@ -122,7 +122,6 @@ const Sidebar: React.FC = () => {
         </div>
       </section>
 
-      {/* Main nav */}
       <section className="flex flex-col justify-start items-start py-5 shrink-0 mt-8">
         <h3 className="px-4 text-gray-500 text-lg mb-2">Main</h3>
         {SidebarOptions.map((option) => {
@@ -157,7 +156,6 @@ const Sidebar: React.FC = () => {
         })}
       </section>
 
-      {/* Settings — pinned to bottom */}
       <section className="flex flex-col justify-start items-start py-5 pb-10 mt-auto shrink-0">
         <h3 className="px-4 text-gray-500 text-lg mb-2">Settings</h3>
 

@@ -6,13 +6,11 @@ const router = Router();
 
 router.use(protect);
 
-// GET /api/favorites
 router.get("/", async (req: Request, res: Response) => {
 	const notes = await getFavoriteNotes(req.user!.id);
 	res.status(200).json(notes);
 });
 
-// POST /api/favorites/:noteId
 router.post("/:noteId", async (req: Request, res: Response) => {
 	const noteId = Array.isArray(req.params.noteId)
 		? req.params.noteId[0]
@@ -27,7 +25,6 @@ router.post("/:noteId", async (req: Request, res: Response) => {
 	res.status(200).json({ message: "Added to favorites", note });
 });
 
-// DELETE /api/favorites/:noteId
 router.delete("/:noteId", async (req: Request, res: Response) => {
 	const noteId = Array.isArray(req.params.noteId)
 		? req.params.noteId[0]

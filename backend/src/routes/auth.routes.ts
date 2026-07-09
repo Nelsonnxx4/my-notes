@@ -7,7 +7,6 @@ import { registerSchema, loginSchema, googleAuthSchema } from "../schemas";
 
 const router = Router();
 
-// POST /api/auth/google
 router.post(
 	"/google",
 	validate(googleAuthSchema),
@@ -17,7 +16,6 @@ router.post(
 	},
 );
 
-// POST /api/auth/register
 router.post(
 	"/signup",
 	validate(registerSchema),
@@ -27,7 +25,6 @@ router.post(
 	},
 );
 
-// POST /api/auth/login
 router.post(
 	"/login",
 	validate(loginSchema),
@@ -37,7 +34,6 @@ router.post(
 	},
 );
 
-// GET /api/auth/me
 router.get("/me", protect, async (req: Request, res: Response) => {
 	const user = await getUserById(req.user!.id);
 

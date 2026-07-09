@@ -97,7 +97,6 @@ const CreateNotesPage: React.FC = () => {
 
   return (
     <main className="min-h-screen bg-[#F7F7FA] pt-6 pb-32 md:py-20">
-      {/* Header */}
       <header className="flex items-center justify-between p-5">
         <button
           aria-label="Go back"
@@ -124,9 +123,7 @@ const CreateNotesPage: React.FC = () => {
           </p>
         )}
 
-        {/* Folder + Tag selectors */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Folder selector */}
           <div ref={folderPickerRef} className="relative">
             <button
               className="flex items-center gap-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:border-gray-400 transition"
@@ -231,7 +228,6 @@ const CreateNotesPage: React.FC = () => {
             )}
           </div>
 
-          {/* Tag selector */}
           <div ref={tagPickerRef} className="relative">
             <button
               className="flex items-center gap-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:border-gray-400 transition"
@@ -324,7 +320,6 @@ const CreateNotesPage: React.FC = () => {
             )}
           </div>
 
-          {/* Selected tag chips */}
           {selectedTags.map((t) => (
             <span
               key={t.id}
@@ -342,7 +337,6 @@ const CreateNotesPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Title */}
         <textarea
           className="w-full resize-none bg-transparent text-4xl font-bold outline-none leading-tight placeholder:text-gray-300"
           placeholder="Untitled Note"
@@ -354,7 +348,6 @@ const CreateNotesPage: React.FC = () => {
           }}
         />
 
-        {/* Rich text editor */}
         <NoteContentEditor
           ref={editorRef}
           onChange={(html) => {

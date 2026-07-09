@@ -117,7 +117,6 @@ const SettingsPage: React.FC = () => {
       </motion.div>
 
       <div className="flex flex-col md:flex-row gap-6 items-start">
-        {/* Nav list — hidden on mobile when a panel is open */}
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
           className={`w-full md:w-56 shrink-0 space-y-1 ${showPanel ? "hidden md:block" : "block"}`}
@@ -137,17 +136,15 @@ const SettingsPage: React.FC = () => {
           ))}
         </motion.aside>
 
-        {/* Panel — full-width on mobile, side-by-side on desktop */}
         <motion.section
           key={active}
           animate={{ opacity: 1, y: 0 }}
-          className={`flex-1 min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-4 shadow-sm -mx-4 md:mx-0 ${
+          className={`flex-1 min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-5 md:p-6 shadow-sm -mx-4 md:mx-0 ${
             showPanel ? "block" : "hidden md:block"
           }`}
           initial={{ opacity: 0, y: 6 }}
           transition={{ duration: 0.25 }}
         >
-          {/* Back button — mobile only */}
           <button
             className="md:hidden flex items-center gap-1 text-sm text-gray-500 mb-4 -ml-1 hover:text-gray-700 transition"
             onClick={() => setShowPanel(false)}

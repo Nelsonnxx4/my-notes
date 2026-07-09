@@ -11,7 +11,6 @@ const pool = new Pool({
 	connectionTimeoutMillis: 2000,
 });
 
-// Test the connection
 pool.on("connect", () => {
 	console.log("Connected to Neon db");
 });

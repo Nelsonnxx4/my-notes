@@ -67,7 +67,6 @@ const NoteDetailsPage = () => {
     if (showWordCount || lineNumbers) setStats(parseStats(html));
   };
 
-  // Compute stats on initial note load
   useEffect(() => {
     if (note?.content) setStats(parseStats(note.content));
   }, [note?.id]);
@@ -108,12 +107,18 @@ const NoteDetailsPage = () => {
           <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
             {showWordCount && (
               <>
-                <span>{stats.words} {stats.words === 1 ? "word" : "words"}</span>
-                <span>{stats.chars} {stats.chars === 1 ? "char" : "chars"}</span>
+                <span>
+                  {stats.words} {stats.words === 1 ? "word" : "words"}
+                </span>
+                <span>
+                  {stats.chars} {stats.chars === 1 ? "char" : "chars"}
+                </span>
               </>
             )}
             {lineNumbers && (
-              <span>{stats.lines} {stats.lines === 1 ? "line" : "lines"}</span>
+              <span>
+                {stats.lines} {stats.lines === 1 ? "line" : "lines"}
+              </span>
             )}
           </div>
         )}

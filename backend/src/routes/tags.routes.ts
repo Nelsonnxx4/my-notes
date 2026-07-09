@@ -13,13 +13,11 @@ const router = Router();
 
 router.use(protect);
 
-// GET /api/tags
 router.get("/", async (req: Request, res: Response) => {
 	const tags = await getTagsByUser(req.user!.id);
 	res.status(200).json(tags);
 });
 
-// POST /api/tags
 router.post(
 	"/",
 	validate(createTagSchema),
@@ -29,7 +27,6 @@ router.post(
 	},
 );
 
-// PATCH /api/tags/:id
 router.patch(
 	"/:id",
 	validate(updateTagSchema),
@@ -49,7 +46,6 @@ router.patch(
 	},
 );
 
-// DELETE /api/tags/:id
 router.delete("/:id", async (req: Request, res: Response) => {
 	const deleted = await deleteTag(
 		Number(req.params["id"] as string),

@@ -85,7 +85,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
 
   return (
     <main className="grid min-h-screen md:grid-cols-2">
-      {/* ── Left: form column ── */}
       <section className="flex flex-col items-center justify-center px-8 py-12 bg-white">
         <div className="w-full max-w-sm mb-4">
           <div className="flex flex-col items-start justify-between">
@@ -236,7 +235,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
         </div>
       </section>
 
-      {/* ── Right: illustration column ── */}
       <section className="hidden md:flex flex-col items-center justify-center bg-gray-50 px-12 py-16 border-l border-gray-100">
         <img
           alt="Illustration of a person organising notes"

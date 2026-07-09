@@ -132,7 +132,6 @@ const FolderPage: React.FC = () => {
             })}
           </AnimatePresence>
 
-          {/* Add folder card */}
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 5 }}

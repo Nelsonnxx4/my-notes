@@ -4,7 +4,6 @@ import prisma from "../config/prisma";
 import type { RegisterDTO, LoginDTO } from "../types";
 import redisClient from "../config/redis";
 
-// Register User
 export const signupUser = async ({ email, password }: RegisterDTO) => {
 	const existing = await prisma.user.findUnique({
 		where: { email },
@@ -33,7 +32,6 @@ export const signupUser = async ({ email, password }: RegisterDTO) => {
 	return { user, token };
 };
 
-// Login user
 export const loginUser = async ({ email, password }: LoginDTO) => {
 	const user = await prisma.user.findUnique({ where: { email } });
 	if (!user) {
@@ -56,7 +54,6 @@ export const loginUser = async ({ email, password }: LoginDTO) => {
 	return { user: safeUser, token };
 };
 
-// Get user by ID
 export const getUserById = async (id: string) => {
 	const user = await prisma.user.findUnique({
 		where: { id },
@@ -66,7 +63,6 @@ export const getUserById = async (id: string) => {
 	return user;
 };
 
-// Logout: blacklist the token with its remaining TTL
 export const logoutUser = async (token: string) => {
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {

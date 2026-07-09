@@ -116,7 +116,6 @@ export const deleteFolder = async (folderId: string, userId: string) => {
 	return true;
 };
 
-// Move a note into or out of a folder
 export const moveNoteToFolder = async (
 	noteId: string,
 	folderId: string | null,

@@ -1,4 +1,3 @@
-// backend/src/schemas/index.ts
 import { z } from "zod";
 
 export const registerSchema = z.object({

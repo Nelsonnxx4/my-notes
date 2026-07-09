@@ -50,7 +50,6 @@ export const getNotesByUser = async (
 	return notes.map(formatNote);
 };
 
-// FIXED: was using userId as noteId
 export const getNoteById = async (noteId: string) => {
 	const note = await prisma.notes.findUnique({
 		where: { id: noteId },

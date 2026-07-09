@@ -15,7 +15,6 @@ const router = Router();
 
 router.use(protect);
 
-// GET /api/notes?q=search&tag=1
 router.get("/", async (req: Request, res: Response) => {
 	const search = typeof req.query.q === "string" ? req.query.q : undefined;
 	const tagId =
@@ -26,14 +25,12 @@ router.get("/", async (req: Request, res: Response) => {
 	res.status(200).json(notes);
 });
 
-// GET /api/notes/archived
 router.get("/archived", async (req: Request, res: Response) => {
 	const notes = await getArchivedNotes(req.user!.id);
 
 	res.status(200).json(notes);
 });
 
-// GET /api/notes/:id
 router.get("/:id", async (req: Request, res: Response) => {
 	const note = await getNoteById(req.params["id"] as string);
 
@@ -45,7 +42,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 	res.status(200).json(note);
 });
 
-// POST /api/notes
 router.post(
 	"/",
 	validate(createNoteSchema),
@@ -55,7 +51,6 @@ router.post(
 	},
 );
 
-// PATCH /api/notes/:id
 router.patch(
 	"/:id",
 	validate(updateNoteSchema),
@@ -75,7 +70,6 @@ router.patch(
 	},
 );
 
-// DELETE /api/notes/:id
 router.delete("/:id", async (req: Request, res: Response) => {
 	const deleted = await deleteNote(req.params["id"] as string, req.user!.id);
 
