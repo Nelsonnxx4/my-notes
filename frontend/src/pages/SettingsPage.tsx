@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Palette, Cloud, Trash2, ChevronRight } from "lucide-react";
+import { User, Palette, Cloud, Trash2, ChevronRight, ChevronLeft } from "lucide-react";
 
 import AccountSettings from "@/components/settings/AccountSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
@@ -75,11 +75,10 @@ const NAV: {
     icon: Palette,
     description: "Theme & editor",
   },
-
   { id: "sync", label: "Sync", icon: Cloud, description: "Cloud & devices" },
   {
     id: "data",
-    label: "Data & storage",
+    label: "Data",
     icon: Trash2,
     description: "Export & delete",
   },
@@ -94,8 +93,14 @@ const PANELS: Record<Section, React.ReactNode> = {
 
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<Section>("account");
+  const [showPanel, setShowPanel] = useState(false);
 
   const activeNav = NAV.find((n) => n.id === active)!;
+
+  function handleNavClick(id: Section) {
+    setActive(id);
+    setShowPanel(true);
+  }
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-14">
@@ -112,9 +117,10 @@ const SettingsPage: React.FC = () => {
       </motion.div>
 
       <div className="flex flex-col md:flex-row gap-6 items-start">
+        {/* Nav list — hidden on mobile when a panel is open */}
         <motion.aside
           animate={{ opacity: 1, x: 0 }}
-          className="w-full md:w-56 shrink-0 space-y-1"
+          className={`w-full md:w-56 shrink-0 space-y-1 ${showPanel ? "hidden md:block" : "block"}`}
           initial={{ opacity: 0, x: -8 }}
           transition={{ duration: 0.35, delay: 0.05 }}
         >
@@ -126,18 +132,30 @@ const SettingsPage: React.FC = () => {
               description={description}
               icon={icon}
               label={label}
-              onClick={() => setActive(id)}
+              onClick={() => handleNavClick(id)}
             />
           ))}
         </motion.aside>
 
+        {/* Panel — full-width on mobile, side-by-side on desktop */}
         <motion.section
           key={active}
           animate={{ opacity: 1, y: 0 }}
-          className="flex-1 min-w-0 bg-white border border-gray-100 rounded-2xl p-4 shadow-sm"
+          className={`flex-1 min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-4 shadow-sm -mx-4 md:mx-0 ${
+            showPanel ? "block" : "hidden md:block"
+          }`}
           initial={{ opacity: 0, y: 6 }}
           transition={{ duration: 0.25 }}
         >
+          {/* Back button — mobile only */}
+          <button
+            className="md:hidden flex items-center gap-1 text-sm text-gray-500 mb-4 -ml-1 hover:text-gray-700 transition"
+            onClick={() => setShowPanel(false)}
+          >
+            <ChevronLeft size={16} strokeWidth={2} />
+            Back
+          </button>
+
           <div className="flex items-center gap-3 mb-2 pb-4 border-b border-gray-100">
             <span className="flex items-center justify-center h-9 w-9 rounded-xl bg-green-400">
               <activeNav.icon

@@ -9,6 +9,7 @@ import { useNotes } from "@/hooks/queries/useNotes";
 import { useFolders } from "@/hooks/useFolder";
 import { useAuth } from "@/contexts/AuthContext";
 import { hashColor, hashIndex } from "@/utils/noteColors";
+import { useAppearance } from "@/contexts/AppearanceContext";
 
 const now = new Date();
 const hour = now.getHours();
@@ -46,6 +47,7 @@ const HomePage: React.FC = () => {
     colorScheme: FOLDER_COLORS[hashIndex(folder.id, FOLDER_COLORS.length)],
   }));
 
+  const { compactMode } = useAppearance();
   const emailPrefix = user?.email?.split("@")[0] ?? "there";
   const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
 
@@ -81,7 +83,7 @@ const HomePage: React.FC = () => {
       </motion.div>
 
       <SectionHeader label="Recent Folders" to="/folders" />
-      <section className="flex flex-wrap gap-3 mb-10">
+      <section className={`flex flex-wrap mb-10 ${compactMode ? "gap-1.5" : "gap-3"}`}>
         {recentFolders.length === 0 ? (
           <p className="text-sm text-gray-400 py-2">No folders yet.</p>
         ) : (
@@ -123,7 +125,7 @@ const HomePage: React.FC = () => {
           </button>
         </p>
       ) : (
-        <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
           {recentNotes.map((note, i) => (
             <motion.div
               key={note.id}

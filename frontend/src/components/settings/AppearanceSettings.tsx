@@ -1,68 +1,26 @@
-import { useState, useEffect } from "react";
 import { Sun, Moon, Monitor } from "lucide-react";
 
+import {
+  useAppearance,
+  type Theme,
+  type FontSize,
+} from "@/contexts/AppearanceContext";
 import SettingField from "./ui/SettingsField";
 import Toggle from "./ui/Toggle";
 
-type Theme = "light" | "dark" | "system";
-type FontSize = "sm" | "md" | "lg";
-
-function applyTheme(t: Theme) {
-  const root = document.documentElement;
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const isDark = t === "dark" || (t === "system" && prefersDark);
-
-  root.classList.toggle("dark", isDark);
-  root.setAttribute("data-theme", isDark ? "dark" : "light");
-}
-
 const AppearanceSettings: React.FC = () => {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem("app:theme") as Theme) ?? "light",
-  );
-  const [fontSize, setFontSize] = useState<FontSize>(
-    () => (localStorage.getItem("app:fontSize") as FontSize) ?? "md",
-  );
-  const [compactMode, setCompactMode] = useState(
-    () => localStorage.getItem("app:compactMode") === "true",
-  );
-  const [showWordCount, setShowWordCount] = useState(
-    () => localStorage.getItem("app:showWordCount") !== "false",
-  );
-  const [lineNumbers, setLineNumbers] = useState(
-    () => localStorage.getItem("app:lineNumbers") === "true",
-  );
-
-  // Apply saved theme on mount
-  useEffect(() => {
-    applyTheme(theme);
-  }, []);
-
-  function handleTheme(t: Theme) {
-    setTheme(t);
-    localStorage.setItem("app:theme", t);
-    applyTheme(t);
-  }
-
-  function handleFontSize(s: FontSize) {
-    setFontSize(s);
-    localStorage.setItem("app:fontSize", s);
-  }
-
-  function handleCompact(v: boolean) {
-    setCompactMode(v);
-    localStorage.setItem("app:compactMode", String(v));
-  }
-
-  function handleWordCount(v: boolean) {
-    setShowWordCount(v);
-    localStorage.setItem("app:showWordCount", String(v));
-  }
-
-  function handleLineNumbers(v: boolean) {
-    setLineNumbers(v);
-    localStorage.setItem("app:lineNumbers", String(v));
-  }
+  const {
+    theme,
+    setTheme,
+    fontSize,
+    setFontSize,
+    compactMode,
+    setCompactMode,
+    showWordCount,
+    setShowWordCount,
+    lineNumbers,
+    setLineNumbers,
+  } = useAppearance();
 
   const themes: { id: Theme; label: string; icon: React.ElementType }[] = [
     { id: "light", label: "Light", icon: Sun },
@@ -91,7 +49,7 @@ const AppearanceSettings: React.FC = () => {
                     : "border-gray-200 text-gray-500 hover:bg-gray-50"
                 }`}
               type="button"
-              onClick={() => handleTheme(id)}
+              onClick={() => setTheme(id)}
             >
               <Icon size={18} strokeWidth={1.5} />
               {label}
@@ -120,12 +78,13 @@ const AppearanceSettings: React.FC = () => {
                     : "border-gray-200 text-gray-500 hover:bg-gray-50"
                 }`}
               type="button"
-              onClick={() => handleFontSize(id)}
+              onClick={() => setFontSize(id)}
             >
               {label}
             </button>
           ))}
         </div>
+        <p className="text-xs text-gray-400 mt-2">Applies to the note editor.</p>
       </div>
 
       <hr className="border-gray-100" />
@@ -134,22 +93,22 @@ const AppearanceSettings: React.FC = () => {
         <h3 className="text-base font-semibold text-gray-800 mb-1">Editor</h3>
         <div className="divide-y divide-gray-100">
           <SettingField
-            description="Reduce spacing between notes"
+            description="Reduce spacing between note cards"
             label="Compact mode"
           >
-            <Toggle enabled={compactMode} onChange={handleCompact} />
+            <Toggle enabled={compactMode} onChange={setCompactMode} />
           </SettingField>
           <SettingField
-            description="Show word count in the editor"
+            description="Show word and character count while editing"
             label="Word count"
           >
-            <Toggle enabled={showWordCount} onChange={handleWordCount} />
+            <Toggle enabled={showWordCount} onChange={setShowWordCount} />
           </SettingField>
           <SettingField
-            description="Show line numbers while editing"
+            description="Show line count in the editor footer"
             label="Line numbers"
           >
-            <Toggle enabled={lineNumbers} onChange={handleLineNumbers} />
+            <Toggle enabled={lineNumbers} onChange={setLineNumbers} />
           </SettingField>
         </div>
       </div>

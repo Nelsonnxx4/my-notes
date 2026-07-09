@@ -6,10 +6,12 @@ import { Star, Loader2 } from "lucide-react";
 import NoteCard from "@/components/notes/NoteCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { hashColor } from "@/utils/noteColors";
+import { useAppearance } from "@/contexts/AppearanceContext";
 
 const FavoritesPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: notes = [], isLoading } = useFavorites();
+  const { compactMode } = useAppearance();
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
@@ -45,7 +47,7 @@ const FavoritesPage: React.FC = () => {
           </p>
         </div>
       ) : (
-        <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
           {notes.map((note, i) => (
             <motion.div
               key={note.id}

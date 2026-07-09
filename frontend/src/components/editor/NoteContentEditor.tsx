@@ -24,7 +24,8 @@ const NoteContentEditor = forwardRef<HTMLDivElement, Props>(
           contentEditable
           suppressContentEditableWarning
           aria-multiline="true"
-          className="w-full min-h-[60vh] bg-transparent text-base leading-8 outline-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2"
+          className="w-full min-h-[60vh] bg-transparent leading-8 outline-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2"
+          style={{ fontSize: "var(--editor-font-size, 1rem)" }}
           data-placeholder="Start writing..."
           role="textbox"
           tabIndex={0}

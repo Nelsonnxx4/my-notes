@@ -6,6 +6,7 @@ import { Plus, Search, Loader2, NotebookText } from "lucide-react";
 import NoteCard from "@/components/notes/NoteCard";
 import { useNotes } from "@/hooks/queries/useNotes";
 import { hashColor } from "@/utils/noteColors";
+import { useAppearance } from "@/contexts/AppearanceContext";
 
 const NotesPage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const NotesPage = () => {
   const { data: notes = [], isLoading } = useNotes(
     search ? { q: search } : undefined,
   );
+  const { compactMode } = useAppearance();
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
@@ -25,6 +27,7 @@ const NotesPage = () => {
         </div>
         <button
           className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-600/85 transition shadow-sm cursor-pointer"
+          type="button"
           onClick={() => navigate("/create")}
         >
           <Plus size={15} strokeWidth={2} />
@@ -70,6 +73,7 @@ const NotesPage = () => {
           {!search && (
             <button
               className="mt-4 text-green-600 text-sm font-medium hover:underline"
+              type="button"
               onClick={() => navigate("/create")}
             >
               Create your first note →
@@ -79,7 +83,7 @@ const NotesPage = () => {
       )}
 
       {!isLoading && notes.length > 0 && (
-        <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
           {notes.map((note, i) => (
             <motion.div
               key={note.id}

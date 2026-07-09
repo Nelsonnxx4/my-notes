@@ -20,6 +20,18 @@
       name="viewport"
     />
     <link href="/favicon.ico" rel="icon" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("app:theme") || "light";
+          var dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+          document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+          var fs = { sm: "0.875rem", md: "1rem", lg: "1.125rem" };
+          document.documentElement.style.setProperty("--editor-font-size", fs[localStorage.getItem("app:fontSize")] || "1rem");
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

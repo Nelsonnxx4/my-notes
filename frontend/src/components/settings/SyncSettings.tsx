@@ -61,6 +61,7 @@ const SyncSettings: React.FC = () => {
   function handleAutoSync(v: boolean) {
     setAutoSync(v);
     localStorage.setItem("app:autoSync", String(v));
+    window.dispatchEvent(new CustomEvent("app:autoSync", { detail: v }));
   }
 
   function handleSyncOnWifi(v: boolean) {

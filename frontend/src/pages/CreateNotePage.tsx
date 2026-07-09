@@ -8,6 +8,18 @@ import { useTags, useCreateTag } from "@/hooks/useTags";
 import { useEditorActions } from "@/hooks/useEditorActions";
 import EditorToolbar from "@/components/editor/EditorToolbar";
 import NoteContentEditor from "@/components/editor/NoteContentEditor";
+import { useAppearance } from "@/contexts/AppearanceContext";
+
+function parseStats(html: string) {
+  const text =
+    new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const lines = Math.max(
+    1,
+    (html.match(/<br|<\/p>|<\/li>|<\/h[1-6]>/gi) ?? []).length + 1,
+  );
+  return { words, chars: text.length, lines };
+}
 
 const CreateNotesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +28,7 @@ const CreateNotesPage: React.FC = () => {
   const { data: tags = [] } = useTags();
   const { mutate: createFolder, isPending: isCreatingFolder } = useCreateFolder();
   const { mutate: createTag, isPending: isCreatingTag } = useCreateTag();
+  const { showWordCount, lineNumbers } = useAppearance();
 
   const [title, setTitle] = useState("");
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -25,6 +38,7 @@ const CreateNotesPage: React.FC = () => {
   const [showTagPicker, setShowTagPicker] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [newTagName, setNewTagName] = useState("");
+  const [stats, setStats] = useState({ words: 0, chars: 0, lines: 1 });
 
   const editorRef = useRef<HTMLDivElement>(null);
   const folderPickerRef = useRef<HTMLDivElement>(null);
@@ -341,7 +355,26 @@ const CreateNotesPage: React.FC = () => {
         />
 
         {/* Rich text editor */}
-        <NoteContentEditor ref={editorRef} onChange={() => {}} />
+        <NoteContentEditor
+          ref={editorRef}
+          onChange={(html) => {
+            if (showWordCount || lineNumbers) setStats(parseStats(html));
+          }}
+        />
+
+        {(showWordCount || lineNumbers) && (
+          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
+            {showWordCount && (
+              <>
+                <span>{stats.words} {stats.words === 1 ? "word" : "words"}</span>
+                <span>{stats.chars} {stats.chars === 1 ? "char" : "chars"}</span>
+              </>
+            )}
+            {lineNumbers && (
+              <span>{stats.lines} {stats.lines === 1 ? "line" : "lines"}</span>
+            )}
+          </div>
+        )}
       </div>
 
       <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />
