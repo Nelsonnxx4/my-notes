@@ -1,23 +1,30 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Loader2, NotebookText } from "lucide-react";
+import { Plus, Loader2, NotebookText } from "lucide-react";
 
 import NoteCard from "@/components/notes/NoteCard";
 import { useNotes } from "@/hooks/queries/useNotes";
 import { hashColor } from "@/utils/noteColors";
 import { useAppearance } from "@/contexts/AppearanceContext";
+import { useNoteFilters } from "@/contexts/NoteFiltersContext";
+
+const GRID_COLS = {
+  comfortable: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  compact: "grid-cols-1 md:grid-cols-3 lg:grid-cols-4",
+};
 
 const NotesPage = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const { data: notes = [], isLoading } = useNotes(
-    search ? { q: search } : undefined,
+  const { search, filters } = useNoteFilters();
+  const { data: allNotes = [], isLoading } = useNotes(
+    search ? { q: search } : filters.tagId ? { tag: filters.tagId } : undefined,
   );
-  const { compactMode } = useAppearance();
+  const { compactMode, gridLayout } = useAppearance();
+
+  const notes = filters.pinned ? allNotes.filter((n) => n.isPinned) : allNotes;
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">All Notes</h1>
@@ -33,21 +40,6 @@ const NotesPage = () => {
           <Plus size={15} strokeWidth={2} />
           New note
         </button>
-      </div>
-
-      <div className="relative mb-6 max-w-sm">
-        <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          size={16}
-          strokeWidth={1.5}
-        />
-        <input
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-          placeholder="Search notes…"
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
       </div>
 
       {isLoading && (
@@ -68,9 +60,13 @@ const NotesPage = () => {
             strokeWidth={1}
           />
           <p className="text-gray-500 font-medium">
-            {search ? `No notes match "${search}"` : "No notes yet"}
+            {search
+              ? `No notes match "${search}"`
+              : filters.pinned
+                ? "No pinned notes"
+                : "No notes yet"}
           </p>
-          {!search && (
+          {!search && !filters.pinned && (
             <button
               className="mt-4 text-green-600 text-sm font-medium hover:underline"
               type="button"
@@ -83,7 +79,9 @@ const NotesPage = () => {
       )}
 
       {!isLoading && notes.length > 0 && (
-        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
+        <section
+          className={`grid ${GRID_COLS[gridLayout]} ${compactMode ? "gap-1.5" : "gap-3"}`}
+        >
           {notes.map((note, i) => (
             <motion.div
               key={note.id}

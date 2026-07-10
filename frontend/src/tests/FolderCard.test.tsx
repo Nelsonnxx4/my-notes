@@ -1,37 +1,34 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
 
 import FolderCard from "@/components/folders/FolderCard";
 
-test("renders folder card with correct title and description", () => {
-  const folder = {
-    title: "Test Folder",
-    count: 5,
-    colorScheme: "blue",
-  } as const;
+const blueScheme = {
+  bg: "bg-blue-50",
+  text: "text-blue-700",
+  border: "border-blue-100",
+  icon: "text-blue-400",
+};
 
-  render(<FolderCard {...folder} onOpen={vi.fn()} />);
+test("renders the folder title", () => {
+  render(<FolderCard colorScheme={blueScheme} count={5} title="Work" />);
 
-  expect(screen.getByText("Test Folder")).toBeInTheDocument();
-  expect(screen.getByText("This is a test folder.")).toBeInTheDocument();
-  expect(screen.getByText("5 notes")).toBeInTheDocument();
+  expect(screen.getByText("Work")).toBeInTheDocument();
 });
 
-test("calls onOpen when clicked", async () => {
-  const onOpen = vi.fn();
+test("renders singular 'note' when count is 1", () => {
+  render(<FolderCard colorScheme={blueScheme} count={1} title="Ideas" />);
 
-  render(
-    <FolderCard
-      folder={{
-        title: "Work",
-        count: 0,
-        colorScheme: "blue",
-      }}
-      onOpen={onOpen}
-    />,
-  );
+  expect(screen.getByText("1 note")).toBeInTheDocument();
+});
 
-  await userEvent.click(screen.getByText("Work"));
-  expect(onOpen).toHaveBeenCalledWith("1");
+test("renders plural 'notes' when count is 0", () => {
+  render(<FolderCard colorScheme={blueScheme} count={0} title="Empty" />);
+
+  expect(screen.getByText("0 notes")).toBeInTheDocument();
+});
+
+test("renders plural 'notes' when count is greater than 1", () => {
+  render(<FolderCard colorScheme={blueScheme} count={3} title="Projects" />);
+
+  expect(screen.getByText("3 notes")).toBeInTheDocument();
 });

@@ -9,6 +9,7 @@ import {
 
 export type Theme = "light" | "dark" | "system";
 export type FontSize = "sm" | "md" | "lg";
+export type GridLayout = "comfortable" | "compact";
 
 interface AppearanceState {
   theme: Theme;
@@ -16,6 +17,7 @@ interface AppearanceState {
   compactMode: boolean;
   showWordCount: boolean;
   lineNumbers: boolean;
+  gridLayout: GridLayout;
 }
 
 interface AppearanceContextValue extends AppearanceState {
@@ -24,6 +26,7 @@ interface AppearanceContextValue extends AppearanceState {
   setCompactMode: (v: boolean) => void;
   setShowWordCount: (v: boolean) => void;
   setLineNumbers: (v: boolean) => void;
+  setGridLayout: (g: GridLayout) => void;
 }
 
 const FONT_SIZE_MAP: Record<FontSize, string> = {
@@ -64,6 +67,9 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
   );
   const [lineNumbers, setLineNumbersState] = useState(
     () => localStorage.getItem("app:lineNumbers") === "true",
+  );
+  const [gridLayout, setGridLayoutState] = useState<GridLayout>(
+    () => (localStorage.getItem("app:gridLayout") as GridLayout) ?? "comfortable",
   );
 
   // Apply on mount — index.html script prevents flash, this is a safety net
@@ -108,6 +114,11 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("app:lineNumbers", String(v));
   }, []);
 
+  const setGridLayout = useCallback((g: GridLayout) => {
+    setGridLayoutState(g);
+    localStorage.setItem("app:gridLayout", g);
+  }, []);
+
   return (
     <AppearanceContext.Provider
       value={{
@@ -116,11 +127,13 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
         compactMode,
         showWordCount,
         lineNumbers,
+        gridLayout,
         setTheme,
         setFontSize,
         setCompactMode,
         setShowWordCount,
         setLineNumbers,
+        setGridLayout,
       }}
     >
       {children}

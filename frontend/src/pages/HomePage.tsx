@@ -47,12 +47,17 @@ const HomePage: React.FC = () => {
     colorScheme: FOLDER_COLORS[hashIndex(folder.id, FOLDER_COLORS.length)],
   }));
 
-  const { compactMode } = useAppearance();
+  const { compactMode, gridLayout } = useAppearance();
+
+  const gridCols =
+    gridLayout === "compact"
+      ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
+      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
   const emailPrefix = user?.email?.split("@")[0] ?? "there";
   const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
@@ -125,7 +130,7 @@ const HomePage: React.FC = () => {
           </button>
         </p>
       ) : (
-        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
+        <section className={`grid ${gridCols} ${compactMode ? "gap-1.5" : "gap-3"}`}>
           {recentNotes.map((note, i) => (
             <motion.div
               key={note.id}
