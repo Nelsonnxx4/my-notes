@@ -76,7 +76,7 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 md:left-50 lg:left-50 xl:left-65 z-50 bg-white border-b border-gray-200 w-full md:w-[74%] lg:w-[81%] xl:w-[83%]">
       {/* Desktop: two-row header */}
-      <div className="hidden md:flex flex-col px-4 lg:px-10 py-4 gap-3 h-28">
+      <div className="hidden md:flex flex-col px-4 lg:px-10 py-4 gap-3 h-26">
         <div className="flex items-center gap-1.5 text-sm text-gray-400">
           <span>Home</span>
           <span>/</span>
