@@ -89,7 +89,7 @@ const NoteDetailsPage = () => {
 
   return (
     <main
-      className="min-h-screen pt-4 pb-32 md:py-20"
+      className="min-h-screen pt-20 pb-32 md:pt-32 md:pb-20"
       style={{ backgroundColor: bgColor }}
     >
       <EditorHeader isSaving={isSaving} note={note} />

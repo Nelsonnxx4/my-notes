@@ -102,7 +102,7 @@ const FolderPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       {isLoading ? (
         <div className="flex items-center justify-center h-40">
           <Loader2 className="animate-spin text-gray-400" size={24} />

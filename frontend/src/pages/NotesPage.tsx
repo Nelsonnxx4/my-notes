@@ -17,7 +17,9 @@ const NotesPage = () => {
   const navigate = useNavigate();
   const { search, filters } = useNoteFilters();
   const { data: allNotes = [], isLoading } = useNotes(
-    search ? { q: search } : filters.tagId ? { tag: filters.tagId } : undefined,
+    search || filters.tagId !== undefined
+      ? { ...(search && { q: search }), ...(filters.tagId !== undefined && { tag: filters.tagId }) }
+      : undefined,
   );
   const { compactMode, gridLayout } = useAppearance();
 
