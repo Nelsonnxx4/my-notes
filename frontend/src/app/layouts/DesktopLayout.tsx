@@ -9,7 +9,7 @@ const DesktopLayout: React.FC = () => {
       <Header />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 min-h-screen p-5 pt-10 mt-8">
+        <main className="flex-1 min-h-screen">
           <Outlet />
         </main>
       </div>

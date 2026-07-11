@@ -96,7 +96,7 @@ const CreateNotesPage: React.FC = () => {
   const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
   return (
-    <main className="min-h-screen bg-[#F7F7FA] pt-6 pb-32 md:py-20">
+    <main className="min-h-screen bg-[#F7F7FA] pt-20 pb-32 md:pt-32 md:pb-20">
       <header className="flex items-center justify-between p-5">
         <button
           aria-label="Go back"

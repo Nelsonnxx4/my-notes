@@ -110,7 +110,7 @@ const SettingsPage: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-14">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"

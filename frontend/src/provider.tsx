@@ -7,6 +7,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AppearanceProvider } from "@/contexts/AppearanceContext";
+import { NoteFiltersProvider } from "@/contexts/NoteFiltersContext";
 
 declare module "@react-types/shared" {
   interface RouterConfig {
@@ -21,9 +22,11 @@ export function Provider({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AppearanceProvider>
-          <HeroUIProvider navigate={navigate} useHref={useHref}>
-            {children}
-          </HeroUIProvider>
+          <NoteFiltersProvider>
+            <HeroUIProvider navigate={navigate} useHref={useHref}>
+              {children}
+            </HeroUIProvider>
+          </NoteFiltersProvider>
         </AppearanceProvider>
       </AuthProvider>
     </QueryClientProvider>

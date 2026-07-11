@@ -8,13 +8,18 @@ import { Note } from "@/types";
 import { hashColor } from "@/utils/noteColors";
 import { useAppearance } from "@/contexts/AppearanceContext";
 
+const GRID_COLS = {
+  comfortable: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  compact: "grid-cols-1 md:grid-cols-3 lg:grid-cols-4",
+};
+
 const ArchivePage: React.FC = () => {
   const navigate = useNavigate();
   const { data: notes = [], isLoading } = useArchivedNotes();
-  const { compactMode } = useAppearance();
+  const { compactMode, gridLayout } = useAppearance();
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -42,7 +47,7 @@ const ArchivePage: React.FC = () => {
           <p className="text-gray-400 text-sm">No archived notes.</p>
         </div>
       ) : (
-        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
+        <section className={`grid ${GRID_COLS[gridLayout]} ${compactMode ? "gap-1.5" : "gap-3"}`}>
           {notes.map((note: Note, i: number) => (
             <motion.div
               key={note.id}

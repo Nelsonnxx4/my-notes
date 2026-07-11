@@ -63,8 +63,10 @@ app.use((_req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-	console.log(`🚀 Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+	app.listen(PORT, () => {
+		console.log(`🚀 Server running on port ${PORT}`);
+	});
+}
 
 export default app;

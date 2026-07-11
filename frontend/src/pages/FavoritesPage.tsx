@@ -10,10 +10,14 @@ import { useAppearance } from "@/contexts/AppearanceContext";
 const FavoritesPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: notes = [], isLoading } = useFavorites();
-  const { compactMode } = useAppearance();
+  const { compactMode, gridLayout } = useAppearance();
+  const gridCols =
+    gridLayout === "compact"
+      ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
+      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-6 pb-28 md:pt-20">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -46,7 +50,7 @@ const FavoritesPage: React.FC = () => {
           </p>
         </div>
       ) : (
-        <section className={`grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ${compactMode ? "gap-1.5" : "gap-3"}`}>
+        <section className={`grid ${gridCols} ${compactMode ? "gap-1.5" : "gap-3"}`}>
           {notes.map((note, i) => (
             <motion.div
               key={note.id}
