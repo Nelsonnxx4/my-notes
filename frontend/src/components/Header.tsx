@@ -78,7 +78,7 @@ export default function Header() {
       {/* Desktop: two-row header */}
       <div className="hidden md:flex flex-col px-4 lg:px-10 py-4 gap-3 h-26.5">
         <div className="flex items-center gap-1.5 text-sm text-gray-400">
-          <span>Home</span>
+          <span>Not-lify</span>
           <span>/</span>
           <span className="font-medium text-gray-700">{pageLabel}</span>
         </div>
