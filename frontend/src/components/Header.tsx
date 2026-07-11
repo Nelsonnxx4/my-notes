@@ -208,7 +208,6 @@ export default function Header() {
           placeholder=""
           selectedKeys={selectedKeys}
           selectionMode="multiple"
-          selectorIcon={null}
           startContent={
             <FilterIcon
               className={hasActiveFilters ? "text-green-500" : "text-gray-400"}
