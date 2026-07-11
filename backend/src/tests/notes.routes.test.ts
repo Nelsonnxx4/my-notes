@@ -1,22 +1,46 @@
-process.env.JWT_SECRET = "test-secret";
-process.env.NODE_ENV = "test";
-
 import request from "supertest";
 import jwt from "jsonwebtoken";
-import app from "../index";
 
-const token = jwt.sign(
-	{ id: "user-1", email: "test@example.com" },
-	"test-secret",
-	{ expiresIn: "1h" },
-);
+jest.mock("../config/prisma", () => ({
+	__esModule: true,
+	default: {
+		notes: {
+			findMany: jest.fn(),
+			findUnique: jest.fn(),
+			findFirst: jest.fn(),
+			create: jest.fn(),
+			update: jest.fn(),
+			delete: jest.fn(),
+		},
+		user: {
+			findUnique: jest.fn(),
+			create: jest.fn(),
+			update: jest.fn(),
+		},
+	},
+}));
+
+jest.mock("../config/redis", () => ({
+	__esModule: true,
+	default: { isOpen: false },
+}));
 
 jest.mock("../services/notes.service", () => ({
-	getNotesByUser: jest
-		.fn()
-		.mockResolvedValue([
-			{ id: "note-1", title: "Note 1", content: "", tags: [], isPinned: false, isFavorite: false, isArchived: false, userId: "user-1", folderId: null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-		]),
+	getNotesByUser: jest.fn().mockResolvedValue([
+		{
+			id: "note-1",
+			title: "Note 1",
+			content: "",
+			tags: [],
+			isPinned: false,
+			isFavorite: false,
+			isArchived: false,
+			userId: "user-1",
+			folderId: null,
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		},
+	]),
 	createNote: jest.fn().mockResolvedValue({
 		id: "note-2",
 		title: "New Note",
@@ -36,10 +60,13 @@ jest.mock("../services/notes.service", () => ({
 	deleteNote: jest.fn().mockResolvedValue(false),
 }));
 
-jest.mock("../config/redis", () => ({
-	__esModule: true,
-	default: { isOpen: false },
-}));
+import app from "../index";
+
+const token = jwt.sign(
+	{ id: "user-1", email: "test@example.com" },
+	"test-secret",
+	{ expiresIn: "1h" },
+);
 
 test("GET /api/notes returns notes for authenticated user", async () => {
 	const res = await request(app)

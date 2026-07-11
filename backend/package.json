@@ -16,8 +16,8 @@
 		"db:push": "prisma db push",
 		"db:migrate": "prisma migrate dev",
 		"db:studio": "prisma studio",
-		"test": "jest",
-		"test:watch": "jest --watch"
+		"test": "jest --runInBand",
+		"test:watch": "jest --runInBand --watch"
 	},
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.6",
