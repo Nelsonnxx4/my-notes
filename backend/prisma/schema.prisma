@@ -29,6 +29,7 @@ model Notes {
   isPinned   Boolean  @default(false) @map("is_pinned")
   isArchived Boolean  @default(false) @map("is_archived")
   isFavorite Boolean  @default(false) @map("is_favorite")
+  version    Int      @default(1)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
   userId     String   @map("user_id")

@@ -44,6 +44,7 @@ export const getFolderById = async (folderId: string, userId: string) => {
 					content: true,
 					isPinned: true,
 					isFavorite: true,
+					version: true,
 					updatedAt: true,
 					noteTags: {
 						select: { tag: { select: { id: true, name: true } } },

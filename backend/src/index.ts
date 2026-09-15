@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+import path from "path";
 import express from "express";
 import cors, { type CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
@@ -13,10 +14,16 @@ import notesRoutes from "./routes/notes.routes";
 import tagsRoutes from "./routes/tags.routes";
 import foldersRoutes from "./routes/folders.routes";
 import favoritesRoutes from "./routes/favorites.routes";
+import uploadsRoutes from "./routes/uploads.routes";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const uploadRoot = path.resolve(
+	process.env.UPLOAD_DIR ?? path.join(process.cwd(), "uploads"),
+);
+
+app.set("trust proxy", 1);
 
 const DEFAULT_ALLOWED_ORIGINS = [
 	"http://localhost:5173",
@@ -53,6 +60,7 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(uploadRoot));
 
 const globalLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
@@ -81,6 +89,7 @@ app.use("/api/notes", notesRoutes);
 app.use("/api/tags", tagsRoutes);
 app.use("/api/folders", foldersRoutes);
 app.use("/api/favorites", favoritesRoutes);
+app.use("/api/uploads", uploadsRoutes);
 
 app.use((_req, res) => {
 	res.status(404).json({ message: "Route not found" });

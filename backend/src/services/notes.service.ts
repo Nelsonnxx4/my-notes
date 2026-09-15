@@ -1,5 +1,7 @@
 import prisma from "../config/prisma";
+import { ConflictError } from "../errors/httpError";
 import type { CreateNoteDTO, UpdateNoteDTO } from "../types";
+import { sanitizeNoteHtml } from "../utils/sanitizeNoteHtml";
 
 const noteWithTags = {
 	id: true,
@@ -9,6 +11,7 @@ const noteWithTags = {
 	isPinned: true,
 	isArchived: true,
 	isFavorite: true,
+	version: true,
 	folderId: true,
 	createdAt: true,
 	updatedAt: true,
@@ -85,7 +88,7 @@ export const createNote = async (
 		data: {
 			userId,
 			title,
-			content,
+			content: sanitizeNoteHtml(content),
 			...(folder_id && { folderId: folder_id }),
 			...(tag_ids?.length && {
 				noteTags: { create: tag_ids.map((tagId) => ({ tagId })) },
@@ -107,6 +110,7 @@ export const updateNote = async (
 		is_favorite,
 		tag_ids,
 		folder_id,
+		version,
 	}: UpdateNoteDTO,
 ) => {
 	const existing = await prisma.notes.findFirst({
@@ -114,15 +118,23 @@ export const updateNote = async (
 	});
 	if (!existing) return null;
 
+	if (version !== undefined && existing.version !== version) {
+		const currentNote = await getNoteById(noteId);
+		throw new ConflictError("Note has changed since you opened it", {
+			currentNote,
+		});
+	}
+
 	const note = await prisma.notes.update({
 		where: { id: noteId },
 		data: {
 			...(title !== undefined && { title }),
-			...(content !== undefined && { content }),
+			...(content !== undefined && { content: sanitizeNoteHtml(content) }),
 			...(is_pinned !== undefined && { isPinned: is_pinned }),
 			...(is_archived !== undefined && { isArchived: is_archived }),
 			...(is_favorite !== undefined && { isFavorite: is_favorite }),
 			...(folder_id !== undefined && { folderId: folder_id }),
+			version: { increment: 1 },
 			...(tag_ids !== undefined && {
 				noteTags: {
 					deleteMany: {},

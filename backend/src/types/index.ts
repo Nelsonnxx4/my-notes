@@ -13,6 +13,7 @@ export interface UpdateNoteDTO {
 	is_favorite?: boolean;
 	tag_ids?: number[];
 	folder_id?: string | null;
+	version?: number;
 }
 
 export interface CreateFolderDTO {

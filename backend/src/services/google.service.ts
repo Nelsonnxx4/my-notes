@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
+import axios from "axios";
 import prisma from "../config/prisma";
 
 interface GoogleTokenInfo {
@@ -23,30 +24,31 @@ export const googleSignIn = async (accessToken: string) => {
 		throw new Error("Google sign-in is not configured");
 	}
 
-	const tokenInfoRes = await fetch(
-		`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(accessToken)}`,
-	);
-
-	if (!tokenInfoRes.ok) {
+	let tokenInfo: GoogleTokenInfo;
+	try {
+		const { data } = await axios.get<GoogleTokenInfo>(
+			"https://oauth2.googleapis.com/tokeninfo",
+			{ params: { access_token: accessToken } },
+		);
+		tokenInfo = data;
+	} catch {
 		throw new Error("Invalid Google token");
 	}
-
-	const tokenInfo = (await tokenInfoRes.json()) as GoogleTokenInfo;
 
 	if (tokenInfo.aud !== googleClientId) {
 		throw new Error("Invalid Google token audience");
 	}
 
-	const userInfoRes = await fetch(
-		"https://www.googleapis.com/oauth2/v3/userinfo",
-		{ headers: { Authorization: `Bearer ${accessToken}` } },
-	);
-
-	if (!userInfoRes.ok) {
+	let profile: GoogleUserInfo;
+	try {
+		const { data } = await axios.get<GoogleUserInfo>(
+			"https://www.googleapis.com/oauth2/v3/userinfo",
+			{ headers: { Authorization: `Bearer ${accessToken}` } },
+		);
+		profile = data;
+	} catch {
 		throw new Error("Invalid Google token");
 	}
-
-	const profile = (await userInfoRes.json()) as GoogleUserInfo;
 
 	if (!profile.email || !profile.email_verified) {
 		throw new Error("Invalid Google account");

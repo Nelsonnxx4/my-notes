@@ -3,6 +3,7 @@ import {
 	PrismaClientKnownRequestError,
 	PrismaClientValidationError,
 } from "@prisma/client/runtime/client";
+import { HttpError } from "../errors/httpError";
 
 export const errorHandler = (
 	err: Error,
@@ -35,6 +36,14 @@ export const errorHandler = (
 
 	if (err instanceof PrismaClientValidationError) {
 		res.status(400).json({ message: "Invalid data provided" });
+		return;
+	}
+
+	if (err instanceof HttpError) {
+		res.status(err.statusCode).json({
+			message: err.message,
+			...(err.details && { details: err.details }),
+		});
 		return;
 	}
 

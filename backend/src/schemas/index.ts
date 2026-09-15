@@ -30,8 +30,9 @@ export const updateNoteSchema = z
 		is_favorite: z.boolean().optional(),
 		tag_ids: z.array(z.number().int().positive()).optional(),
 		folder_id: z.string().nullable().optional(),
+		version: z.number().int().positive().optional(),
 	})
-	.refine((data) => Object.keys(data).length > 0, {
+	.refine((data) => Object.keys(data).some((key) => key !== "version"), {
 		message: "At least one field must be provided",
 	});
 
