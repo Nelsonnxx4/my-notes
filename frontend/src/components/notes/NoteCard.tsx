@@ -65,16 +65,16 @@ const NoteCard: React.FC<NoteCardProps> = ({
 
   return (
     <article
-      className={`relative flex flex-col min-w-60 h-[22.5rem] rounded-2xl border border-gray-300 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-default ${color}`}
+      className={`relative flex flex-col min-w-60 h-[22.5rem] rounded-2xl border border-gray-300 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-default dark:border-gray-800 dark:shadow-black/20 ${color}`}
     >
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700">
+        <h3 className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-gray-950/75 dark:text-gray-100">
           {tags && tags.length > 0 ? `#${tags[0].name}` : "Note"}
         </h3>
 
-        <div ref={menuRef} className="relative flex items-center gap-1 text-gray-700">
+        <div ref={menuRef} className="relative flex items-center gap-1 text-gray-700 dark:text-gray-100">
           {isPinned && (
-            <Pin className="text-slate-600" size={14} strokeWidth={1.5} />
+            <Pin className="text-slate-600 dark:text-gray-200" size={14} strokeWidth={1.5} />
           )}
           {isFavorite && (
             <Star className="text-yellow-500" size={14} strokeWidth={1.5} />
@@ -93,9 +93,9 @@ const NoteCard: React.FC<NoteCardProps> = ({
           </button>
 
           {menuOpen && (
-            <div className="absolute top-8 right-0 z-30 min-w-36 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+            <div className="absolute top-8 right-0 z-30 min-w-36 rounded-xl border border-gray-100 bg-white py-1 shadow-lg dark:border-gray-800 dark:bg-gray-950">
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition dark:text-gray-200 dark:hover:bg-gray-900"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -108,7 +108,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               </button>
 
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition dark:text-gray-200 dark:hover:bg-gray-900"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -130,7 +130,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               </button>
 
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition dark:text-gray-200 dark:hover:bg-gray-900"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -151,10 +151,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 )}
               </button>
 
-              <div className="my-1 border-t border-gray-100" />
+              <div className="my-1 border-t border-gray-100 dark:border-gray-800" />
 
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition dark:hover:bg-red-950/30"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -170,7 +170,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
         </div>
       </div>
 
-      <div className="relative flex flex-col bg-white rounded-2xl p-4 flex-1 overflow-hidden">
+      <div className="relative flex flex-col bg-white rounded-2xl p-4 flex-1 overflow-hidden dark:bg-gray-950">
         {previewImage && (
           <img
             alt=""
@@ -179,21 +179,21 @@ const NoteCard: React.FC<NoteCardProps> = ({
             src={previewImage}
           />
         )}
-        <h3 className="mb-3 text-lg font-semibold text-slate-900 line-clamp-2">
+        <h3 className="mb-3 text-lg font-semibold text-slate-900 line-clamp-2 dark:text-gray-100">
           {title}
         </h3>
         {previewText && (
           <p
-            className={`text-sm leading-6 text-slate-700 ${
+            className={`text-sm leading-6 text-slate-700 dark:text-gray-300 ${
               previewImage ? "line-clamp-3" : "line-clamp-5"
             }`}
           >
             {previewText}
           </p>
         )}
-        <div className="mt-5 absolute bottom-2 flex items-baseline justify-between w-[calc(100%-2rem)] text-xs text-slate-600">
+        <div className="mt-5 absolute bottom-2 flex items-baseline justify-between w-[calc(100%-2rem)] text-xs text-slate-600 dark:text-gray-400">
           <span>{updatedAt ? timeAgo(updatedAt) : ""}</span>
-          <span className="rounded-full bg-white/80 px-3 py-1">Updated</span>
+          <span className="rounded-full bg-white/80 px-3 py-1 dark:bg-gray-900 dark:text-gray-300">Updated</span>
         </div>
       </div>
     </article>

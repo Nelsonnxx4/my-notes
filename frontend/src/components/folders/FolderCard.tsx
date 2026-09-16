@@ -26,7 +26,7 @@ const FolderCard: React.FC<FolderCardProps> = ({
         group flex flex-col justify-between gap-3
         min-w-35 min-h-35 md:min-w-50 md:min-h-50 p-4 rounded-md
         border cursor-pointer
-        transition-all duration-150 hover:shadow-sm hover:brightness-95
+        transition-all duration-150 hover:shadow-sm hover:brightness-95 dark:brightness-90 dark:hover:brightness-100
         ${bg} ${border}
       `}
     >
@@ -40,7 +40,7 @@ const FolderCard: React.FC<FolderCardProps> = ({
         <span className={`font-semibold text-sm leading-tight ${text}`}>
           {title}
         </span>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-gray-400 dark:text-gray-600">
           {count} {count === 1 ? "note" : "notes"}
         </span>
       </div>

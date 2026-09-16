@@ -19,7 +19,7 @@ const ArchivePage: React.FC = () => {
   const { compactMode, gridLayout } = useAppearance();
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -28,9 +28,9 @@ const ArchivePage: React.FC = () => {
       >
         <div className="flex items-center gap-2 mb-1">
           <Archive className="h-5 w-5 text-green-600" strokeWidth={1.5} />
-          <h1 className="text-2xl font-bold text-gray-800">Archive</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Archive</h1>
         </div>
-        <p className="text-gray-500 text-sm">Notes you&apos;ve archived.</p>
+        <p className="text-gray-500 text-sm dark:text-gray-400">Notes you&apos;ve archived.</p>
       </motion.div>
 
       {isLoading ? (
@@ -43,8 +43,8 @@ const ArchivePage: React.FC = () => {
         </div>
       ) : notes.length === 0 ? (
         <div className="flex flex-col items-center py-24 text-center">
-          <Archive className="text-gray-200 mb-4" size={48} strokeWidth={1} />
-          <p className="text-gray-400 text-sm">No archived notes.</p>
+          <Archive className="text-gray-200 mb-4 dark:text-gray-800" size={48} strokeWidth={1} />
+          <p className="text-gray-400 text-sm dark:text-gray-500">No archived notes.</p>
         </div>
       ) : (
         <section className={`grid ${GRID_COLS[gridLayout]} ${compactMode ? "gap-1.5" : "gap-3"}`}>

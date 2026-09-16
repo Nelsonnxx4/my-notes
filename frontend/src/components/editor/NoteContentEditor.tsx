@@ -41,7 +41,7 @@ const extensions = [
 ];
 
 const editorClassName =
-  "not-lify-editor w-full min-h-[60vh] bg-transparent leading-8 outline-none text-gray-800";
+  "not-lify-editor w-full min-h-[60vh] bg-transparent leading-8 outline-none text-gray-800 dark:text-gray-100";
 
 const NoteContentEditor: React.FC<Props> = ({
   value,
@@ -101,6 +101,10 @@ const NoteContentEditor: React.FC<Props> = ({
           margin: 1.5rem 0 0.75rem;
         }
 
+        .dark .not-lify-editor h1 {
+          color: #f9fafb;
+        }
+
         .not-lify-editor h2 {
           color: #1f2937;
           font-size: 1.5rem;
@@ -109,12 +113,20 @@ const NoteContentEditor: React.FC<Props> = ({
           margin: 1.25rem 0 0.625rem;
         }
 
+        .dark .not-lify-editor h2 {
+          color: #f3f4f6;
+        }
+
         .not-lify-editor h3 {
           color: #374151;
           font-size: 1.25rem;
           font-weight: 700;
           line-height: 1.3;
           margin: 1rem 0 0.5rem;
+        }
+
+        .dark .not-lify-editor h3 {
+          color: #e5e7eb;
         }
 
         .not-lify-editor p {
@@ -137,6 +149,11 @@ const NoteContentEditor: React.FC<Props> = ({
           padding-left: 1rem;
         }
 
+        .dark .not-lify-editor blockquote {
+          border-left-color: #374151;
+          color: #d1d5db;
+        }
+
         .not-lify-editor pre {
           background: #111827;
           border-radius: 0.75rem;
@@ -149,6 +166,11 @@ const NoteContentEditor: React.FC<Props> = ({
           background: #f3f4f6;
           border-radius: 0.375rem;
           padding: 0.125rem 0.25rem;
+        }
+
+        .dark .not-lify-editor code {
+          background: #1f2937;
+          color: #f9fafb;
         }
 
         .not-lify-editor pre code {

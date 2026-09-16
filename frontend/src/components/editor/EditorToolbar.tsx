@@ -143,7 +143,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
           onMouseDown={() => setLinkModalOpen(false)}
         >
           <form
-            className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl"
+            className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl dark:border-gray-800 dark:bg-gray-950"
             onMouseDown={(event) => event.stopPropagation()}
             onSubmit={(event) => {
               event.preventDefault();
@@ -151,14 +151,14 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
             }}
           >
             <label
-              className="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-400"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500"
               htmlFor="editor-link-url"
             >
               Link URL
             </label>
             <input
               autoFocus
-              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition focus:border-green-400 focus:ring-2 focus:ring-green-100"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition focus:border-green-400 focus:ring-2 focus:ring-green-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:focus:ring-green-950"
               id="editor-link-url"
               placeholder="https://example.com"
               type="url"
@@ -167,7 +167,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
             />
             <div className="mt-4 flex items-center justify-between gap-2">
               <button
-                className="rounded-lg px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 disabled:opacity-40"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 disabled:opacity-40 dark:hover:bg-red-950/30"
                 disabled={!editor?.isActive("link")}
                 type="button"
                 onClick={removeLink}
@@ -176,7 +176,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
               </button>
               <div className="flex gap-2">
                 <button
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
                   type="button"
                   onClick={() => setLinkModalOpen(false)}
                 >
@@ -194,7 +194,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
         </div>
       )}
 
-      <div className="fixed bottom-20 md:bottom-8 left-1/2 z-50 flex max-w-[calc(100vw-1rem)] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-full bg-white px-3 py-2 shadow-xl border border-gray-100">
+      <div className="fixed bottom-20 md:bottom-8 left-1/2 z-50 flex max-w-[calc(100vw-1rem)] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-full bg-white px-3 py-2 shadow-xl border border-gray-100 dark:border-gray-800 dark:bg-gray-950 dark:shadow-black/40">
         {tools.map(({ label, icon: Icon, active, run }) => {
           const isActive = active();
 
@@ -205,8 +205,8 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
               aria-pressed={isActive ? "true" : "false"}
               className={`shrink-0 p-2 rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                 isActive
-                  ? "bg-gray-200/80 text-gray-900"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  ? "bg-gray-200/80 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-900 dark:hover:text-white"
               }`}
               disabled={disabled}
               type="button"
@@ -217,15 +217,15 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
           );
         })}
 
-        <div className="mx-1 h-5 w-px shrink-0 bg-gray-200" />
+        <div className="mx-1 h-5 w-px shrink-0 bg-gray-200 dark:bg-gray-800" />
 
         <button
           aria-label="Add link"
           aria-pressed={editor?.isActive("link") ? "true" : "false"}
           className={`shrink-0 p-2 rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
             editor?.isActive("link")
-              ? "bg-gray-200/80 text-gray-900"
-              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              ? "bg-gray-200/80 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-900 dark:hover:text-white"
           }`}
           disabled={disabled}
           type="button"
@@ -236,7 +236,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
         <button
           aria-label="Upload image"
-          className="shrink-0 p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="shrink-0 p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:text-gray-300 dark:hover:bg-gray-900 dark:hover:text-white"
           disabled={disabled || isUploadingImage}
           type="button"
           onClick={onInsertImage}

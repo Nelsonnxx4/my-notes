@@ -37,7 +37,7 @@ const AppearanceSettings: React.FC = () => {
   return (
     <div className="w-full  space-y-6">
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-3">Theme</h3>
+        <h3 className="text-base font-semibold text-gray-800 mb-3 dark:text-gray-100">Theme</h3>
         <div className="grid grid-cols-3 gap-2">
           {themes.map(({ id, label, icon: Icon }) => (
             <button
@@ -45,8 +45,8 @@ const AppearanceSettings: React.FC = () => {
               className={`flex flex-col items-center gap-2 py-3 px-2 rounded-xl border text-sm font-medium transition-all
                 ${
                   theme === id
-                    ? "border-green-400 bg-green-50 text-green-700"
-                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                    ? "border-green-400 bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300"
+                    : "border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-900"
                 }`}
               type="button"
               onClick={() => setTheme(id)}
@@ -61,10 +61,10 @@ const AppearanceSettings: React.FC = () => {
         </div>
       </div>
 
-      <hr className="border-gray-100" />
+      <hr className="border-gray-100 dark:border-gray-800" />
 
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-3">
+        <h3 className="text-base font-semibold text-gray-800 mb-3 dark:text-gray-100">
           Font size
         </h3>
         <div className="flex gap-2">
@@ -74,8 +74,8 @@ const AppearanceSettings: React.FC = () => {
               className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-all
                 ${
                   fontSize === id
-                    ? "border-green-400 bg-green-50 text-green-700"
-                    : "border-gray-200 text-gray-500 hover:bg-gray-50"
+                    ? "border-green-400 bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300"
+                    : "border-gray-200 text-gray-500 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-900"
                 }`}
               type="button"
               onClick={() => setFontSize(id)}
@@ -84,16 +84,16 @@ const AppearanceSettings: React.FC = () => {
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs text-gray-400 mt-2 dark:text-gray-500">
           Applies to the note editor.
         </p>
       </div>
 
-      <hr className="border-gray-100" />
+      <hr className="border-gray-100 dark:border-gray-800" />
 
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-1">Editor</h3>
-        <div className="divide-y divide-gray-100">
+        <h3 className="text-base font-semibold text-gray-800 mb-1 dark:text-gray-100">Editor</h3>
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
           <SettingField
             description="Reduce spacing between note cards"
             label="Compact mode"

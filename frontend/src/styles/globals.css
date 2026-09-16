@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --dark-app-bg: #17181a;
+  --dark-surface-bg: #252629;
+  --dark-surface-hover: #2d2e31;
+  --dark-editor-bg: #101113;
+}
+
 @theme {
   /* Note card colors */
   --color-note-yellow: #fdf1d1;
@@ -32,6 +39,33 @@ body {
 }
 
 html.dark body {
-  background-color: #030712;
+  background-color: var(--dark-app-bg);
   color: #f9fafb;
+}
+
+.dark .dark\:bg-gray-950 {
+  background-color: var(--dark-app-bg);
+}
+
+.dark .dark\:bg-gray-950\/75 {
+  background-color: rgb(23 24 26 / 0.75);
+}
+
+.dark .dark\:bg-gray-900,
+.dark .dark\:bg-gray-800 {
+  background-color: var(--dark-surface-bg);
+}
+
+.dark .dark\:hover\:bg-gray-900:hover,
+.dark .dark\:hover\:bg-gray-800:hover {
+  background-color: var(--dark-surface-hover);
+}
+
+.dark .dark\:focus-within\:bg-gray-900:focus-within,
+.dark .dark\:data-\[open\=true\]\:bg-gray-900[data-open="true"] {
+  background-color: var(--dark-surface-bg);
+}
+
+.dark .dark\:data-\[hover\=true\]\:bg-gray-900[data-hover="true"] {
+  background-color: var(--dark-surface-hover);
 }

@@ -107,7 +107,7 @@ const TagsPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -116,9 +116,9 @@ const TagsPage: React.FC = () => {
       >
         <div className="flex items-center gap-2 mb-1">
           <Tag className="h-5 w-5 text-green-600" strokeWidth={1.5} />
-          <h1 className="text-2xl font-bold text-gray-800">Tags</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Tags</h1>
         </div>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 text-sm dark:text-gray-400">
           Organise your notes with tags. Click a tag to filter notes by it.
         </p>
       </motion.div>
@@ -126,11 +126,11 @@ const TagsPage: React.FC = () => {
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500"
             strokeWidth={1.5}
           />
           <Input
-            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm"
+            className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
             placeholder="Search tags…"
             type="text"
             value={search}
@@ -158,10 +158,10 @@ const TagsPage: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50 dark:border-green-900/60 dark:bg-green-950/30">
               <input
                 ref={inputRef}
-                className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+                className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 transition dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                 maxLength={30}
                 placeholder="Tag name…"
                 type="text"
@@ -174,7 +174,7 @@ const TagsPage: React.FC = () => {
                   <button
                     key={i}
                     aria-label="color button"
-                    className={`h-6 w-6 rounded-full ${c.dot} transition-all ${selectedColorIdx === i ? "ring-2 ring-offset-1 ring-gray-500 scale-110" : "opacity-60 hover:opacity-100"}`}
+                    className={`h-6 w-6 rounded-full ${c.dot} transition-all ${selectedColorIdx === i ? "ring-2 ring-offset-1 ring-gray-500 scale-110 dark:ring-offset-gray-950" : "opacity-60 hover:opacity-100"}`}
                     onClick={() => setSelectedColorIdx(i)}
                   />
                 ))}
@@ -189,7 +189,7 @@ const TagsPage: React.FC = () => {
                   Add
                 </button>
                 <button
-                  className="px-3 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 text-sm transition"
+                  className="px-3 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 text-sm transition dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900"
                   onClick={() => {
                     setShowInput(false);
                     setNewTagName("");
@@ -219,8 +219,8 @@ const TagsPage: React.FC = () => {
           className="flex flex-col items-center justify-center py-20 text-center"
           initial={{ opacity: 0 }}
         >
-          <Tag className="h-10 w-10 text-gray-200 mb-3" strokeWidth={1} />
-          <p className="text-gray-400 text-sm">
+          <Tag className="h-10 w-10 text-gray-200 mb-3 dark:text-gray-800" strokeWidth={1} />
+          <p className="text-gray-400 text-sm dark:text-gray-500">
             {search
               ? `No tags matching "${search}"`
               : "No tags yet. Create your first one!"}
@@ -243,7 +243,7 @@ const TagsPage: React.FC = () => {
                   key={tag.id}
                   layout
                   animate={{ opacity: 1, scale: 1 }}
-                  className={`relative group flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all select-none ${c.bg} ${c.border} ${isActive ? "ring-2 ring-offset-1 ring-green-400 shadow-md" : "hover:shadow-sm"}`}
+                  className={`relative group flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all select-none dark:brightness-90 ${c.bg} ${c.border} ${isActive ? "ring-2 ring-offset-1 ring-green-400 shadow-md dark:ring-offset-gray-950" : "hover:shadow-sm"}`}
                   exit={{ opacity: 0, scale: 0.88 }}
                   initial={{ opacity: 0, scale: 0.92 }}
                   transition={{ duration: 0.2 }}
@@ -251,7 +251,7 @@ const TagsPage: React.FC = () => {
                 >
                   <button
                     aria-label="delete tag"
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition h-5 w-5 flex items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-500 hover:text-red-500"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition h-5 w-5 flex items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-500 hover:text-red-500 dark:bg-gray-950/70 dark:hover:bg-gray-950 dark:text-gray-300"
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteTag(tag.id);
@@ -265,7 +265,7 @@ const TagsPage: React.FC = () => {
                   >
                     {tag.name}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-400 dark:text-gray-600">
                     {tag.noteCount ?? 0}{" "}
                     {(tag.noteCount ?? 0) === 1 ? "note" : "notes"}
                   </span>

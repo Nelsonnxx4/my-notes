@@ -7,7 +7,7 @@ const NotFoundPage = () => {
   const { pathname } = useLocation();
 
   return (
-    <main className="min-h-screen bg-[#F7F7FA] flex flex-col items-center justify-center px-6 text-center">
+    <main className="min-h-screen bg-[#F7F7FA] flex flex-col items-center justify-center px-6 text-center dark:bg-gray-950">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center"
@@ -15,11 +15,11 @@ const NotFoundPage = () => {
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
         <div className="relative mb-6">
-          <span className="text-[120px] font-black leading-none text-gray-100 select-none">
+          <span className="text-[120px] font-black leading-none text-gray-100 select-none dark:text-gray-900">
             404
           </span>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-16 w-16 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center shadow-sm">
+            <div className="h-16 w-16 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center shadow-sm dark:border-green-900/60 dark:bg-green-950/40">
               <FileQuestion
                 className="text-green-400"
                 size={28}
@@ -29,11 +29,11 @@ const NotFoundPage = () => {
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2 dark:text-gray-100">
           Page not found
         </h1>
-        <p className="text-gray-400 text-sm max-w-xs leading-relaxed mb-8">
-          <code className="text-xs bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 font-mono">
+        <p className="text-gray-400 text-sm max-w-xs leading-relaxed mb-8 dark:text-gray-500">
+          <code className="text-xs bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 font-mono dark:bg-gray-900 dark:text-gray-300">
             {pathname}
           </code>{" "}
           doesn't exist. It may have been moved or the link is wrong.
@@ -41,7 +41,7 @@ const NotFoundPage = () => {
 
         <div className="flex items-center gap-3">
           <button
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm cursor-pointer dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft size={15} strokeWidth={2} />

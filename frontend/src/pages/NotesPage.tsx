@@ -26,11 +26,11 @@ const NotesPage = () => {
   const notes = filters.pinned ? allNotes.filter((n) => n.isPinned) : allNotes;
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">All Notes</h1>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">All Notes</h1>
+          <p className="text-sm text-gray-400 mt-0.5 dark:text-gray-500">
             {notes.length} note{notes.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -57,11 +57,11 @@ const NotesPage = () => {
       {!isLoading && notes.length === 0 && (
         <div className="flex flex-col items-center py-24 text-center">
           <NotebookText
-            className="text-gray-200 mb-4"
+            className="text-gray-200 mb-4 dark:text-gray-800"
             size={48}
             strokeWidth={1}
           />
-          <p className="text-gray-500 font-medium">
+          <p className="text-gray-500 font-medium dark:text-gray-400">
             {search
               ? `No notes match "${search}"`
               : filters.pinned

@@ -191,11 +191,11 @@ const CreateNotesPage: React.FC = () => {
   const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id));
 
   return (
-    <main className="min-h-screen bg-[#F7F7FA] pt-20 pb-32 md:pt-32 md:pb-20">
+    <main className="min-h-screen bg-[#F7F7FA] pt-20 pb-32 md:pt-32 md:pb-20 dark:bg-[#101113]">
       <header className="flex items-center justify-between p-5">
         <button
           aria-label="Go back"
-          className="rounded-full bg-white p-3 shadow-sm hover:shadow-md transition"
+          className="rounded-full bg-white p-3 shadow-sm hover:shadow-md transition dark:bg-gray-900 dark:text-gray-100"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft size={20} />
@@ -213,10 +213,10 @@ const CreateNotesPage: React.FC = () => {
 
       <div className="px-5 space-y-4">
         {draftSavedAt && (
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-green-100 bg-green-50 px-3 py-2 text-xs text-green-700">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-green-100 bg-green-50 px-3 py-2 text-xs text-green-700 dark:border-green-900/60 dark:bg-green-950/30 dark:text-green-300">
             <span>Draft saved locally.</span>
             <button
-              className="flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-green-800 hover:bg-green-100"
+              className="flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-green-800 hover:bg-green-100 dark:text-green-200 dark:hover:bg-green-900/40"
               type="button"
               onClick={clearDraft}
             >
@@ -227,7 +227,7 @@ const CreateNotesPage: React.FC = () => {
         )}
 
         {error && (
-          <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
             {error}
           </p>
         )}
@@ -235,7 +235,7 @@ const CreateNotesPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <div ref={folderPickerRef} className="relative">
             <button
-              className="flex items-center gap-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:border-gray-400 transition"
+              className="flex items-center gap-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:border-gray-400 transition dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
               type="button"
               onClick={() => {
                 setShowFolderPicker((v) => !v);
@@ -247,9 +247,9 @@ const CreateNotesPage: React.FC = () => {
             </button>
 
             {showFolderPicker && (
-              <div className="absolute top-10 left-0 z-20 bg-white border border-gray-200 rounded-xl shadow-lg min-w-48 py-1">
+              <div className="absolute top-10 left-0 z-20 bg-white border border-gray-200 rounded-xl shadow-lg min-w-48 py-1 dark:border-gray-800 dark:bg-gray-950">
                 <button
-                  className="w-full text-left px-3 py-2 text-sm text-gray-400 hover:bg-gray-50"
+                  className="w-full text-left px-3 py-2 text-sm text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900"
                   type="button"
                   onClick={() => {
                     setSelectedFolderId(null);
@@ -262,10 +262,10 @@ const CreateNotesPage: React.FC = () => {
                   {folders.map((f) => (
                     <button
                       key={f.id}
-                      className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-900 ${
                         selectedFolderId === f.id
                           ? "text-green-600 font-medium"
-                          : "text-gray-700"
+                          : "text-gray-700 dark:text-gray-200"
                       }`}
                       type="button"
                       onClick={() => {
@@ -277,15 +277,15 @@ const CreateNotesPage: React.FC = () => {
                     </button>
                   ))}
                   {folders.length === 0 && (
-                    <p className="px-3 py-2 text-sm text-gray-400">
+                    <p className="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">
                       No folders yet
                     </p>
                   )}
                 </div>
-                <div className="border-t border-gray-100 mt-1 pt-1 px-2 pb-1">
+                <div className="border-t border-gray-100 mt-1 pt-1 px-2 pb-1 dark:border-gray-800">
                   <div className="flex items-center gap-1">
                     <input
-                      className="flex-1 rounded-md border border-gray-200 px-2 py-1 text-xs outline-none focus:border-gray-400"
+                      className="flex-1 rounded-md border border-gray-200 px-2 py-1 text-xs outline-none focus:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                       disabled={isCreatingFolder}
                       maxLength={100}
                       placeholder="New folder name"
@@ -339,7 +339,7 @@ const CreateNotesPage: React.FC = () => {
 
           <div ref={tagPickerRef} className="relative">
             <button
-              className="flex items-center gap-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:border-gray-400 transition"
+              className="flex items-center gap-1.5 text-sm text-gray-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:border-gray-400 transition dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
               type="button"
               onClick={() => {
                 setShowTagPicker((v) => !v);
@@ -351,15 +351,15 @@ const CreateNotesPage: React.FC = () => {
             </button>
 
             {showTagPicker && (
-              <div className="absolute top-10 left-0 z-20 bg-white border border-gray-200 rounded-xl shadow-lg min-w-48 py-1">
+              <div className="absolute top-10 left-0 z-20 bg-white border border-gray-200 rounded-xl shadow-lg min-w-48 py-1 dark:border-gray-800 dark:bg-gray-950">
                 <div className="max-h-40 overflow-y-auto">
                   {tags.map((t) => (
                     <button
                       key={t.id}
-                      className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-gray-50 ${
+                      className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-900 ${
                         selectedTagIds.includes(t.id)
                           ? "text-green-600 font-medium"
-                          : "text-gray-700"
+                          : "text-gray-700 dark:text-gray-200"
                       }`}
                       type="button"
                       onClick={() => toggleTag(t.id)}
@@ -371,15 +371,15 @@ const CreateNotesPage: React.FC = () => {
                     </button>
                   ))}
                   {tags.length === 0 && (
-                    <p className="px-3 py-2 text-sm text-gray-400">
+                    <p className="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">
                       No tags yet
                     </p>
                   )}
                 </div>
-                <div className="border-t border-gray-100 mt-1 pt-1 px-2 pb-1">
+                <div className="border-t border-gray-100 mt-1 pt-1 px-2 pb-1 dark:border-gray-800">
                   <div className="flex items-center gap-1">
                     <input
-                      className="flex-1 rounded-md border border-gray-200 px-2 py-1 text-xs outline-none focus:border-gray-400"
+                      className="flex-1 rounded-md border border-gray-200 px-2 py-1 text-xs outline-none focus:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                       disabled={isCreatingTag}
                       maxLength={50}
                       placeholder="New tag name"
@@ -432,7 +432,7 @@ const CreateNotesPage: React.FC = () => {
           {selectedTags.map((t) => (
             <span
               key={t.id}
-              className="flex items-center gap-1 text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1"
+              className="flex items-center gap-1 text-xs bg-green-50 text-green-700 border border-green-200 rounded-full px-2.5 py-1 dark:border-green-900/60 dark:bg-green-950/30 dark:text-green-300"
             >
               {t.name}
               <button
@@ -447,7 +447,7 @@ const CreateNotesPage: React.FC = () => {
         </div>
 
         <textarea
-          className="w-full resize-none bg-transparent text-4xl font-bold outline-none leading-tight placeholder:text-gray-300"
+          className="w-full resize-none bg-transparent text-4xl font-bold outline-none leading-tight text-gray-900 placeholder:text-gray-300 dark:text-gray-100 dark:placeholder:text-gray-700"
           placeholder="Untitled Note"
           rows={2}
           value={title}
@@ -464,7 +464,7 @@ const CreateNotesPage: React.FC = () => {
         />
 
         {(showWordCount || lineNumbers) && (
-          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400">
+          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500">
             {showWordCount && (
               <>
                 <span>{stats.words} {stats.words === 1 ? "word" : "words"}</span>

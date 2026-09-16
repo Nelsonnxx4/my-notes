@@ -96,22 +96,22 @@ const DataSettings = () => {
   return (
     <div className="w-full  space-y-6">
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-3">Export</h3>
-        <p className="text-xs text-gray-400 mb-3">
+        <h3 className="text-base font-semibold text-gray-800 mb-3 dark:text-gray-100">Export</h3>
+        <p className="text-xs text-gray-400 mb-3 dark:text-gray-500">
           Download a copy of all your notes and folders.
         </p>
         <div className="space-y-2">
           {exportOptions.map(({ fmt, desc, fn }) => (
             <button
               key={fmt}
-              className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition group cursor-pointer disabled:opacity-50"
+              className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition group cursor-pointer disabled:opacity-50 dark:border-gray-800 dark:hover:bg-gray-900"
               disabled={isLoading || notes.length === 0}
               type="button"
               onClick={fn}
             >
               <div className="text-left">
-                <p className="text-sm font-medium text-gray-700">{fmt}</p>
-                <p className="text-xs text-gray-400">{desc}</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{fmt}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{desc}</p>
               </div>
               <Download
                 className="text-gray-300 group-hover:text-green-400 transition"
@@ -123,19 +123,19 @@ const DataSettings = () => {
         </div>
       </div>
 
-      <hr className="border-gray-100" />
+      <hr className="border-gray-100 dark:border-gray-800" />
 
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-1">Storage</h3>
+        <h3 className="text-base font-semibold text-gray-800 mb-1 dark:text-gray-100">Storage</h3>
         <div className="mb-3">
-          <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+          <div className="flex justify-between text-xs text-gray-500 mb-1.5 dark:text-gray-400">
             <span>
               {isLoading ? "…" : notes.length}{" "}
               {notes.length === 1 ? "note" : "notes"}
             </span>
             <span>Unlimited</span>
           </div>
-          <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+          <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden dark:bg-gray-900">
             <div
               className="h-full rounded-full bg-green-400 transition-all"
               style={{ width: `${Math.min((notes.length / 200) * 100, 100)}%` }}
@@ -144,19 +144,19 @@ const DataSettings = () => {
         </div>
       </div>
 
-      <hr className="border-gray-100" />
+      <hr className="border-gray-100 dark:border-gray-800" />
 
       <div>
         <h3 className="text-base font-semibold text-red-500 mb-1">
           Danger zone
         </h3>
-        <p className="text-xs text-gray-400 mb-3">
+        <p className="text-xs text-gray-400 mb-3 dark:text-gray-500">
           These actions are permanent and cannot be undone.
         </p>
 
         {!showConfirm ? (
           <button
-            className="flex items-center gap-2 w-full px-4 py-3 rounded-xl border border-red-200 text-red-500 text-sm font-medium hover:bg-red-50 transition cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 w-full px-4 py-3 rounded-xl border border-red-200 text-red-500 text-sm font-medium hover:bg-red-50 transition cursor-pointer disabled:opacity-50 dark:border-red-900/60 dark:hover:bg-red-950/30"
             disabled={notes.length === 0}
             type="button"
             onClick={() => setShowConfirm(true)}
@@ -165,14 +165,14 @@ const DataSettings = () => {
             Delete all notes
           </button>
         ) : (
-          <div className="p-4 rounded-xl border border-red-200 bg-red-50 space-y-3">
-            <p className="text-sm text-red-600 font-medium">
+          <div className="p-4 rounded-xl border border-red-200 bg-red-50 space-y-3 dark:border-red-900/60 dark:bg-red-950/30">
+            <p className="text-sm text-red-600 font-medium dark:text-red-300">
               Are you sure? This will permanently delete all {notes.length}{" "}
               notes.
             </p>
             <div className="flex gap-2">
               <button
-                className="flex-1 py-2 rounded-lg border border-gray-200 bg-white text-gray-600 text-sm hover:bg-gray-50 transition cursor-pointer"
+                className="flex-1 py-2 rounded-lg border border-gray-200 bg-white text-gray-600 text-sm hover:bg-gray-50 transition cursor-pointer dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-gray-900"
                 disabled={deleting}
                 type="button"
                 onClick={() => setShowConfirm(false)}

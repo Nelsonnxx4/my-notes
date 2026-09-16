@@ -21,7 +21,7 @@ const SectionHeader: React.FC<{ label: string; to: string }> = ({
   to,
 }) => (
   <div className="flex items-center justify-between mb-4">
-    <h2 className="text-gray-700 font-semibold text-lg">{label}</h2>
+    <h2 className="text-gray-700 font-semibold text-lg dark:text-gray-100">{label}</h2>
     <Link
       className="flex items-center gap-1 text-green-500 text-sm font-medium hover:underline"
       to={to}
@@ -60,24 +60,24 @@ const HomePage: React.FC = () => {
   const displayName = customDisplayName || user?.name?.trim() || "there";
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-10"
         initial={{ opacity: 0, y: -8 }}
         transition={{ duration: 0.4 }}
       >
-        <p className="text-gray-400 text-sm font-medium uppercase tracking-widest mb-1">
+        <p className="text-gray-400 text-sm font-medium uppercase tracking-widest mb-1 dark:text-gray-500">
           {now.toLocaleDateString("en-US", {
             weekday: "long",
             month: "long",
             day: "numeric",
           })}
         </p>
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
           {greeting}, {displayName} 👋
         </h1>
-        <p className="text-gray-500 mt-1 text-sm">
+        <p className="text-gray-500 mt-1 text-sm dark:text-gray-400">
           You have{" "}
           <span className="text-green-500 font-semibold">
             {isLoading ? "…" : notes.length} notes

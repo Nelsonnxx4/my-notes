@@ -113,8 +113,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
   };
 
   return (
-    <main className="grid min-h-screen md:grid-cols-2">
-      <section className="flex flex-col items-center justify-center px-8 py-12 bg-white">
+    <main className="grid min-h-screen md:grid-cols-2 dark:bg-gray-950">
+      <section className="flex flex-col items-center justify-center px-8 py-12 bg-white dark:bg-gray-950">
         <div className="w-full max-w-sm mb-4">
           <div className="flex flex-col items-start justify-between">
             <video
@@ -124,29 +124,29 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             >
               <track default kind="captions" src="/icons8-bee.vtt" />
             </video>
-            <h1 className="text-xl font-semibold text-gray-600">Not-lify</h1>
+            <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-200">Not-lify</h1>
           </div>
         </div>
 
         <div className="flex flex-col items-start justify-start w-full max-w-sm">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1 dark:text-gray-100">
             {isSignUp ? "Create your account" : "Welcome back"}
           </h1>
-          <p className="text-sm text-gray-500 mb-8">
+          <p className="text-sm text-gray-500 mb-8 dark:text-gray-400">
             {isSignUp
               ? "Sign up and start taking notes — free forever."
               : "Sign in to continue to your notes."}
           </p>
 
           {searchParams.get("error") && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-5">
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-5 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
               <AlertCircle className="shrink-0" size={16} />
               Google sign-in failed. Please try again or use email.
             </div>
           )}
 
           <Button
-            className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl bg-white text-gray-700 text-sm font-medium py-2.5 transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl bg-white text-gray-700 text-sm font-medium py-2.5 transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm cursor-pointer dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
             isDisabled={isLoading}
             onPress={startGoogleLogin}
           >
@@ -163,7 +163,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           {formError && (
             <div
               aria-live="polite"
-              className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4 w-full"
+              className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4 w-full dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300"
             >
               <AlertCircle className="mt-0.5 shrink-0" size={16} />
               <span>{formError}</span>
@@ -177,7 +177,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
               </label>
               <input
                 required
-                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2"
+                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                 id="email"
                 placeholder="you@example.com"
                 type="email"
@@ -195,7 +195,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
               </label>
               <input
                 required
-                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2 pr-11"
+                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2 pr-11 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                 id="password"
                 placeholder={
                   isSignUp ? "At least 6 characters" : "Your password"
@@ -220,7 +220,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             {!isSignUp && (
               <div className="text-right mt-1.5">
                 <a
-                  className="text-xs text-gray-500 hover:text-gray-800 hover:underline transition-colors"
+                  className="text-xs text-gray-500 hover:text-gray-800 hover:underline transition-colors dark:text-gray-400 dark:hover:text-gray-100"
                   href="mailto:support@not-lify.com?subject=Password reset"
                 >
                   Forgot password?
@@ -241,7 +241,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           <p className="text-center text-sm text-gray-500 mt-6">
             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <Link
-              className="text-gray-800 font-semibold hover:underline"
+              className="text-gray-800 font-semibold hover:underline dark:text-gray-100"
               to={isSignUp ? "/auth/login" : "/auth/signup"}
             >
               {isSignUp ? "Sign in" : "Sign up free"}
@@ -264,17 +264,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
         </div>
       </section>
 
-      <section className="hidden md:flex flex-col items-center justify-center bg-gray-50 px-12 py-16 border-l border-gray-100">
+      <section className="hidden md:flex flex-col items-center justify-center bg-gray-50 px-12 py-16 border-l border-gray-100 dark:border-gray-800 dark:bg-gray-900">
         <img
           alt="Illustration of a person organising notes"
           className="w-full max-w-md"
           src="/illustrations/login-illustration.svg"
         />
         <div className="mt-10 text-center max-w-sm">
-          <h2 className="text-2xl font-bold text-gray-900 leading-snug">
+          <h2 className="text-2xl font-bold text-gray-900 leading-snug dark:text-gray-100">
             Your second mind, always ready.
           </h2>
-          <p className="mt-3 text-sm text-gray-500 leading-relaxed">
+          <p className="mt-3 text-sm text-gray-500 leading-relaxed dark:text-gray-400">
             Capture thoughts, ideas, and tasks in seconds. Not-lify keeps
             everything organised so you never lose a good idea again.
           </p>

@@ -19,7 +19,7 @@ type Section = "account" | "appearance" | "sync" | "data";
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
-  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 px-1">
+  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 px-1 dark:text-gray-500">
     {children}
   </h2>
 );
@@ -35,29 +35,29 @@ const SettingRow: React.FC<{
     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 text-left group
       ${
         active
-          ? "bg-green-50 border border-green-300"
-          : "hover:bg-gray-50 border border-transparent"
+          ? "bg-green-50 border border-green-300 dark:bg-green-950/40 dark:border-green-800"
+          : "hover:bg-gray-50 border border-transparent dark:hover:bg-gray-900"
       }`}
     onClick={onClick}
   >
     <span
       className={`flex items-center justify-center h-8 w-8 rounded-lg shrink-0 transition-colors
-        ${active ? "bg-green-400 text-white" : "bg-gray-100 text-gray-500 group-hover:bg-gray-200"}`}
+        ${active ? "bg-green-400 text-white" : "bg-gray-100 text-gray-500 group-hover:bg-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:group-hover:bg-gray-800"}`}
     >
       <Icon size={15} strokeWidth={1.8} />
     </span>
     <span className="flex flex-col flex-1 min-w-0">
       <span
-        className={`text-sm font-medium ${active ? "text-green-700" : "text-gray-700"}`}
+        className={`text-sm font-medium ${active ? "text-green-700 dark:text-green-300" : "text-gray-700 dark:text-gray-200"}`}
       >
         {label}
       </span>
       {description && (
-        <span className="text-xs text-gray-400 truncate">{description}</span>
+        <span className="text-xs text-gray-400 truncate dark:text-gray-500">{description}</span>
       )}
     </span>
     <ChevronRight
-      className={`shrink-0 transition-colors ${active ? "text-green-400" : "text-gray-300 group-hover:text-gray-400"}`}
+      className={`shrink-0 transition-colors ${active ? "text-green-400" : "text-gray-300 group-hover:text-gray-400 dark:text-gray-700 dark:group-hover:text-gray-500"}`}
       size={14}
       strokeWidth={2}
     />
@@ -110,15 +110,15 @@ const SettingsPage: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
         initial={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.35 }}
       >
-        <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
-        <p className="text-sm text-gray-400 mt-0.5">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Settings</h1>
+        <p className="text-sm text-gray-400 mt-0.5 dark:text-gray-500">
           Manage your account and app preferences.
         </p>
       </motion.div>
@@ -146,21 +146,21 @@ const SettingsPage: React.FC = () => {
         <motion.section
           key={active}
           animate={{ opacity: 1, y: 0 }}
-          className={`flex-1 w-full md:min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-5 md:p-6 shadow-sm -mx-4 md:mx-0 ${
+          className={`flex-1 w-full md:min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-5 md:p-6 shadow-sm -mx-4 md:mx-0 dark:border-gray-800 dark:bg-gray-950 ${
             showPanel ? "block" : "hidden md:block"
           }`}
           initial={{ opacity: 0, y: 6 }}
           transition={{ duration: 0.25 }}
         >
           <button
-            className="md:hidden flex items-center gap-1 text-sm text-gray-500 mb-4 -ml-1 hover:text-gray-700 transition"
+            className="md:hidden flex items-center gap-1 text-sm text-gray-500 mb-4 -ml-1 hover:text-gray-700 transition dark:text-gray-400 dark:hover:text-gray-200"
             onClick={() => setShowPanel(false)}
           >
             <ChevronLeft size={16} strokeWidth={2} />
             Back
           </button>
 
-          <div className="flex items-center gap-3 mb-2 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-3 mb-2 pb-4 border-b border-gray-100 dark:border-gray-800">
             <span className="flex items-center justify-center h-9 w-9 rounded-xl bg-green-400">
               <activeNav.icon
                 className="text-white"
@@ -169,10 +169,10 @@ const SettingsPage: React.FC = () => {
               />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-gray-800">
+              <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">
                 {activeNav.label}
               </h2>
-              <p className="text-xs text-gray-400">{activeNav.description}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{activeNav.description}</p>
             </div>
           </div>
 

@@ -55,7 +55,7 @@ const SyncButton: React.FC = () => {
 
   return (
     <button
-      className="flex items-center gap-2 mb-2 w-[80%] mx-3 px-4 py-2 cursor-pointer transition-all rounded-md group border-none hover:bg-gray-100/85 hover:border hover:border-gray-300"
+      className="flex items-center gap-2 mb-2 w-[80%] mx-3 px-4 py-2 cursor-pointer transition-all rounded-md group border-none hover:bg-gray-100/85 hover:border hover:border-gray-300 dark:hover:bg-gray-900 dark:hover:border-gray-700"
       title={isSyncing ? "Syncing…" : "Click to sync"}
       type="button"
       onClick={handleSync}
@@ -67,13 +67,13 @@ const SyncButton: React.FC = () => {
         />
       ) : (
         <RefreshCw
-          className={`h-4 w-4 text-gray-500 group-hover:text-gray-800 transition-all ${
+          className={`h-4 w-4 text-gray-500 group-hover:text-gray-800 dark:text-gray-400 dark:group-hover:text-gray-100 transition-all ${
             isSyncing ? "animate-spin" : ""
           }`}
           strokeWidth={1.5}
         />
       )}
-      <span className="text-gray-600 group-hover:text-gray-800 text-sm">
+      <span className="text-gray-600 group-hover:text-gray-800 text-sm dark:text-gray-300 dark:group-hover:text-gray-100">
         {isSyncing ? "Syncing…" : justSynced ? "Synced" : "Sync"}
       </span>
     </button>
@@ -105,12 +105,12 @@ const Sidebar: React.FC = () => {
       "flex items-center gap-2 mb-2 w-[80%] mx-3 px-4 py-2 cursor-pointer transition-all rounded-md group border-none",
       isActive
         ? "bg-green-600 hover:bg-green-600/85 outline-2 outline-offset-1 outline-accent-100 border border-green-400"
-        : "hover:bg-gray-100/85 hover:border hover:border-gray-300",
+        : "hover:bg-gray-100/85 hover:border hover:border-gray-300 dark:hover:bg-gray-900 dark:hover:border-gray-700",
     ].join(" ");
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 xl:w-65 md:w-50 h-dvh overflow-hidden border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
-      <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0">
+    <aside className="fixed left-0 top-0 bottom-0 xl:w-65 md:w-50 h-dvh overflow-hidden border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40 dark:border-gray-800 dark:bg-gray-950">
+      <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0 dark:border-gray-800">
         <div className="relative shrink-0">
           <div className="h-11 w-11 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-base font-bold select-none">
             {avatarLetter}
@@ -118,17 +118,17 @@ const Sidebar: React.FC = () => {
           <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-green-400 border-2 border-white" />
         </div>
         <div className="flex flex-col leading-5 min-w-0">
-          <h3 className="font-semibold text-sm text-gray-800 truncate">
+          <h3 className="font-semibold text-sm text-gray-800 truncate dark:text-gray-100">
             {displayName}
           </h3>
-          <span className="text-gray-500 text-xs truncate">
+          <span className="text-gray-500 text-xs truncate dark:text-gray-400">
             {user?.email ?? ""}
           </span>
         </div>
       </section>
 
       <section className="flex flex-col justify-start items-start py-5 shrink-0 mt-8">
-        <h3 className="px-4 text-gray-500 text-lg mb-2">Main</h3>
+        <h3 className="px-4 text-gray-500 text-lg mb-2 dark:text-gray-400">Main</h3>
         {SidebarOptions.map((option) => {
           const Icon = option.icon;
 
@@ -142,14 +142,14 @@ const Sidebar: React.FC = () => {
               {({ isActive }) => (
                 <>
                   <Icon
-                    className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-800"}`}
+                    className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-800 dark:text-gray-400 dark:group-hover:text-gray-100"}`}
                     strokeWidth={1.5}
                   />
                   <span
                     className={
                       isActive
                         ? "text-white font-medium"
-                        : "text-gray-600 group-hover:text-gray-800"
+                        : "text-gray-600 group-hover:text-gray-800 dark:text-gray-300 dark:group-hover:text-gray-100"
                     }
                   >
                     {option.name}
@@ -162,20 +162,20 @@ const Sidebar: React.FC = () => {
       </section>
 
       <section className="flex flex-col justify-start items-start py-5 pb-10 mt-auto shrink-0">
-        <h3 className="px-4 text-gray-500 text-lg mb-2">Settings</h3>
+        <h3 className="px-4 text-gray-500 text-lg mb-2 dark:text-gray-400">Settings</h3>
 
         <NavLink className={navLinkClass} to="/settings">
           {({ isActive }) => (
             <>
               <SettingsIcon
-                className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-800"}`}
+                className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-800 dark:text-gray-400 dark:group-hover:text-gray-100"}`}
                 strokeWidth={1.5}
               />
               <span
                 className={
                   isActive
                     ? "text-white font-medium"
-                    : "text-gray-600 group-hover:text-gray-800"
+                    : "text-gray-600 group-hover:text-gray-800 dark:text-gray-300 dark:group-hover:text-gray-100"
                 }
               >
                 Settings

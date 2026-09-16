@@ -17,7 +17,7 @@ const FavoritesPage: React.FC = () => {
       : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -26,9 +26,9 @@ const FavoritesPage: React.FC = () => {
       >
         <div className="flex items-center gap-2 mb-1">
           <Star className="h-5 w-5 text-green-600" strokeWidth={1.5} />
-          <h1 className="text-2xl font-bold text-gray-800">Favourites</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Favourites</h1>
         </div>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 text-sm dark:text-gray-400">
           {notes.length} favourited note{notes.length !== 1 ? "s" : ""}
         </p>
       </motion.div>
@@ -43,9 +43,9 @@ const FavoritesPage: React.FC = () => {
         </div>
       ) : notes.length === 0 ? (
         <div className="flex flex-col items-center py-24 text-center">
-          <Star className="text-gray-200 mb-4" size={48} strokeWidth={1} />
-          <p className="text-gray-400 text-sm">No favourites yet.</p>
-          <p className="text-gray-400 text-xs mt-1">
+          <Star className="text-gray-200 mb-4 dark:text-gray-800" size={48} strokeWidth={1} />
+          <p className="text-gray-400 text-sm dark:text-gray-500">No favourites yet.</p>
+          <p className="text-gray-400 text-xs mt-1 dark:text-gray-500">
             Open any note and tap the star to add it here.
           </p>
         </div>

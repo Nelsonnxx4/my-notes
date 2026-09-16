@@ -84,10 +84,10 @@ const SyncSettings: React.FC = () => {
       <div
         className={`flex items-center gap-3 p-4 rounded-xl border transition-colors ${
           justSynced
-            ? "bg-green-50 border-green-200"
+            ? "bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-900/60"
             : isSyncing
-              ? "bg-blue-50 border-blue-200"
-              : "bg-green-50 border-green-200"
+              ? "bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-900/60"
+              : "bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-900/60"
         }`}
       >
         {isSyncing ? (
@@ -105,12 +105,12 @@ const SyncSettings: React.FC = () => {
         )}
         <div>
           <p
-            className={`text-sm font-medium ${isSyncing ? "text-blue-700" : "text-green-700"}`}
+            className={`text-sm font-medium ${isSyncing ? "text-blue-700 dark:text-blue-300" : "text-green-700 dark:text-green-300"}`}
           >
             {isSyncing ? "Syncing…" : justSynced ? "Synced" : "Sync is on"}
           </p>
           <p
-            className={`text-xs ${isSyncing ? "text-blue-600" : "text-green-600"}`}
+            className={`text-xs ${isSyncing ? "text-blue-600 dark:text-blue-400" : "text-green-600 dark:text-green-400"}`}
           >
             Last synced {formatLastSynced(lastSynced)}
           </p>
@@ -118,10 +118,10 @@ const SyncSettings: React.FC = () => {
       </div>
 
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-1">
+        <h3 className="text-base font-semibold text-gray-800 mb-1 dark:text-gray-100">
           Preferences
         </h3>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
           <SettingField
             description="Keep notes up to date automatically"
             label="Auto-sync"
@@ -137,13 +137,13 @@ const SyncSettings: React.FC = () => {
         </div>
       </div>
 
-      <hr className="border-gray-100" />
+      <hr className="border-gray-100 dark:border-gray-800" />
 
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-3">Actions</h3>
+        <h3 className="text-base font-semibold text-gray-800 mb-3 dark:text-gray-100">Actions</h3>
         <div className="space-y-2">
           <button
-            className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
             disabled={isSyncing}
             type="button"
             onClick={handleSyncNow}

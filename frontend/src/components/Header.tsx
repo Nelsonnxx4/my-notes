@@ -37,9 +37,10 @@ const triggerBase =
   "bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg px-3 h-9 shadow-none justify-between gap-2 data-[hover=true]:border-gray-400 data-[open=true]:bg-white dark:data-[open=true]:bg-gray-900 data-[open=true]:border-gray-400";
 
 const dropdownClassNames = {
-  popoverContent: "bg-white rounded-xl border border-gray-200 shadow-lg",
-  listbox: "bg-white py-1",
-  listboxWrapper: "bg-white",
+  popoverContent:
+    "bg-white rounded-xl border border-gray-200 shadow-lg dark:border-gray-800 dark:bg-gray-950",
+  listbox: "bg-white py-1 dark:bg-gray-950",
+  listboxWrapper: "bg-white dark:bg-gray-950",
 };
 
 export default function Header() {
@@ -164,7 +165,7 @@ export default function Header() {
               {(item) => (
                 <SelectItem
                   key={item.key}
-                  className="bg-white text-gray-700 data-[hover=true]:bg-gray-50"
+                  className="bg-white text-gray-700 data-[hover=true]:bg-gray-50 dark:bg-gray-950 dark:text-gray-200 dark:data-[hover=true]:bg-gray-900"
                   textValue={item.label}
                 >
                   {item.label}
@@ -257,7 +258,7 @@ export default function Header() {
           {(item) => (
             <SelectItem
               key={item.key}
-              className="bg-white text-gray-700 data-[hover=true]:bg-gray-50"
+              className="bg-white text-gray-700 data-[hover=true]:bg-gray-50 dark:bg-gray-950 dark:text-gray-200 dark:data-[hover=true]:bg-gray-900"
               textValue={item.label}
             >
               {item.label}

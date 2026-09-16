@@ -34,7 +34,7 @@ const EditorHeader = ({ note, isSaving }: Props) => {
     <header className="flex items-center justify-between p-5">
       <button
         aria-label="Go back"
-        className="rounded-full bg-white p-3"
+        className="rounded-full bg-white p-3 dark:bg-gray-900 dark:text-gray-100"
         onClick={() => navigate(-1)}
       >
         <ArrowLeft size={20} />
@@ -44,7 +44,7 @@ const EditorHeader = ({ note, isSaving }: Props) => {
         {isSaving && (
           <span className="flex items-center gap-1 text-xs text-gray-400">
             <Loader2 className="animate-spin" size={12} />
-            Saving…
+            Saving...
           </span>
         )}
 
@@ -53,7 +53,7 @@ const EditorHeader = ({ note, isSaving }: Props) => {
           className={`rounded-full p-3 transition ${
             note.isPinned
               ? "bg-green-400 text-white"
-              : "bg-white text-gray-500 hover:text-green-500"
+              : "bg-white text-gray-500 hover:text-green-500 dark:bg-gray-900 dark:text-gray-300 dark:hover:text-green-400"
           }`}
           onClick={() => togglePin()}
         >
@@ -62,7 +62,7 @@ const EditorHeader = ({ note, isSaving }: Props) => {
 
         <button
           aria-label="Delete note"
-          className="rounded-full bg-white p-3 text-gray-500 hover:text-red-500 transition"
+          className="rounded-full bg-white p-3 text-gray-500 hover:text-red-500 transition dark:bg-gray-900 dark:text-gray-300 dark:hover:text-red-400"
           onClick={() => {
             if (confirm("Delete this note? This cannot be undone.")) remove();
           }}

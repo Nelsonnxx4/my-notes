@@ -1,5 +1,5 @@
 export const colorOptions = [
-  { value: "#FFFFFF", className: "bg-white border border-gray-200" },
+  { value: "#FFFFFF", className: "bg-white border border-gray-200 dark:border-gray-700" },
   { value: "#FCEAA8", className: "bg-[#FCEAA8]" },
   { value: "#F7CBE9", className: "bg-[#F7CBE9]" },
   { value: "#CFEFFF", className: "bg-[#CFEFFF]" },

@@ -14,7 +14,7 @@ const ColorPicker = ({ value, onChange }: Props) => {
           aria-label={`Select color ${color.value}`}
           className={`h-10 w-10 rounded-full shadow-sm transition-transform ${color.className} ${
             value === color.value
-              ? "ring-2 ring-offset-1 ring-gray-500 scale-110"
+              ? "ring-2 ring-offset-1 ring-gray-500 scale-110 dark:ring-offset-gray-950"
               : "hover:scale-105"
           }`}
           type="button"

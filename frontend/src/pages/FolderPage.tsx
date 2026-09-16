@@ -102,7 +102,7 @@ const FolderPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
+    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">
       {isLoading ? (
         <div className="flex items-center justify-center h-40">
           <Loader2 className="animate-spin text-gray-400" size={24} />
@@ -138,7 +138,7 @@ const FolderPage: React.FC = () => {
             transition={{ duration: 0.3, delay: folders.length * 0.04 }}
           >
             {isAdding ? (
-              <div className="flex flex-col justify-between gap-3 min-w-35 min-h-35 md:min-w-50 md:min-h-50 p-4 rounded-md border border-gray-300 bg-white shadow-sm">
+              <div className="flex flex-col justify-between gap-3 min-w-35 min-h-35 md:min-w-50 md:min-h-50 p-4 rounded-md border border-gray-300 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-950">
                 <FolderPlusIcon
                   className="text-gray-400"
                   size={40}
@@ -147,7 +147,7 @@ const FolderPage: React.FC = () => {
                 <div className="flex flex-col gap-2">
                   <input
                     ref={inputRef}
-                    className="w-full rounded-md border border-gray-200 px-2 py-1 text-sm outline-none focus:border-gray-400"
+                    className="w-full rounded-md border border-gray-200 px-2 py-1 text-sm outline-none focus:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                     disabled={isCreating}
                     maxLength={100}
                     placeholder="Folder name"
@@ -171,7 +171,7 @@ const FolderPage: React.FC = () => {
                       Create
                     </button>
                     <button
-                      className="rounded-md px-2 py-1 text-xs text-gray-400 hover:bg-gray-100 transition"
+                      className="rounded-md px-2 py-1 text-xs text-gray-400 hover:bg-gray-100 transition dark:hover:bg-gray-900"
                       type="button"
                       onClick={() => {
                         setIsAdding(false);
@@ -186,7 +186,7 @@ const FolderPage: React.FC = () => {
             ) : (
               <button
                 aria-label="New folder"
-                className="flex flex-col justify-center items-center p-4 bg-gray-100 min-w-35 min-h-35 md:min-w-50 md:min-h-50 border border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-all duration-150"
+                className="flex flex-col justify-center items-center p-4 bg-gray-100 min-w-35 min-h-35 md:min-w-50 md:min-h-50 border border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-all duration-150 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800"
                 type="button"
                 onClick={() => setIsAdding(true)}
               >
