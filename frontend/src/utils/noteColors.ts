@@ -1,12 +1,12 @@
 export const NOTE_COLORS = [
-  "bg-[#fc843e96]",
-  "bg-[#D7B0CB96]",
-  "bg-[#34d39996]",
-  "bg-[#D1F5E096]",
-  "bg-[#FFE4D696]",
-  "bg-[#f6ec3396]",
-  "bg-[#926bf496]",
-  "bg-[#E03F4096]",
+  "bg-[#d95f21]",
+  "bg-[#a85f92]",
+  "bg-[#059669]",
+  "bg-[#32a66b]",
+  "bg-[#d98247]",
+  "bg-[#c6a80d]",
+  "bg-[#7148d8]",
+  "bg-[#c92f34]",
 ];
 
 export const hashColor = (str: string): string => {

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   ArchiveIcon,
   BookmarkIcon,
+  FileTextIcon,
   PenIcon,
   SettingsIcon,
   TagIcon,
@@ -81,18 +82,22 @@ const SyncButton: React.FC = () => {
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
-  const emailPrefix = user?.email?.split("@")[0] ?? "User";
-  const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
+  const displayNameKey = user?.id ? `app:customDisplayName:${user.id}` : null;
+  const customDisplayName = displayNameKey
+    ? localStorage.getItem(displayNameKey)?.trim()
+    : "";
+  const displayName = customDisplayName || user?.name?.trim() || "User";
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   const SidebarOptions = [
     { id: 1, icon: HomeIcon, name: "Home", path: "/home" },
     { id: 2, icon: PlusIcon, name: "New Note", path: "/create" },
-    { id: 3, icon: PenIcon, name: "All notes", path: "/notes" },
-    { id: 4, icon: BookmarkIcon, name: "Favorites", path: "/favorites" },
-    { id: 5, icon: ArchiveIcon, name: "Archive", path: "/archive" },
-    { id: 6, icon: FolderIcon, name: "Folders", path: "/folders" },
-    { id: 7, icon: TagIcon, name: "Tags", path: "/tags" },
+    { id: 3, icon: FileTextIcon, name: "Drafts", path: "/drafts" },
+    { id: 4, icon: PenIcon, name: "All notes", path: "/notes" },
+    { id: 5, icon: BookmarkIcon, name: "Favorites", path: "/favorites" },
+    { id: 6, icon: ArchiveIcon, name: "Archive", path: "/archive" },
+    { id: 7, icon: FolderIcon, name: "Folders", path: "/folders" },
+    { id: 8, icon: TagIcon, name: "Tags", path: "/tags" },
   ];
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -104,7 +109,7 @@ const Sidebar: React.FC = () => {
     ].join(" ");
 
   return (
-    <aside className="sticky top-0 xl:w-65 md:w-50 h-screen border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
+    <aside className="fixed left-0 top-0 bottom-0 xl:w-65 md:w-50 h-dvh overflow-hidden border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40">
       <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0">
         <div className="relative shrink-0">
           <div className="h-11 w-11 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-base font-bold select-none">

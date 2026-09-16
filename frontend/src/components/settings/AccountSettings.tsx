@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, LogOut } from "lucide-react";
 import { Input } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/contexts/AuthContext";
-
-const DISPLAY_NAME_KEY = "app:displayName";
 
 const inputClasses = {
   inputWrapper:
@@ -17,16 +15,27 @@ const AccountSettings = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const emailPrefix = user?.email?.split("@")[0] ?? "User";
+  const fallbackName = user?.name?.trim() || "User";
+  const displayNameKey = useMemo(
+    () =>
+      user?.id
+        ? `app:customDisplayName:${user.id}`
+        : "app:customDisplayName",
+    [user?.id],
+  );
 
   const [name, setName] = useState<string>(
-    () => localStorage.getItem(DISPLAY_NAME_KEY) ?? emailPrefix,
+    () => localStorage.getItem(displayNameKey) ?? fallbackName,
   );
   const [saved, setSaved] = useState(false);
 
+  useEffect(() => {
+    setName(localStorage.getItem(displayNameKey) ?? fallbackName);
+  }, [displayNameKey, fallbackName]);
+
   function save() {
-    const trimmed = name.trim() || emailPrefix;
-    localStorage.setItem(DISPLAY_NAME_KEY, trimmed);
+    const trimmed = name.trim() || fallbackName;
+    localStorage.setItem(displayNameKey, trimmed);
     setName(trimmed);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);

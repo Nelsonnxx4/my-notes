@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
+import type { Editor } from "@tiptap/react";
+import type { AxiosError } from "axios";
 
 import EditorHeader from "@/components/editor/EditorHeader";
 import NoteTitleInput from "@/components/editor/NoteTitleInput";
@@ -9,19 +11,10 @@ import EditorToolbar from "@/components/editor/EditorToolbar";
 import ColorPicker from "@/components/editor/ColorPicker";
 import { useNote } from "@/hooks/queries/useNotes";
 import { useAutoSaveNote } from "@/hooks/mutations/useAutoSaveNote";
-import { useEditorActions } from "@/hooks/useEditorActions";
+import { useUploadEditorImage } from "@/hooks/useUploadEditorImage";
 import { useAppearance } from "@/contexts/AppearanceContext";
-
-function parseStats(html: string) {
-  const text =
-    new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const lines = Math.max(
-    1,
-    (html.match(/<br|<\/p>|<\/li>|<\/h[1-6]>/gi) ?? []).length + 1,
-  );
-  return { words, chars: text.length, lines };
-}
+import type { ApiErrorResponse, Note } from "@/types";
+import { parseEditorStats, sanitizeEditorHtml } from "@/utils/editorHtml";
 
 const AUTOSAVE_MS = 800;
 
@@ -32,44 +25,144 @@ const NoteDetailsPage = () => {
   const { showWordCount, lineNumbers } = useAppearance();
 
   const [title, setTitle] = useState<string>("");
+  const [contentHtml, setContentHtml] = useState("");
   const [bgColor, setBgColor] = useState<string>("#FFFFFF");
+  const [editor, setEditor] = useState<Editor | null>(null);
+  const [savedVersion, setSavedVersion] = useState<number | null>(null);
+  const [conflictNote, setConflictNote] = useState<Note | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [stats, setStats] = useState({ words: 0, chars: 0, lines: 1 });
 
-  const editorRef = useRef<HTMLDivElement>(null);
-  const { execFormat, insertImage } = useEditorActions(editorRef);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestVersion = useRef<number | null>(null);
+
+  const handleImageError = useCallback((message: string) => {
+    setSaveError(message);
+  }, []);
+
+  const { insertImage, isUploadingImage } = useUploadEditorImage(
+    editor,
+    handleImageError,
+  );
 
   useEffect(() => {
     if (note) {
       setTitle(note.title);
+      setContentHtml(sanitizeEditorHtml(note.content ?? ""));
+      setStats(parseEditorStats(note.content ?? ""));
+      setConflictNote(null);
+      setSaveError(null);
+      latestVersion.current = note.version;
+      setSavedVersion(note.version);
     }
   }, [note?.id]);
 
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, []);
+
+  const handleAutoSaveError = useCallback(
+    (err: AxiosError<ApiErrorResponse>) => {
+      if (err.response?.status === 409) {
+        const currentNote = err.response.data.details?.currentNote;
+
+        if (currentNote) {
+          setConflictNote(currentNote);
+          setSaveError("This note changed somewhere else before autosave ran.");
+          return;
+        }
+      }
+
+      setSaveError(
+        err.response?.data?.message ?? "Autosave failed. Your changes are still on screen.",
+      );
+    },
+    [],
+  );
 
   const scheduleSave = useCallback(
     (nextTitle: string, nextContent: string) => {
-      if (!id) return;
+      if (!id || conflictNote) return;
       if (saveTimer.current) clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(() => {
-        autoSave({ id, payload: { title: nextTitle, content: nextContent } });
+        const trimmedTitle = nextTitle.trim();
+        const version = latestVersion.current;
+
+        if (!trimmedTitle || !version) return;
+
+        autoSave(
+          {
+            id,
+            payload: {
+              title: trimmedTitle,
+              content: sanitizeEditorHtml(nextContent),
+              version,
+            },
+          },
+          {
+            onSuccess: (savedNote) => {
+              latestVersion.current = savedNote.version;
+              setSavedVersion(savedNote.version);
+              setSaveError(null);
+            },
+            onError: handleAutoSaveError,
+          },
+        );
       }, AUTOSAVE_MS);
     },
-    [id, autoSave],
+    [id, autoSave, conflictNote, handleAutoSaveError],
   );
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    scheduleSave(val, editorRef.current?.innerHTML ?? "");
+    scheduleSave(val, contentHtml);
   };
 
   const handleContentChange = (html: string) => {
+    setContentHtml(html);
     scheduleSave(title, html);
-    if (showWordCount || lineNumbers) setStats(parseStats(html));
+    if (showWordCount || lineNumbers) setStats(parseEditorStats(html));
   };
 
-  useEffect(() => {
-    if (note?.content) setStats(parseStats(note.content));
-  }, [note?.id]);
+  const useServerCopy = () => {
+    if (!conflictNote) return;
+
+    const nextContent = sanitizeEditorHtml(conflictNote.content ?? "");
+
+    setTitle(conflictNote.title);
+    setContentHtml(nextContent);
+    setStats(parseEditorStats(nextContent));
+    latestVersion.current = conflictNote.version;
+    setSavedVersion(conflictNote.version);
+    setConflictNote(null);
+    setSaveError(null);
+  };
+
+  const overwriteServerCopy = () => {
+    if (!id || !conflictNote) return;
+
+    autoSave(
+      {
+        id,
+        payload: {
+          title: title.trim() || conflictNote.title,
+          content: sanitizeEditorHtml(contentHtml),
+          version: conflictNote.version,
+        },
+      },
+      {
+        onSuccess: (savedNote) => {
+          latestVersion.current = savedNote.version;
+          setSavedVersion(savedNote.version);
+          setConflictNote(null);
+          setSaveError(null);
+        },
+        onError: handleAutoSaveError,
+      },
+    );
+  };
 
   if (isLoading) {
     return (
@@ -96,11 +189,39 @@ const NoteDetailsPage = () => {
 
       <div className="px-5">
         <ColorPicker value={bgColor} onChange={setBgColor} />
+        {saveError && (
+          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="mt-0.5 shrink-0" size={16} />
+              <div className="flex-1">
+                <p>{saveError}</p>
+                {conflictNote && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-amber-800 ring-1 ring-amber-200 hover:bg-amber-100"
+                      type="button"
+                      onClick={useServerCopy}
+                    >
+                      Use server copy
+                    </button>
+                    <button
+                      className="rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"
+                      type="button"
+                      onClick={overwriteServerCopy}
+                    >
+                      Overwrite with mine
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         <NoteTitleInput value={title} onChange={handleTitleChange} />
         <NoteContentEditor
-          ref={editorRef}
-          defaultContent={note.content ?? ""}
+          value={contentHtml}
           onChange={handleContentChange}
+          onEditorReady={setEditor}
         />
 
         {(showWordCount || lineNumbers) && (
@@ -120,11 +241,16 @@ const NoteDetailsPage = () => {
                 {stats.lines} {stats.lines === 1 ? "line" : "lines"}
               </span>
             )}
+            {savedVersion && <span>v{savedVersion}</span>}
           </div>
         )}
       </div>
 
-      <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />
+      <EditorToolbar
+        editor={editor}
+        isUploadingImage={isUploadingImage}
+        onInsertImage={insertImage}
+      />
     </main>
   );
 };

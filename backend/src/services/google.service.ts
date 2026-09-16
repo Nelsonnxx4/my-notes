@@ -55,6 +55,7 @@ export const googleSignIn = async (accessToken: string) => {
 	}
 
 	const { email, sub: googleId, name } = profile;
+	const displayName = name?.trim() || null;
 
 	let user = await prisma.user.findUnique({ where: { email } });
 
@@ -66,15 +67,19 @@ export const googleSignIn = async (accessToken: string) => {
 
 		user = await prisma.user.create({
 			data: {
+				name: displayName,
 				email,
 				password: placeholderPassword,
 				googleId,
 			},
 		});
-	} else if (!user.googleId) {
+	} else if (!user.googleId || (!user.name && displayName)) {
 		user = await prisma.user.update({
 			where: { email },
-			data: { googleId },
+			data: {
+				...(!user.googleId ? { googleId } : {}),
+				...(!user.name && displayName ? { name: displayName } : {}),
+			},
 		});
 	}
 
@@ -89,5 +94,5 @@ export const googleSignIn = async (accessToken: string) => {
 
 	const { password: _password, ...safeUser } = user;
 
-	return { user: safeUser, token, name };
+	return { user: safeUser, token };
 };

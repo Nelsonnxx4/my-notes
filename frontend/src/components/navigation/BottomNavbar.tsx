@@ -1,10 +1,11 @@
-import { Home, PenSquare, Plus, Star, Settings } from "lucide-react";
+import { FileText, Home, PenSquare, Plus, Star, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const links = [
   { path: "/home",      icon: Home,       label: "Home" },
   { path: "/notes",     icon: PenSquare,  label: "Notes" },
   { path: "/create",    icon: Plus,       label: "Create", accent: true },
+  { path: "/drafts",    icon: FileText,   label: "Drafts" },
   { path: "/favorites", icon: Star,       label: "Favourites" },
   { path: "/settings",  icon: Settings,   label: "Settings" },
 ];

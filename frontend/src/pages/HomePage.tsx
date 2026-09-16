@@ -53,8 +53,11 @@ const HomePage: React.FC = () => {
     gridLayout === "compact"
       ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
       : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
-  const emailPrefix = user?.email?.split("@")[0] ?? "there";
-  const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
+  const displayNameKey = user?.id ? `app:customDisplayName:${user.id}` : null;
+  const customDisplayName = displayNameKey
+    ? localStorage.getItem(displayNameKey)?.trim()
+    : "";
+  const displayName = customDisplayName || user?.name?.trim() || "there";
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">

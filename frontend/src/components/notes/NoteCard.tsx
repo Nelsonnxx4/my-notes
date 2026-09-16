@@ -4,6 +4,7 @@ import { Archive, ArchiveRestore, MoreHorizontalIcon, Pencil, Pin, Star, StarOff
 import { useDeleteNote, useArchiveNote, useUnarchiveNote } from "@/hooks/mutations/useNoteActions";
 import { useToggleFavorite } from "@/hooks/useFavorites";
 import { Tag } from "@/types";
+import { firstImageFromHtml, textFromHtml } from "@/utils/editorHtml";
 
 interface NoteCardProps {
   noteId: string;
@@ -50,6 +51,8 @@ const NoteCard: React.FC<NoteCardProps> = ({
   const { mutate: archiveNote } = useArchiveNote();
   const { mutate: unarchiveNote } = useUnarchiveNote();
   const { mutate: toggleFavorite } = useToggleFavorite();
+  const previewImage = firstImageFromHtml(content);
+  const previewText = textFromHtml(content).trim();
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -168,12 +171,26 @@ const NoteCard: React.FC<NoteCardProps> = ({
       </div>
 
       <div className="relative flex flex-col bg-white rounded-2xl p-4 flex-1 overflow-hidden">
+        {previewImage && (
+          <img
+            alt=""
+            className="mb-3 h-28 w-full rounded-xl object-cover"
+            loading="lazy"
+            src={previewImage}
+          />
+        )}
         <h3 className="mb-3 text-lg font-semibold text-slate-900 line-clamp-2">
           {title}
         </h3>
-        <p className="line-clamp-5 text-sm leading-6 text-slate-700">
-          {content}
-        </p>
+        {previewText && (
+          <p
+            className={`text-sm leading-6 text-slate-700 ${
+              previewImage ? "line-clamp-3" : "line-clamp-5"
+            }`}
+          >
+            {previewText}
+          </p>
+        )}
         <div className="mt-5 absolute bottom-2 flex items-baseline justify-between w-[calc(100%-2rem)] text-xs text-slate-600">
           <span>{updatedAt ? timeAgo(updatedAt) : ""}</span>
           <span className="rounded-full bg-white/80 px-3 py-1">Updated</span>

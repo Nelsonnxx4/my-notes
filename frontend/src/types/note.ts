@@ -8,6 +8,7 @@ export interface Note {
   folderId?: string;
   isPinned: boolean;
   isArchived: boolean;
+  version: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -11,6 +11,10 @@ jest.mock("../config/prisma", () => ({
 	},
 }));
 
+jest.mock("../utils/sanitizeNoteHtml", () => ({
+	sanitizeNoteHtml: (html?: string | null) => html,
+}));
+
 const mockNotes = prisma.notes as unknown as {
 	create: jest.Mock;
 	findMany: jest.Mock;
@@ -24,6 +28,7 @@ const baseNote = {
 	isPinned: false,
 	isArchived: false,
 	isFavorite: false,
+	version: 1,
 	folderId: null,
 	createdAt: new Date(),
 	updatedAt: new Date(),

@@ -17,6 +17,7 @@ export interface Note {
   isPinned: boolean;
   isArchived: boolean;
   isFavorite: boolean;
+  version: number;
   folderId: string | null;
   createdAt: string;
   updatedAt: string;
@@ -38,4 +39,12 @@ export interface UpdateNotePayload {
   is_favorite?: boolean;
   tag_ids?: number[];
   folder_id?: string | null;
+  version?: number;
+}
+
+export interface ApiErrorResponse {
+  message: string;
+  details?: {
+    currentNote?: Note;
+  };
 }

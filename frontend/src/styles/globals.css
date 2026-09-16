@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Note card colors */
   --color-note-yellow: #fdf1d1;
@@ -27,4 +29,9 @@ body {
   font-family: var(--font-sans);
   background-color: #fff;
   overscroll-behavior: none;
+}
+
+html.dark body {
+  background-color: #030712;
+  color: #f9fafb;
 }

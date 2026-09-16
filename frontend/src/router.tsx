@@ -12,6 +12,7 @@ import ArchivePage from "./pages/ArchivePage";
 import TagsPage from "./pages/TagsPage";
 import HomePage from "./pages/HomePage";
 import FolderPage from "./pages/FolderPage";
+import DraftsPage from "./pages/DraftsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 import ResponsiveLayout from "@/app/layouts/ResponsiveLayout";
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
           { path: "/home", element: <HomePage /> },
           { path: "/folders", element: <FolderPage /> },
           { path: "/notes", element: <NotesPage /> },
+          { path: "/drafts", element: <DraftsPage /> },
           { path: "/notes/:id", element: <NoteDetailsPage /> },
           { path: "/create", element: <CreateNotesPage /> },
           { path: "/favorites", element: <FavoritesPage /> },

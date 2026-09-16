@@ -1,29 +1,35 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, FolderOpen, Tag, X, Plus } from "lucide-react";
+import { ArrowLeft, Loader2, FolderOpen, Tag, X, Plus, Trash2 } from "lucide-react";
+import type { Editor } from "@tiptap/react";
 
 import { useCreateNote } from "@/hooks/mutations/useCreateNote";
 import { useFolders, useCreateFolder } from "@/hooks/useFolder";
 import { useTags, useCreateTag } from "@/hooks/useTags";
-import { useEditorActions } from "@/hooks/useEditorActions";
+import { useUploadEditorImage } from "@/hooks/useUploadEditorImage";
+import { useAuth } from "@/contexts/AuthContext";
 import EditorToolbar from "@/components/editor/EditorToolbar";
 import NoteContentEditor from "@/components/editor/NoteContentEditor";
 import { useAppearance } from "@/contexts/AppearanceContext";
-
-function parseStats(html: string) {
-  const text =
-    new DOMParser().parseFromString(html, "text/html").body.textContent ?? "";
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  const lines = Math.max(
-    1,
-    (html.match(/<br|<\/p>|<\/li>|<\/h[1-6]>/gi) ?? []).length + 1,
-  );
-  return { words, chars: text.length, lines };
-}
+import {
+  isEditorHtmlEmpty,
+  parseEditorStats,
+  sanitizeEditorHtml,
+} from "@/utils/editorHtml";
+import {
+  clearCreateNoteDraft,
+  emptyCreateNoteDraft,
+  getCreateNoteDraftKey,
+  isCreateNoteDraftEmpty,
+  readCreateNoteDraft,
+  writeCreateNoteDraft,
+  type CreateNoteDraft,
+} from "@/utils/createNoteDraft";
 
 const CreateNotesPage: React.FC = () => {
   const navigate = useNavigate();
   const { mutate: createNote, isPending } = useCreateNote();
+  const { user } = useAuth();
   const { data: folders = [] } = useFolders();
   const { data: tags = [] } = useTags();
   const { mutate: createFolder, isPending: isCreatingFolder } = useCreateFolder();
@@ -38,13 +44,25 @@ const CreateNotesPage: React.FC = () => {
   const [showTagPicker, setShowTagPicker] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [newTagName, setNewTagName] = useState("");
+  const [contentHtml, setContentHtml] = useState("");
+  const [editor, setEditor] = useState<Editor | null>(null);
   const [stats, setStats] = useState({ words: 0, chars: 0, lines: 1 });
+  const [draftLoaded, setDraftLoaded] = useState(false);
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
 
-  const editorRef = useRef<HTMLDivElement>(null);
   const folderPickerRef = useRef<HTMLDivElement>(null);
   const tagPickerRef = useRef<HTMLDivElement>(null);
+  const loadedDraftKey = useRef<string | null>(null);
+  const skipNextDraftSave = useRef(false);
+  const draftKey = getCreateNoteDraftKey(user?.id);
 
-  const { execFormat, insertImage } = useEditorActions(editorRef);
+  const handleImageError = useCallback((message: string) => {
+    setError(message);
+  }, []);
+  const { insertImage, isUploadingImage } = useUploadEditorImage(
+    editor,
+    handleImageError,
+  );
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -67,6 +85,62 @@ const CreateNotesPage: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    skipNextDraftSave.current = true;
+    const draft = readCreateNoteDraft(draftKey);
+
+    if (draft) {
+      setTitle(draft.title);
+      setContentHtml(draft.contentHtml);
+      setSelectedFolderId(draft.selectedFolderId);
+      setSelectedTagIds(draft.selectedTagIds);
+      setStats(parseEditorStats(draft.contentHtml));
+      setDraftSavedAt(draft.updatedAt || null);
+    } else {
+      setTitle(emptyCreateNoteDraft.title);
+      setContentHtml(emptyCreateNoteDraft.contentHtml);
+      setSelectedFolderId(emptyCreateNoteDraft.selectedFolderId);
+      setSelectedTagIds(emptyCreateNoteDraft.selectedTagIds);
+      setStats({ words: 0, chars: 0, lines: 1 });
+      setDraftSavedAt(null);
+    }
+
+    loadedDraftKey.current = draftKey;
+    setDraftLoaded(true);
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (!draftLoaded || loadedDraftKey.current !== draftKey) return;
+    if (skipNextDraftSave.current) {
+      skipNextDraftSave.current = false;
+      return;
+    }
+
+    const draft: CreateNoteDraft = {
+      title,
+      contentHtml: sanitizeEditorHtml(contentHtml),
+      selectedFolderId,
+      selectedTagIds,
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (isCreateNoteDraftEmpty(draft)) {
+      clearCreateNoteDraft(draftKey);
+      setDraftSavedAt(null);
+      return;
+    }
+
+    writeCreateNoteDraft(draftKey, draft);
+    setDraftSavedAt(draft.updatedAt);
+  }, [
+    contentHtml,
+    draftKey,
+    draftLoaded,
+    selectedFolderId,
+    selectedTagIds,
+    title,
+  ]);
+
   const toggleTag = (tagId: number) => {
     setSelectedTagIds((prev) =>
       prev.includes(tagId)
@@ -82,14 +156,35 @@ const CreateNotesPage: React.FC = () => {
       return;
     }
     setError(null);
-    const content = editorRef.current?.innerHTML ?? "";
+    const sanitizedContent = sanitizeEditorHtml(contentHtml);
 
     createNote({
       title: title.trim(),
-      content: content || undefined,
+      content: isEditorHtmlEmpty(sanitizedContent) ? undefined : sanitizedContent,
       folder_id: selectedFolderId ?? undefined,
       tag_ids: selectedTagIds.length ? selectedTagIds : undefined,
+    }, {
+      onSuccess: (note) => {
+        clearCreateNoteDraft(draftKey);
+        navigate(`/notes/${note.id}`);
+      },
     });
+  };
+
+  const clearDraft = () => {
+    clearCreateNoteDraft(draftKey);
+    setTitle(emptyCreateNoteDraft.title);
+    setContentHtml(emptyCreateNoteDraft.contentHtml);
+    setSelectedFolderId(emptyCreateNoteDraft.selectedFolderId);
+    setSelectedTagIds(emptyCreateNoteDraft.selectedTagIds);
+    setStats({ words: 0, chars: 0, lines: 1 });
+    setDraftSavedAt(null);
+    setError(null);
+  };
+
+  const handleContentChange = (html: string) => {
+    setContentHtml(html);
+    if (showWordCount || lineNumbers) setStats(parseEditorStats(html));
   };
 
   const selectedFolder = folders.find((f) => f.id === selectedFolderId);
@@ -117,6 +212,20 @@ const CreateNotesPage: React.FC = () => {
       </header>
 
       <div className="px-5 space-y-4">
+        {draftSavedAt && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-green-100 bg-green-50 px-3 py-2 text-xs text-green-700">
+            <span>Draft saved locally.</span>
+            <button
+              className="flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-green-800 hover:bg-green-100"
+              type="button"
+              onClick={clearDraft}
+            >
+              <Trash2 size={12} />
+              Clear draft
+            </button>
+          </div>
+        )}
+
         {error && (
           <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
             {error}
@@ -349,10 +458,9 @@ const CreateNotesPage: React.FC = () => {
         />
 
         <NoteContentEditor
-          ref={editorRef}
-          onChange={(html) => {
-            if (showWordCount || lineNumbers) setStats(parseStats(html));
-          }}
+          value={contentHtml}
+          onChange={handleContentChange}
+          onEditorReady={setEditor}
         />
 
         {(showWordCount || lineNumbers) && (
@@ -370,7 +478,11 @@ const CreateNotesPage: React.FC = () => {
         )}
       </div>
 
-      <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />
+      <EditorToolbar
+        editor={editor}
+        isUploadingImage={isUploadingImage}
+        onInsertImage={insertImage}
+      />
     </main>
   );
 };

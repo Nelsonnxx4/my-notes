@@ -40,10 +40,15 @@ export const errorHandler = (
 	}
 
 	if (err instanceof HttpError) {
-		res.status(err.statusCode).json({
+		const response: { message: string; details?: unknown } = {
 			message: err.message,
-			...(err.details && { details: err.details }),
-		});
+		};
+
+		if (err.details !== undefined) {
+			response.details = err.details;
+		}
+
+		res.status(err.statusCode).json(response);
 		return;
 	}
 
