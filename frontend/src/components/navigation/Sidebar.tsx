@@ -19,7 +19,9 @@ import {
   useIsMutating,
 } from "@tanstack/react-query";
 
+import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { getUserDisplayName } from "@/utils/userProfile";
 
 const SyncButton: React.FC = () => {
   const queryClient = useQueryClient();
@@ -82,12 +84,7 @@ const SyncButton: React.FC = () => {
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
-  const displayNameKey = user?.id ? `app:customDisplayName:${user.id}` : null;
-  const customDisplayName = displayNameKey
-    ? localStorage.getItem(displayNameKey)?.trim()
-    : "";
-  const displayName = customDisplayName || user?.name?.trim() || "User";
-  const avatarLetter = displayName.charAt(0).toUpperCase();
+  const displayName = getUserDisplayName(user);
 
   const SidebarOptions = [
     { id: 1, icon: HomeIcon, name: "Home", path: "/home" },
@@ -112,9 +109,7 @@ const Sidebar: React.FC = () => {
     <aside className="fixed left-0 top-0 bottom-0 xl:w-65 md:w-50 h-dvh overflow-hidden border-r border-gray-300 bg-white hidden md:flex flex-col shrink-0 z-40 dark:border-gray-800 dark:bg-gray-950">
       <section className="flex justify-start items-center gap-2 border-b border-gray-300 py-8 px-4 shrink-0 dark:border-gray-800">
         <div className="relative shrink-0">
-          <div className="h-11 w-11 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-base font-bold select-none">
-            {avatarLetter}
-          </div>
+          <UserAvatar user={user} />
           <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-green-400 border-2 border-white" />
         </div>
         <div className="flex flex-col leading-5 min-w-0">

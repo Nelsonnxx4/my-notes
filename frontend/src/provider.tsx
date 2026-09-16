@@ -1,5 +1,6 @@
 import type { NavigateOptions } from "react-router-dom";
 
+import { ToastProvider } from "@heroui/react";
 import { HeroUIProvider } from "@heroui/system";
 import { useHref, useNavigate } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -25,6 +26,14 @@ export function Provider({ children }: { children: React.ReactNode }) {
           <NoteFiltersProvider>
             <HeroUIProvider navigate={navigate} useHref={useHref}>
               {children}
+              <ToastProvider
+                placement="top-right"
+                toastProps={{
+                  radius: "md",
+                  timeout: 5000,
+                  shouldShowTimeoutProgress: true,
+                }}
+              />
             </HeroUIProvider>
           </NoteFiltersProvider>
         </AppearanceProvider>

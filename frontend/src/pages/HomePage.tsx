@@ -10,6 +10,7 @@ import { useFolders } from "@/hooks/useFolder";
 import { useAuth } from "@/contexts/AuthContext";
 import { hashColor, hashIndex } from "@/utils/noteColors";
 import { useAppearance } from "@/contexts/AppearanceContext";
+import { getUserDisplayName } from "@/utils/userProfile";
 
 const now = new Date();
 const hour = now.getHours();
@@ -53,11 +54,7 @@ const HomePage: React.FC = () => {
     gridLayout === "compact"
       ? "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"
       : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
-  const displayNameKey = user?.id ? `app:customDisplayName:${user.id}` : null;
-  const customDisplayName = displayNameKey
-    ? localStorage.getItem(displayNameKey)?.trim()
-    : "";
-  const displayName = customDisplayName || user?.name?.trim() || "there";
+  const displayName = getUserDisplayName(user, "there");
 
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32 dark:bg-gray-950">

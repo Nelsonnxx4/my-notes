@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { useNotes } from "@/hooks/queries/useNotes";
 import { deleteNote } from "@/api/notes.api";
+import { getToastErrorMessage, notify } from "@/utils/toast";
 
 function stripHtml(html: string): string {
   return (
@@ -46,6 +47,11 @@ const DataSettings = () => {
     const content = notes.map(noteToMarkdown).join("\n\n---\n\n");
 
     download("my-notes.md", content, "text/markdown");
+    notify({
+      title: "Export started",
+      description: "Your Markdown export is downloading.",
+      severity: "success",
+    });
   }
 
   function exportText() {
@@ -54,6 +60,11 @@ const DataSettings = () => {
       .join("\n\n---\n\n");
 
     download("my-notes.txt", content, "text/plain");
+    notify({
+      title: "Export started",
+      description: "Your text export is downloading.",
+      severity: "success",
+    });
   }
 
   function exportJson() {
@@ -74,6 +85,11 @@ const DataSettings = () => {
       JSON.stringify(payload, null, 2),
       "application/json",
     );
+    notify({
+      title: "Export started",
+      description: "Your JSON export is downloading.",
+      severity: "success",
+    });
   }
 
   async function handleDeleteAll() {
@@ -81,6 +97,17 @@ const DataSettings = () => {
     try {
       await Promise.all(notes.map((n) => deleteNote(n.id)));
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      notify({
+        title: "Notes deleted",
+        description: "All notes were permanently deleted.",
+        severity: "success",
+      });
+    } catch (error) {
+      notify({
+        title: "Notes not deleted",
+        description: getToastErrorMessage(error),
+        severity: "danger",
+      });
     } finally {
       setDeleting(false);
       setShowConfirm(false);

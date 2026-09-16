@@ -4,6 +4,7 @@ import { Tag, Plus, X, Search, Loader2 } from "lucide-react";
 import { Input } from "@heroui/react";
 
 import { useTags, useCreateTag, useDeleteTag } from "@/hooks/useTags";
+import { getToastErrorMessage, notify } from "@/utils/toast";
 
 const TAG_COLORS = [
   {
@@ -90,10 +91,22 @@ const TagsPage: React.FC = () => {
 
     if (!name) return;
     createTag(name, {
-      onSuccess: () => {
+      onSuccess: (tag) => {
         setNewTagName("");
         setShowInput(false);
         setSelectedColorIdx(0);
+        notify({
+          title: "Tag created",
+          description: `"${tag.name}" is ready to use.`,
+          severity: "success",
+        });
+      },
+      onError: (error) => {
+        notify({
+          title: "Tag not created",
+          description: getToastErrorMessage(error),
+          severity: "danger",
+        });
       },
     });
   };
@@ -254,7 +267,22 @@ const TagsPage: React.FC = () => {
                     className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition h-5 w-5 flex items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-500 hover:text-red-500 dark:bg-gray-950/70 dark:hover:bg-gray-950 dark:text-gray-300"
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteTag(tag.id);
+                      deleteTag(tag.id, {
+                        onSuccess: () => {
+                          notify({
+                            title: "Tag deleted",
+                            description: `"${tag.name}" was removed.`,
+                            severity: "success",
+                          });
+                        },
+                        onError: (error) => {
+                          notify({
+                            title: "Tag not deleted",
+                            description: getToastErrorMessage(error),
+                            severity: "danger",
+                          });
+                        },
+                      });
                     }}
                   >
                     <X size={11} strokeWidth={2.5} />

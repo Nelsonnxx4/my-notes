@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Note } from "@/types";
 import { deleteNote, updateNote } from "@/api/notes.api";
+import { getToastErrorMessage, notify } from "@/utils/toast";
 
 interface Props {
   note: Note;
@@ -18,7 +19,19 @@ const EditorHeader = ({ note, isSaving }: Props) => {
     mutationFn: () => deleteNote(note.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      notify({
+        title: "Note deleted",
+        description: "The note was removed.",
+        severity: "success",
+      });
       navigate(-1);
+    },
+    onError: (error) => {
+      notify({
+        title: "Note not deleted",
+        description: getToastErrorMessage(error),
+        severity: "danger",
+      });
     },
   });
 
@@ -27,6 +40,20 @@ const EditorHeader = ({ note, isSaving }: Props) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["note", note.id] });
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      notify({
+        title: note.isPinned ? "Note unpinned" : "Note pinned",
+        description: note.isPinned
+          ? "The note was removed from pinned notes."
+          : "The note was added to pinned notes.",
+        severity: "success",
+      });
+    },
+    onError: (error) => {
+      notify({
+        title: "Pin update failed",
+        description: getToastErrorMessage(error),
+        severity: "danger",
+      });
     },
   });
 

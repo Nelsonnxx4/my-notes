@@ -9,6 +9,9 @@
   --dark-surface-bg: #252629;
   --dark-surface-hover: #2d2e31;
   --dark-editor-bg: #101113;
+  --dark-field-border: #414247;
+  --dark-field-border-hover: #37393d;
+  --dark-field-border-active: #2f3135;
 }
 
 @theme {
@@ -68,4 +71,36 @@ html.dark body {
 
 .dark .dark\:data-\[hover\=true\]\:bg-gray-900[data-hover="true"] {
   background-color: var(--dark-surface-hover);
+}
+
+.dark .dark\:border-gray-800,
+.dark .dark\:border-gray-700 {
+  border-color: var(--dark-field-border);
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  border-color: var(--dark-field-border);
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):hover,
+.dark select:hover,
+.dark textarea:hover,
+.dark .hover\:border-gray-300:hover,
+.dark .hover\:border-gray-400:hover,
+.dark .dark\:hover\:border-gray-700:hover,
+.dark .data-\[hover\=true\]\:border-gray-400[data-hover="true"] {
+  border-color: var(--dark-field-border-hover);
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):focus,
+.dark select:focus,
+.dark textarea:focus,
+.dark .focus\:border-gray-400:focus,
+.dark .focus\:border-gray-500:focus,
+.dark .focus\:border-green-400:focus,
+.dark .focus-within\:border-gray-400:focus-within,
+.dark .data-\[open\=true\]\:border-gray-400[data-open="true"] {
+  border-color: var(--dark-field-border-active);
 }

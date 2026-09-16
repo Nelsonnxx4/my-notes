@@ -15,6 +15,7 @@ import { useUploadEditorImage } from "@/hooks/useUploadEditorImage";
 import { useAppearance } from "@/contexts/AppearanceContext";
 import type { ApiErrorResponse, Note } from "@/types";
 import { parseEditorStats, sanitizeEditorHtml } from "@/utils/editorHtml";
+import { notify } from "@/utils/toast";
 
 const AUTOSAVE_MS = 800;
 const LIGHT_EDITOR_BG = "#FFFFFF";
@@ -43,7 +44,11 @@ const NoteDetailsPage = () => {
   const latestVersion = useRef<number | null>(null);
 
   const handleImageError = useCallback((message: string) => {
-    setSaveError(message);
+    notify({
+      title: "Image upload failed",
+      description: message,
+      severity: "danger",
+    });
   }, []);
 
   const { insertImage, isUploadingImage } = useUploadEditorImage(
@@ -91,13 +96,23 @@ const NoteDetailsPage = () => {
         if (currentNote) {
           setConflictNote(currentNote);
           setSaveError("This note changed somewhere else before autosave ran.");
+          notify({
+            title: "Autosave conflict",
+            description: "This note changed somewhere else. Choose which copy to keep.",
+            severity: "warning",
+          });
           return;
         }
       }
 
-      setSaveError(
-        err.response?.data?.message ?? "Autosave failed. Your changes are still on screen.",
-      );
+      setSaveError(null);
+      notify({
+        title: "Autosave failed",
+        description:
+          err.response?.data?.message ??
+          "Your changes are still on screen. Please try again.",
+        severity: "danger",
+      });
     },
     [],
   );
@@ -158,6 +173,11 @@ const NoteDetailsPage = () => {
     setSavedVersion(conflictNote.version);
     setConflictNote(null);
     setSaveError(null);
+    notify({
+      title: "Server copy restored",
+      description: "The latest saved version is now on screen.",
+      severity: "success",
+    });
   };
 
   const overwriteServerCopy = () => {
@@ -178,6 +198,11 @@ const NoteDetailsPage = () => {
           setSavedVersion(savedNote.version);
           setConflictNote(null);
           setSaveError(null);
+          notify({
+            title: "Conflict resolved",
+            description: "Your version replaced the server copy.",
+            severity: "success",
+          });
         },
         onError: handleAutoSaveError,
       },

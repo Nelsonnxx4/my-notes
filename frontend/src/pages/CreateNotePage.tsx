@@ -25,6 +25,7 @@ import {
   writeCreateNoteDraft,
   type CreateNoteDraft,
 } from "@/utils/createNoteDraft";
+import { notify } from "@/utils/toast";
 
 const CreateNotesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +40,6 @@ const CreateNotesPage: React.FC = () => {
   const [title, setTitle] = useState("");
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
   const [showTagPicker, setShowTagPicker] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -54,10 +54,15 @@ const CreateNotesPage: React.FC = () => {
   const tagPickerRef = useRef<HTMLDivElement>(null);
   const loadedDraftKey = useRef<string | null>(null);
   const skipNextDraftSave = useRef(false);
+  const draftToastShown = useRef(false);
   const draftKey = getCreateNoteDraftKey(user?.id);
 
   const handleImageError = useCallback((message: string) => {
-    setError(message);
+    notify({
+      title: "Image upload failed",
+      description: message,
+      severity: "danger",
+    });
   }, []);
   const { insertImage, isUploadingImage } = useUploadEditorImage(
     editor,
@@ -96,6 +101,7 @@ const CreateNotesPage: React.FC = () => {
       setSelectedTagIds(draft.selectedTagIds);
       setStats(parseEditorStats(draft.contentHtml));
       setDraftSavedAt(draft.updatedAt || null);
+      draftToastShown.current = true;
     } else {
       setTitle(emptyCreateNoteDraft.title);
       setContentHtml(emptyCreateNoteDraft.contentHtml);
@@ -103,6 +109,7 @@ const CreateNotesPage: React.FC = () => {
       setSelectedTagIds(emptyCreateNoteDraft.selectedTagIds);
       setStats({ words: 0, chars: 0, lines: 1 });
       setDraftSavedAt(null);
+      draftToastShown.current = false;
     }
 
     loadedDraftKey.current = draftKey;
@@ -127,11 +134,20 @@ const CreateNotesPage: React.FC = () => {
     if (isCreateNoteDraftEmpty(draft)) {
       clearCreateNoteDraft(draftKey);
       setDraftSavedAt(null);
+      draftToastShown.current = false;
       return;
     }
 
     writeCreateNoteDraft(draftKey, draft);
     setDraftSavedAt(draft.updatedAt);
+    if (!draftToastShown.current) {
+      notify({
+        title: "Draft saved",
+        description: "Your note has been saved in drafts.",
+        severity: "success",
+      });
+      draftToastShown.current = true;
+    }
   }, [
     contentHtml,
     draftKey,
@@ -151,11 +167,14 @@ const CreateNotesPage: React.FC = () => {
 
   const handleSubmit = () => {
     if (!title.trim()) {
-      setError("Title is required.");
+      notify({
+        title: "Title is required",
+        description: "Add a title before saving this note.",
+        severity: "danger",
+      });
 
       return;
     }
-    setError(null);
     const sanitizedContent = sanitizeEditorHtml(contentHtml);
 
     createNote({
@@ -166,7 +185,73 @@ const CreateNotesPage: React.FC = () => {
     }, {
       onSuccess: (note) => {
         clearCreateNoteDraft(draftKey);
+        notify({
+          title: "Note saved",
+          description: "Your note has been saved.",
+          severity: "success",
+        });
         navigate(`/notes/${note.id}`);
+      },
+      onError: (err) => {
+        const message =
+          err instanceof Error ? err.message : "Please try again.";
+
+        notify({
+          title: "Note not saved",
+          description: message,
+          severity: "danger",
+        });
+      },
+    });
+  };
+
+  const handleCreateFolder = () => {
+    const name = newFolderName.trim();
+
+    if (!name) return;
+    createFolder(name, {
+      onSuccess: (folder) => {
+        setSelectedFolderId(folder.id);
+        setNewFolderName("");
+        setShowFolderPicker(false);
+        notify({
+          title: "Folder created",
+          description: `"${folder.name}" is ready to use.`,
+          severity: "success",
+        });
+      },
+      onError: (err) => {
+        notify({
+          title: "Folder not created",
+          description:
+            err instanceof Error ? err.message : "Please try again.",
+          severity: "danger",
+        });
+      },
+    });
+  };
+
+  const handleCreateTag = () => {
+    const name = newTagName.trim();
+
+    if (!name) return;
+    createTag(name, {
+      onSuccess: (tag) => {
+        setSelectedTagIds((prev) => [...prev, tag.id]);
+        setNewTagName("");
+        notify({
+          title: "Tag created",
+          description: `"${tag.name}" was added to this note.`,
+          severity: "success",
+        });
+      },
+      onError: (err) => {
+        notify({
+          title: "Tag not created",
+          description:
+            err instanceof Error ? err.message : "Please try again.",
+          severity: "danger",
+        });
       },
     });
   };
@@ -179,7 +264,12 @@ const CreateNotesPage: React.FC = () => {
     setSelectedTagIds(emptyCreateNoteDraft.selectedTagIds);
     setStats({ words: 0, chars: 0, lines: 1 });
     setDraftSavedAt(null);
-    setError(null);
+    draftToastShown.current = false;
+    notify({
+      title: "Draft cleared",
+      description: "The local draft was removed.",
+      severity: "success",
+    });
   };
 
   const handleContentChange = (html: string) => {
@@ -213,23 +303,14 @@ const CreateNotesPage: React.FC = () => {
 
       <div className="px-5 space-y-4">
         {draftSavedAt && (
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-green-100 bg-green-50 px-3 py-2 text-xs text-green-700 dark:border-green-900/60 dark:bg-green-950/30 dark:text-green-300">
-            <span>Draft saved locally.</span>
-            <button
-              className="flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-green-800 hover:bg-green-100 dark:text-green-200 dark:hover:bg-green-900/40"
-              type="button"
-              onClick={clearDraft}
-            >
-              <Trash2 size={12} />
-              Clear draft
-            </button>
-          </div>
-        )}
-
-        {error && (
-          <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
-            {error}
-          </p>
+          <button
+            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-gray-400 transition hover:bg-gray-100 hover:text-red-500 dark:hover:bg-gray-900"
+            type="button"
+            onClick={clearDraft}
+          >
+            <Trash2 size={12} />
+            Clear draft
+          </button>
         )}
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -295,16 +376,7 @@ const CreateNotesPage: React.FC = () => {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault();
-                          const name = newFolderName.trim();
-
-                          if (!name) return;
-                          createFolder(name, {
-                            onSuccess: (folder) => {
-                              setSelectedFolderId(folder.id);
-                              setNewFolderName("");
-                              setShowFolderPicker(false);
-                            },
-                          });
+                          handleCreateFolder();
                         }
                       }}
                     />
@@ -312,18 +384,7 @@ const CreateNotesPage: React.FC = () => {
                       className="flex items-center justify-center w-6 h-6 rounded-md bg-green-600 text-white hover:bg-green-600/85 disabled:opacity-50 transition shrink-0"
                       disabled={!newFolderName.trim() || isCreatingFolder}
                       type="button"
-                      onClick={() => {
-                        const name = newFolderName.trim();
-
-                        if (!name) return;
-                        createFolder(name, {
-                          onSuccess: (folder) => {
-                            setSelectedFolderId(folder.id);
-                            setNewFolderName("");
-                            setShowFolderPicker(false);
-                          },
-                        });
-                      }}
+                      onClick={handleCreateFolder}
                     >
                       {isCreatingFolder ? (
                         <Loader2 className="animate-spin" size={11} />
@@ -389,15 +450,7 @@ const CreateNotesPage: React.FC = () => {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault();
-                          const name = newTagName.trim();
-
-                          if (!name) return;
-                          createTag(name, {
-                            onSuccess: (tag) => {
-                              setSelectedTagIds((prev) => [...prev, tag.id]);
-                              setNewTagName("");
-                            },
-                          });
+                          handleCreateTag();
                         }
                       }}
                     />
@@ -405,17 +458,7 @@ const CreateNotesPage: React.FC = () => {
                       className="flex items-center justify-center w-6 h-6 rounded-md bg-green-600 text-white hover:bg-green-600/85 disabled:opacity-50 transition shrink-0"
                       disabled={!newTagName.trim() || isCreatingTag}
                       type="button"
-                      onClick={() => {
-                        const name = newTagName.trim();
-
-                        if (!name) return;
-                        createTag(name, {
-                          onSuccess: (tag) => {
-                            setSelectedTagIds((prev) => [...prev, tag.id]);
-                            setNewTagName("");
-                          },
-                        });
-                      }}
+                      onClick={handleCreateTag}
                     >
                       {isCreatingTag ? (
                         <Loader2 className="animate-spin" size={11} />
@@ -451,10 +494,7 @@ const CreateNotesPage: React.FC = () => {
           placeholder="Untitled Note"
           rows={2}
           value={title}
-          onChange={(e) => {
-            setError(null);
-            setTitle(e.target.value);
-          }}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
         <NoteContentEditor

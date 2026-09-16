@@ -5,6 +5,7 @@ import {
   addFavoriteApi,
   removeFavoriteApi,
 } from "@/api/favorites.api";
+import { getToastErrorMessage, notify } from "@/utils/toast";
 
 export const useFavorites = () =>
   useQuery({
@@ -23,10 +24,26 @@ export const useToggleFavorite = () => {
       noteId: string;
       isFavorite: boolean;
     }) => (isFavorite ? removeFavoriteApi(noteId) : addFavoriteApi(noteId)),
-    onSuccess: () => {
+    onSuccess: (_, { isFavorite }) => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["note"] });
+      notify({
+        title: isFavorite ? "Removed from favorites" : "Added to favorites",
+        description: isFavorite
+          ? "The note was removed from Favorites."
+          : "The note was added to Favorites.",
+        severity: "success",
+      });
+    },
+    onError: (error, { isFavorite }) => {
+      notify({
+        title: isFavorite
+          ? "Favorite not removed"
+          : "Favorite not added",
+        description: getToastErrorMessage(error),
+        severity: "danger",
+      });
     },
   });
 };

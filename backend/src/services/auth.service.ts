@@ -17,7 +17,13 @@ export const signupUser = async ({ email, password }: RegisterDTO) => {
 
 	const user = await prisma.user.create({
 		data: { email, password: hashedPassword },
-		select: { id: true, name: true, email: true, createdAt: true },
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			avatarUrl: true,
+			createdAt: true,
+		},
 	});
 
 	const token = jwt.sign(
@@ -60,7 +66,13 @@ export const loginUser = async ({ email, password }: LoginDTO) => {
 export const getUserById = async (id: string) => {
 	const user = await prisma.user.findUnique({
 		where: { id },
-		select: { id: true, name: true, email: true, createdAt: true },
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			avatarUrl: true,
+			createdAt: true,
+		},
 	});
 
 	return user;

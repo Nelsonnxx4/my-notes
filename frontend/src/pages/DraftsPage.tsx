@@ -10,6 +10,7 @@ import {
   type CreateNoteDraft,
 } from "@/utils/createNoteDraft";
 import { textFromHtml } from "@/utils/editorHtml";
+import { notify } from "@/utils/toast";
 
 function formatSavedAt(value: string): string {
   const date = new Date(value);
@@ -41,6 +42,11 @@ const DraftsPage = () => {
   function deleteDraft() {
     clearCreateNoteDraft(draftKey);
     setDraft(null);
+    notify({
+      title: "Draft deleted",
+      description: "The draft was removed.",
+      severity: "success",
+    });
   }
 
   return (

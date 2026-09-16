@@ -7,6 +7,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { GoogleIcon } from "@/assets/icons";
 import { loginApi, registerApi, googleAuthApi } from "@/api/auth.api";
 import { useAuth } from "@/contexts/AuthContext";
+import { notify } from "@/utils/toast";
 
 interface AuthPageProps {
   mode: "login" | "signup";
@@ -26,14 +27,26 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
   const navigate = useNavigate();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+  const showAuthError = (title: string, message: string) => {
+    setFormError(message);
+    notify({
+      title,
+      description: message,
+      severity: "danger",
+    });
+  };
+
   const validate = (): boolean => {
     if (!email.trim()) {
-      setFormError("Email is required.");
+      showAuthError("Email is required", "Enter your email address.");
 
       return false;
     }
     if (!password || password.length < 6) {
-      setFormError("Password must be at least 6 characters.");
+      showAuthError(
+        "Password is too short",
+        "Password must be at least 6 characters.",
+      );
 
       return false;
     }
@@ -55,7 +68,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
       setCredentials(result);
       navigate("/home", { replace: true });
     } catch (err: any) {
-      setFormError(
+      showAuthError(
+        isSignUp ? "Sign up failed" : "Sign in failed",
         err?.response?.data?.message ??
           "Something went wrong. Please try again.",
       );
@@ -76,7 +90,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
         navigate("/home", { replace: true });
       } catch (err: any) {
         console.error("Google backend auth failed:", err);
-        setFormError(
+        showAuthError(
+          "Google sign-in failed",
           err?.response?.data?.message ??
             "Google sign-in failed. Please try again or use email.",
         );
@@ -86,14 +101,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
     },
     onError: (errorResponse) => {
       console.error("Google OAuth failed:", errorResponse);
-      setFormError(
+      showAuthError(
+        "Google sign-in failed",
         errorResponse.error_description ??
           "Google sign-in failed. Please try again or use email.",
       );
     },
     onNonOAuthError: (nonOAuthError) => {
       console.error("Google sign-in popup failed:", nonOAuthError);
-      setFormError(
+      showAuthError(
+        "Google sign-in failed",
         nonOAuthError.type === "popup_closed"
           ? "Google sign-in was closed before it finished."
           : "Google sign-in popup could not open. Please disable popup blockers and try again.",
@@ -105,7 +122,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
     setFormError(null);
 
     if (!googleClientId) {
-      setFormError("Google sign-in is not configured for this app.");
+      showAuthError(
+        "Google is not configured",
+        "Google sign-in is not configured for this app.",
+      );
       return;
     }
 

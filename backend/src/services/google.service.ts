@@ -15,6 +15,7 @@ interface GoogleUserInfo {
 	email?: string;
 	email_verified?: boolean;
 	name?: string;
+	picture?: string;
 }
 
 export const googleSignIn = async (accessToken: string) => {
@@ -54,8 +55,9 @@ export const googleSignIn = async (accessToken: string) => {
 		throw new Error("Invalid Google account");
 	}
 
-	const { email, sub: googleId, name } = profile;
+	const { email, sub: googleId, name, picture } = profile;
 	const displayName = name?.trim() || null;
+	const avatarUrl = picture?.trim() || null;
 
 	let user = await prisma.user.findUnique({ where: { email } });
 
@@ -71,14 +73,20 @@ export const googleSignIn = async (accessToken: string) => {
 				email,
 				password: placeholderPassword,
 				googleId,
+				avatarUrl,
 			},
 		});
-	} else if (!user.googleId || (!user.name && displayName)) {
+	} else if (
+		!user.googleId ||
+		(displayName && user.name !== displayName) ||
+		(avatarUrl && user.avatarUrl !== avatarUrl)
+	) {
 		user = await prisma.user.update({
 			where: { email },
 			data: {
 				...(!user.googleId ? { googleId } : {}),
-				...(!user.name && displayName ? { name: displayName } : {}),
+				...(displayName && user.name !== displayName ? { name: displayName } : {}),
+				...(avatarUrl && user.avatarUrl !== avatarUrl ? { avatarUrl } : {}),
 			},
 		});
 	}

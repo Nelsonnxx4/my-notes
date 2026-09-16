@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import { Check, LogOut } from "lucide-react";
 import { Input } from "@heroui/react";
+import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import UserAvatar from "@/components/UserAvatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { getUserDisplayName } from "@/utils/userProfile";
 
 const inputClasses = {
   inputWrapper:
@@ -14,32 +15,7 @@ const inputClasses = {
 const AccountSettings = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  const fallbackName = user?.name?.trim() || "User";
-  const displayNameKey = useMemo(
-    () =>
-      user?.id
-        ? `app:customDisplayName:${user.id}`
-        : "app:customDisplayName",
-    [user?.id],
-  );
-
-  const [name, setName] = useState<string>(
-    () => localStorage.getItem(displayNameKey) ?? fallbackName,
-  );
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    setName(localStorage.getItem(displayNameKey) ?? fallbackName);
-  }, [displayNameKey, fallbackName]);
-
-  function save() {
-    const trimmed = name.trim() || fallbackName;
-    localStorage.setItem(displayNameKey, trimmed);
-    setName(trimmed);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }
+  const displayName = getUserDisplayName(user);
 
   function handleSignOut() {
     logout();
@@ -49,13 +25,13 @@ const AccountSettings = () => {
   return (
     <div className="w-full space-y-6">
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-4 dark:text-gray-100">Profile</h3>
+        <h3 className="text-base font-semibold text-gray-800 mb-4 dark:text-gray-100">
+          Profile
+        </h3>
 
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
-            <div className="h-16 w-16 rounded-full bg-green-100 ring-2 ring-green-200 flex items-center justify-center text-green-700 text-xl font-bold select-none">
-              {name.charAt(0).toUpperCase()}
-            </div>
+            <UserAvatar size="lg" user={user} />
             <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-green-400 border-2 border-white" />
           </div>
         </div>
@@ -63,38 +39,28 @@ const AccountSettings = () => {
         <div className="space-y-3">
           <Input
             classNames={inputClasses}
+            isReadOnly
             placeholder="Display name"
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={displayName}
           />
           <Input
             classNames={inputClasses}
-            description="Your sign-in email — cannot be changed here."
+            description="Your sign-in email cannot be changed here."
             isReadOnly
             placeholder="Email"
             type="email"
             value={user?.email ?? ""}
           />
         </div>
-
-        <button
-          className={`mt-4 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer w-full sm:w-auto ${
-            saved
-              ? "bg-green-100 text-green-700 border border-green-300"
-              : "bg-green-600 hover:bg-green-600/85 border border-green-400 text-white"
-          }`}
-          onClick={save}
-        >
-          {saved && <Check size={14} strokeWidth={2.5} />}
-          {saved ? "Saved" : "Save changes"}
-        </button>
       </div>
 
       <hr className="border-gray-100 dark:border-gray-800" />
 
       <div>
-        <h3 className="text-base font-semibold text-gray-800 mb-3 dark:text-gray-100">Account</h3>
+        <h3 className="text-base font-semibold text-gray-800 mb-3 dark:text-gray-100">
+          Account
+        </h3>
         <div className="space-y-1">
           <button
             className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50 transition cursor-pointer dark:hover:bg-red-950/30"

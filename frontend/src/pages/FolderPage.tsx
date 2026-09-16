@@ -4,6 +4,7 @@ import { FolderPlusIcon, Loader2, Check, X } from "lucide-react";
 
 import FolderCard from "@/components/folders/FolderCard";
 import { useFolders, useCreateFolder } from "@/hooks/useFolder";
+import { getToastErrorMessage, notify } from "@/utils/toast";
 
 export const FOLDER_COLORS = [
   {
@@ -86,9 +87,21 @@ const FolderPage: React.FC = () => {
 
     if (!name) return;
     createFolder(name, {
-      onSuccess: () => {
+      onSuccess: (folder) => {
         setNewName("");
         setIsAdding(false);
+        notify({
+          title: "Folder created",
+          description: `"${folder.name}" is ready to use.`,
+          severity: "success",
+        });
+      },
+      onError: (error) => {
+        notify({
+          title: "Folder not created",
+          description: getToastErrorMessage(error),
+          severity: "danger",
+        });
       },
     });
   };
