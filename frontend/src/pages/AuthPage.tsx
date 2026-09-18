@@ -13,6 +13,8 @@ interface AuthPageProps {
   mode: "login" | "signup";
 }
 
+const GOOGLE_PROFILE_SCOPES = "openid email profile";
+
 const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
   const isSignUp = mode === "signup";
 
@@ -79,7 +81,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
   };
 
   const handleGoogleLogin = useGoogleLogin({
-    scope: "openid email profile",
+    scope: GOOGLE_PROFILE_SCOPES,
+    prompt: "consent",
+    include_granted_scopes: true,
     onSuccess: async (tokenResponse) => {
       setFormError(null);
       setIsLoading(true);
