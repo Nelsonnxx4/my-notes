@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { deleteNote, updateNote } from "@/api/notes.api";
+import { broadcastNotesChanged } from "@/lib/noteEvents";
 
 export const useDeleteNote = () => {
   const queryClient = useQueryClient();
@@ -9,6 +10,7 @@ export const useDeleteNote = () => {
     mutationFn: (id: string) => deleteNote(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      broadcastNotesChanged();
     },
   });
 };
@@ -21,6 +23,7 @@ export const useArchiveNote = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notes", "archived"] });
+      broadcastNotesChanged();
     },
   });
 };
@@ -33,6 +36,7 @@ export const useUnarchiveNote = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notes", "archived"] });
+      broadcastNotesChanged();
     },
   });
 };

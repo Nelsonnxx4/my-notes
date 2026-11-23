@@ -1,47 +1,72 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
+
+import { sanitizeNoteHtml } from "@/lib/sanitizeHtml";
 
 interface Props {
   defaultContent?: string;
   onChange: (html: string) => void;
+  onEditorReady: (editor: Editor | null) => void;
 }
 
-const NoteContentEditor = forwardRef<HTMLDivElement, Props>(
-  ({ defaultContent = "", onChange }, ref) => {
-    const initialized = useRef(false);
+/**
+ * Structured rich-text editing replaces the browser's deprecated execCommand API.
+ * Tiptap owns the document model; only sanitised HTML crosses the app/API boundary.
+ */
+const NoteContentEditor: React.FC<Props> = ({
+  defaultContent = "",
+  onChange,
+  onEditorReady,
+}) => {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({ heading: { levels: [2, 3] } }),
+      Placeholder.configure({ placeholder: "Start writing…" }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        linkOnPaste: true,
+        protocols: ["http", "https", "mailto"],
+      }),
+      Image.configure({ allowBase64: false }),
+      TaskList,
+      TaskItem.configure({ nested: true }),
+    ],
+    content: sanitizeNoteHtml(defaultContent),
+    editorProps: {
+      attributes: {
+        "aria-label": "Note content",
+        "data-note-editor": "true",
+        class:
+          "min-h-[58vh] w-full pb-28 text-[1rem] leading-8 text-[var(--app-text)] outline-none",
+      },
+    },
+    onUpdate: ({ editor: activeEditor }) => {
+      onChange(sanitizeNoteHtml(activeEditor.getHTML()));
+    },
+  });
 
-    useEffect(() => {
-      if (initialized.current) return;
-      if (ref && "current" in ref && ref.current) {
-        ref.current.innerHTML = defaultContent;
-        initialized.current = true;
-      }
-    }, [defaultContent, ref]);
+  useEffect(() => {
+    onEditorReady(editor);
+    return () => onEditorReady(null);
+  }, [editor, onEditorReady]);
 
-    return (
-      <>
-        <div
-          ref={ref}
-          contentEditable
-          suppressContentEditableWarning
-          aria-multiline="true"
-          className="w-full min-h-[60vh] bg-transparent leading-8 outline-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2"
-          style={{ fontSize: "var(--editor-font-size, 1rem)" }}
-          data-placeholder="Start writing..."
-          role="textbox"
-          tabIndex={0}
-          onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        />
-        <style>{`
-          [contenteditable]:empty:before {
-            content: attr(data-placeholder);
-            color: #9ca3af;
-            pointer-events: none;
-          }
-        `}</style>
-      </>
-    );
-  },
-);
+  useEffect(() => {
+    if (!editor) return;
+    const nextContent = sanitizeNoteHtml(defaultContent);
+    if (nextContent !== editor.getHTML()) {
+      editor.commands.setContent(nextContent, { emitUpdate: false });
+    }
+  }, [defaultContent, editor]);
 
-NoteContentEditor.displayName = "NoteContentEditor";
+  return <EditorContent editor={editor} />;
+};
+
 export default NoteContentEditor;

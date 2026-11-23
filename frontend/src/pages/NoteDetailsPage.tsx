@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import type { Editor } from "@tiptap/react";
 
 import EditorHeader from "@/components/editor/EditorHeader";
 import NoteTitleInput from "@/components/editor/NoteTitleInput";
@@ -9,7 +10,6 @@ import EditorToolbar from "@/components/editor/EditorToolbar";
 import ColorPicker from "@/components/editor/ColorPicker";
 import { useNote } from "@/hooks/queries/useNotes";
 import { useAutoSaveNote } from "@/hooks/mutations/useAutoSaveNote";
-import { useEditorActions } from "@/hooks/useEditorActions";
 import { useAppearance } from "@/contexts/AppearanceContext";
 
 function parseStats(html: string) {
@@ -32,15 +32,15 @@ const NoteDetailsPage = () => {
   const { showWordCount, lineNumbers } = useAppearance();
 
   const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [bgColor, setBgColor] = useState<string>("#FFFFFF");
   const [stats, setStats] = useState({ words: 0, chars: 0, lines: 1 });
-
-  const editorRef = useRef<HTMLDivElement>(null);
-  const { execFormat, insertImage } = useEditorActions(editorRef);
+  const [editor, setEditor] = useState<Editor | null>(null);
 
   useEffect(() => {
     if (note) {
       setTitle(note.title);
+      setContent(note.content ?? "");
     }
   }, [note?.id]);
 
@@ -59,10 +59,11 @@ const NoteDetailsPage = () => {
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
-    scheduleSave(val, editorRef.current?.innerHTML ?? "");
+    scheduleSave(val, content);
   };
 
   const handleContentChange = (html: string) => {
+    setContent(html);
     scheduleSave(title, html);
     if (showWordCount || lineNumbers) setStats(parseStats(html));
   };
@@ -98,8 +99,8 @@ const NoteDetailsPage = () => {
         <ColorPicker value={bgColor} onChange={setBgColor} />
         <NoteTitleInput value={title} onChange={handleTitleChange} />
         <NoteContentEditor
-          ref={editorRef}
           defaultContent={note.content ?? ""}
+          onEditorReady={setEditor}
           onChange={handleContentChange}
         />
 
@@ -124,7 +125,7 @@ const NoteDetailsPage = () => {
         )}
       </div>
 
-      <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />
+      <EditorToolbar editor={editor} />
     </main>
   );
 };

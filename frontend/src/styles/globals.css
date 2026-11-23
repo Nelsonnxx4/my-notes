@@ -10,21 +10,136 @@
   --color-note-green: #d1f5e0;
 
   /* Brand colors */
-  --color-primary: #7c3aed;
-  --color-primary-100: #926bf4;
-  --color-primary-200: #7c3aed;
-  --color-secondary-100: #f9fafb;
-  --color-secondary-200: #e0e0e1;
-  --color-accent-100: #34d399;
-  --color-accent-200: #10b981;
-  --color-highlight: #f59e0b;
+  --color-primary: #1d1f20;
+  --color-primary-100: #343638;
+  --color-primary-200: #111111;
+  --color-secondary-100: #f7f8f7;
+  --color-secondary-200: #e8e9e8;
+  --color-accent-100: #e8f3eb;
+  --color-accent-200: #247b50;
+  --color-highlight: #1d5fbf;
 
   /* Typography */
   --font-sans: "Raleway", Roboto, sans-serif;
 }
 
+:root {
+  --app-ground: #f6f7f6;
+  --app-surface: #ffffff;
+  --app-raised: #f1f2f1;
+  --app-active: #e8e9e8;
+  --app-border: #e2e4e2;
+  --app-rule: #eceeec;
+  --app-control: #cfd3d0;
+  --app-text: #1d1f20;
+  --app-muted: #5e6560;
+  --app-faint: #717873;
+  --app-primary: #1d1f20;
+  --app-positive: #247b50;
+  --app-negative: #b42318;
+  --app-focus: #1d5fbf;
+  --app-radius-card: 8px;
+  --app-radius-control: 6px;
+  --app-gap: 16px;
+}
+
 body {
   font-family: var(--font-sans);
-  background-color: #fff;
+  background-color: var(--app-ground);
+  color: var(--app-text);
   overscroll-behavior: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--app-focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #dce8f8;
+  color: var(--app-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-note-editor] > * + * {
+  margin-top: 1rem;
+}
+
+[data-note-editor] h2 {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+[data-note-editor] h3 {
+  margin-top: 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+
+[data-note-editor] ul,
+[data-note-editor] ol {
+  padding-left: 1.5rem;
+}
+
+[data-note-editor] ul {
+  list-style: disc;
+}
+
+[data-note-editor] ol {
+  list-style: decimal;
+}
+
+[data-note-editor] blockquote {
+  border-left: 2px solid var(--app-control);
+  padding-left: 1rem;
+  color: var(--app-muted);
+}
+
+[data-note-editor] pre {
+  overflow-x: auto;
+  border-radius: var(--app-radius-card);
+  background: #202322;
+  padding: 1rem;
+  color: #f5f7f5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+[data-note-editor] img {
+  max-width: 100%;
+  border-radius: var(--app-radius-card);
+}
+
+[data-note-editor] a {
+  color: #174f9d;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+[data-note-editor] .is-editor-empty:first-child::before {
+  float: left;
+  height: 0;
+  color: var(--app-faint);
+  content: attr(data-placeholder);
+  pointer-events: none;
 }

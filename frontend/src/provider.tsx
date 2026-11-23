@@ -8,6 +8,7 @@ import { queryClient } from "@/lib/queryClient";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AppearanceProvider } from "@/contexts/AppearanceContext";
 import { NoteFiltersProvider } from "@/contexts/NoteFiltersContext";
+import { SyncStatusProvider } from "@/contexts/SyncStatusContext";
 
 declare module "@react-types/shared" {
   interface RouterConfig {
@@ -22,11 +23,13 @@ export function Provider({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AppearanceProvider>
-          <NoteFiltersProvider>
-            <HeroUIProvider navigate={navigate} useHref={useHref}>
-              {children}
-            </HeroUIProvider>
-          </NoteFiltersProvider>
+          <SyncStatusProvider>
+            <NoteFiltersProvider>
+              <HeroUIProvider navigate={navigate} useHref={useHref}>
+                {children}
+              </HeroUIProvider>
+            </NoteFiltersProvider>
+          </SyncStatusProvider>
         </AppearanceProvider>
       </AuthProvider>
     </QueryClientProvider>

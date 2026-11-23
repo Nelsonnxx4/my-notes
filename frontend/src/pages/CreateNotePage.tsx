@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, FolderOpen, Tag, X, Plus } from "lucide-react";
+import type { Editor } from "@tiptap/react";
 
 import { useCreateNote } from "@/hooks/mutations/useCreateNote";
 import { useFolders, useCreateFolder } from "@/hooks/useFolder";
 import { useTags, useCreateTag } from "@/hooks/useTags";
-import { useEditorActions } from "@/hooks/useEditorActions";
 import EditorToolbar from "@/components/editor/EditorToolbar";
 import NoteContentEditor from "@/components/editor/NoteContentEditor";
 import { useAppearance } from "@/contexts/AppearanceContext";
@@ -31,6 +31,7 @@ const CreateNotesPage: React.FC = () => {
   const { showWordCount, lineNumbers } = useAppearance();
 
   const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -39,12 +40,10 @@ const CreateNotesPage: React.FC = () => {
   const [newFolderName, setNewFolderName] = useState("");
   const [newTagName, setNewTagName] = useState("");
   const [stats, setStats] = useState({ words: 0, chars: 0, lines: 1 });
+  const [editor, setEditor] = useState<Editor | null>(null);
 
-  const editorRef = useRef<HTMLDivElement>(null);
   const folderPickerRef = useRef<HTMLDivElement>(null);
   const tagPickerRef = useRef<HTMLDivElement>(null);
-
-  const { execFormat, insertImage } = useEditorActions(editorRef);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -82,8 +81,6 @@ const CreateNotesPage: React.FC = () => {
       return;
     }
     setError(null);
-    const content = editorRef.current?.innerHTML ?? "";
-
     createNote({
       title: title.trim(),
       content: content || undefined,
@@ -349,8 +346,9 @@ const CreateNotesPage: React.FC = () => {
         />
 
         <NoteContentEditor
-          ref={editorRef}
+          onEditorReady={setEditor}
           onChange={(html) => {
+            setContent(html);
             if (showWordCount || lineNumbers) setStats(parseStats(html));
           }}
         />
@@ -370,7 +368,7 @@ const CreateNotesPage: React.FC = () => {
         )}
       </div>
 
-      <EditorToolbar execFormat={execFormat} onInsertImage={insertImage} />
+      <EditorToolbar editor={editor} />
     </main>
   );
 };
