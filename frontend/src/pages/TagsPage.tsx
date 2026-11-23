@@ -19,10 +19,10 @@ const TAG_COLORS = [
     dot: "bg-blue-400",
   },
   {
-    bg: "bg-purple-200/85",
-    text: "text-purple-700",
-    border: "border-purple-300",
-    dot: "bg-purple-400",
+    bg: "bg-gray-100",
+    text: "text-gray-700",
+    border: "border-gray-200",
+    dot: "bg-gray-500",
   },
   {
     bg: "bg-orange-200/85",

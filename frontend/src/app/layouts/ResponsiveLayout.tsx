@@ -5,7 +5,7 @@ import { useAutoSync } from "@/hooks/useAutoSync";
 import CommandPalette from "@/components/CommandPalette";
 
 const ResponsiveLayout = () => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1101px)");
   useAutoSync();
 
   return (

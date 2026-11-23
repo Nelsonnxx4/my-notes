@@ -179,7 +179,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
                 required
                 className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2"
                 id="email"
-                placeholder="you@example.com"
+                placeholder="Email address"
                 type="email"
                 value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

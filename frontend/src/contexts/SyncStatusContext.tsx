@@ -12,9 +12,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { updateNote } from "@/api/notes.api";
 import {
   getQueuedNoteUpdates,
+  listenForQueuedNoteChanges,
   removeQueuedNoteUpdate,
 } from "@/lib/offlineMutationQueue";
-import { listenForNoteChanges } from "@/lib/noteEvents";
+import { broadcastNotesChanged, listenForNoteChanges } from "@/lib/noteEvents";
 
 export type SyncState = "saved" | "saving" | "offline" | "error";
 
@@ -48,25 +49,30 @@ export function SyncStatusProvider({ children }: { children: ReactNode }) {
   const flush = useCallback(async () => {
     if (!navigator.onLine) {
       setState("offline");
+      await refreshPendingCount();
       return;
     }
 
-    const queued = await getQueuedNoteUpdates();
-    if (queued.length === 0) {
-      setState("saved");
-      return;
-    }
-
-    setState("saving");
     try {
+      const queued = await getQueuedNoteUpdates();
+      if (queued.length === 0) {
+        setPendingCount(0);
+        setState("saved");
+        return;
+      }
+
+      setState("saving");
       for (const update of queued) {
         await updateNote(update.noteId, update.payload);
         await removeQueuedNoteUpdate(update.noteId);
+        queryClient.invalidateQueries({ queryKey: ["note", update.noteId] });
       }
       await refreshPendingCount();
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      broadcastNotesChanged();
       setState("saved");
     } catch {
+      await refreshPendingCount();
       setState(navigator.onLine ? "error" : "offline");
     }
   }, [queryClient, refreshPendingCount]);
@@ -92,17 +98,31 @@ export function SyncStatusProvider({ children }: { children: ReactNode }) {
     [queryClient],
   );
 
+  useEffect(
+    () => listenForQueuedNoteChanges(() => void refreshPendingCount()),
+    [refreshPendingCount],
+  );
+
   const value = useMemo<SyncStatusContextValue>(
     () => ({
       state,
       pendingCount,
       flush,
       setSaving: () => setState("saving"),
-      setSaved: () => setState("saved"),
-      setOffline: () => setState("offline"),
-      setError: () => setState("error"),
+      setSaved: () => {
+        void refreshPendingCount();
+        setState("saved");
+      },
+      setOffline: () => {
+        void refreshPendingCount();
+        setState("offline");
+      },
+      setError: () => {
+        void refreshPendingCount();
+        setState("error");
+      },
     }),
-    [flush, pendingCount, state],
+    [flush, pendingCount, refreshPendingCount, state],
   );
 
   return <SyncStatusContext.Provider value={value}>{children}</SyncStatusContext.Provider>;

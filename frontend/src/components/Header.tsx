@@ -6,6 +6,7 @@ import SyncStatus from "@/components/SyncStatus";
 import { useAppearance } from "@/contexts/AppearanceContext";
 import { useNoteFilters } from "@/contexts/NoteFiltersContext";
 import { useTags } from "@/hooks/useTags";
+import { openCommandPalette } from "@/lib/appEvents";
 
 const routeLabels: Record<string, string> = {
   "/home": "Home",
@@ -36,8 +37,6 @@ export default function Header() {
     ...(filters.tagId !== undefined ? [`${tagPrefix}${filters.tagId}`] : []),
   ]);
   const hasActiveFilters = Boolean(filters.pinned || filters.tagId !== undefined);
-
-  const openCommands = () => window.dispatchEvent(new Event("notlify:open-command-palette"));
 
   function handleFilterChange(keys: "all" | Set<React.Key>) {
     if (keys === "all") return;
@@ -75,8 +74,8 @@ export default function Header() {
   );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--app-border)] bg-[var(--app-ground)] md:left-60">
-      <div className="hidden h-14 items-center gap-3 px-6 md:flex">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--app-border)] bg-[var(--app-ground)] min-[1101px]:left-60">
+      <div className="hidden h-14 items-center gap-3 px-6 min-[1101px]:flex">
         <span className="w-24 text-sm font-medium text-[var(--app-text)]">{pageLabel}</span>
         <div className="flex h-8 max-w-md flex-1 items-center rounded-[var(--app-radius-control)] border border-[var(--app-control)] bg-white px-2.5 focus-within:border-[var(--app-text)]">
           <SearchIcon className="shrink-0 text-[var(--app-muted)]" size={15} strokeWidth={1.6} />
@@ -118,23 +117,23 @@ export default function Header() {
         <button
           className="ml-auto flex h-8 items-center gap-1.5 rounded-[var(--app-radius-control)] px-2 text-xs text-[var(--app-muted)] hover:bg-[var(--app-raised)]"
           type="button"
-          onClick={openCommands}
+          onClick={openCommandPalette}
         >
           <Keyboard size={14} strokeWidth={1.6} />
           <span>Commands</span>
-          <kbd className="rounded border border-[var(--app-control)] px-1 py-0.5 text-[10px]">⌘K</kbd>
+          <kbd className="rounded border border-[var(--app-control)] px-1 py-0.5 text-[11px]">⌘K</kbd>
         </button>
         <SyncStatus />
       </div>
 
-      <div className="flex h-14 items-center gap-2 px-4 md:hidden">
+      <div className="flex h-14 items-center gap-2 px-4 min-[1101px]:hidden">
         <span className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--app-text)]">{pageLabel}</span>
         <SyncStatus />
         <button
           aria-label="Open command palette"
           className="grid h-9 w-9 place-items-center rounded-[var(--app-radius-control)] border border-[var(--app-control)] bg-white text-[var(--app-muted)]"
           type="button"
-          onClick={openCommands}
+          onClick={openCommandPalette}
         >
           <SearchIcon size={16} strokeWidth={1.6} />
         </button>

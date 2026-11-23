@@ -80,7 +80,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ editor }) => {
   return (
     <div
       aria-label="Formatting controls"
-      className="fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1 rounded-[var(--app-radius-card)] border border-[var(--app-control)] bg-white p-1.5 md:bottom-6"
+      className="fixed bottom-20 left-1/2 z-40 flex -translate-x-1/2 items-center gap-1 rounded-[var(--app-radius-card)] border border-[var(--app-control)] bg-white p-1.5 min-[1101px]:bottom-6"
       role="toolbar"
     >
       {tools.map(({ label, icon: Icon, active, execute }) => {

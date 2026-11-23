@@ -67,9 +67,11 @@ export const useAutoSaveNote = () => {
       // The optimistic value remains in place so a writer never loses their draft.
       console.warn("Autosave queued for retry", error);
     },
-    onSettled: (_data, _error, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ["note", id] });
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    onSettled: (_data, error, { id }) => {
+      if (!error) {
+        queryClient.invalidateQueries({ queryKey: ["note", id] });
+        queryClient.invalidateQueries({ queryKey: ["notes"] });
+      }
     },
   });
 };

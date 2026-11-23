@@ -19,7 +19,7 @@ type Section = "account" | "appearance" | "sync" | "data";
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (
-  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 px-1">
+  <h2 className="mb-2 px-1 text-sm font-medium text-[var(--app-muted)]">
     {children}
   </h2>
 );

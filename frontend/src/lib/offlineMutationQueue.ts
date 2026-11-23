@@ -2,6 +2,10 @@ import type { UpdateNotePayload } from "@/types";
 
 const DATABASE_NAME = "notlify-offline";
 const STORE_NAME = "pending-note-updates";
+const QUEUE_CHANGED_EVENT = "notlify:offline-queue-changed";
+
+const fallbackQueue = new Map<string, PendingNoteUpdate>();
+const suppressedNoteIds = new Set<string>();
 
 export interface PendingNoteUpdate {
   noteId: string;
@@ -22,6 +26,10 @@ function openDatabase(): Promise<IDBDatabase> {
     };
     request.onsuccess = () => resolve(request.result);
   });
+}
+
+function notifyQueueChanged() {
+  window.dispatchEvent(new Event(QUEUE_CHANGED_EVENT));
 }
 
 async function runTransaction<T>(
@@ -53,26 +61,66 @@ export async function queueNoteUpdate(
       (store) => store.get(noteId),
     );
   } catch {
-    // IndexedDB can be unavailable in private contexts; the in-memory UI still works.
+    // IndexedDB can be unavailable in private contexts.
   }
 
-  await runTransaction("readwrite", (store) =>
-    store.put({
-      noteId,
-      payload: { ...existing?.payload, ...payload },
-      updatedAt: Date.now(),
-    } satisfies PendingNoteUpdate),
-  );
+  const queuedUpdate = {
+    noteId,
+    payload: {
+      ...existing?.payload,
+      ...fallbackQueue.get(noteId)?.payload,
+      ...payload,
+    },
+    updatedAt: Date.now(),
+  } satisfies PendingNoteUpdate;
+
+  suppressedNoteIds.delete(noteId);
+  try {
+    await runTransaction("readwrite", (store) => store.put(queuedUpdate));
+    fallbackQueue.delete(noteId);
+  } catch {
+    fallbackQueue.set(noteId, queuedUpdate);
+  }
+  notifyQueueChanged();
 }
 
 export async function getQueuedNoteUpdates(): Promise<PendingNoteUpdate[]> {
-  const updates = await runTransaction<PendingNoteUpdate[]>("readonly", (store) =>
-    store.getAll(),
-  );
+  let storedUpdates: PendingNoteUpdate[] = [];
 
-  return updates.sort((a, b) => a.updatedAt - b.updatedAt);
+  try {
+    storedUpdates = await runTransaction<PendingNoteUpdate[]>("readonly", (store) =>
+      store.getAll(),
+    );
+  } catch {
+    // The in-memory fallback still protects the current editing session.
+  }
+
+  const updatesByNote = new Map(
+    storedUpdates
+      .filter((update) => !suppressedNoteIds.has(update.noteId))
+      .map((update) => [update.noteId, update]),
+  );
+  for (const update of fallbackQueue.values()) {
+    updatesByNote.set(update.noteId, update);
+  }
+
+  return [...updatesByNote.values()].sort((a, b) => a.updatedAt - b.updatedAt);
 }
 
 export async function removeQueuedNoteUpdate(noteId: string): Promise<void> {
-  await runTransaction("readwrite", (store) => store.delete(noteId));
+  fallbackQueue.delete(noteId);
+  try {
+    await runTransaction("readwrite", (store) => store.delete(noteId));
+    suppressedNoteIds.delete(noteId);
+  } catch {
+    // Prevent a successfully synced IndexedDB record from retrying this session.
+    suppressedNoteIds.add(noteId);
+  }
+  notifyQueueChanged();
+}
+
+export function listenForQueuedNoteChanges(listener: () => void) {
+  window.addEventListener(QUEUE_CHANGED_EVENT, listener);
+
+  return () => window.removeEventListener(QUEUE_CHANGED_EVENT, listener);
 }

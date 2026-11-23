@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, FolderOpen, Tag, X, Plus } from "lucide-react";
+import { ArrowLeft, Check, Loader2, FolderOpen, Tag, X, Plus } from "lucide-react";
 import type { Editor } from "@tiptap/react";
 
 import { useCreateNote } from "@/hooks/mutations/useCreateNote";
@@ -254,7 +254,7 @@ const CreateNotesPage: React.FC = () => {
                     >
                       {t.name}
                       {selectedTagIds.includes(t.id) && (
-                        <span className="text-green-500 text-xs">✓</span>
+                        <Check aria-hidden="true" size={14} strokeWidth={1.8} />
                       )}
                     </button>
                   ))}

@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -20,10 +19,10 @@ const SectionHeader: React.FC<{ label: string; to: string }> = ({
   label,
   to,
 }) => (
-  <div className="flex items-center justify-between mb-4">
-    <h2 className="text-gray-700 font-semibold text-lg">{label}</h2>
+  <div className="mb-4 flex items-center justify-between">
+    <h2 className="text-base font-semibold text-[var(--app-text)]">{label}</h2>
     <Link
-      className="flex items-center gap-1 text-green-500 text-sm font-medium hover:underline"
+      className="flex items-center gap-1 text-sm font-medium text-[var(--app-muted)] hover:text-[var(--app-text)]"
       to={to}
     >
       View all <ArrowRight size={13} strokeWidth={2} />
@@ -57,86 +56,77 @@ const HomePage: React.FC = () => {
   const displayName = localStorage.getItem("app:displayName") ?? emailPrefix;
 
   return (
-    <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-10"
-        initial={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.4 }}
-      >
-        <p className="text-gray-400 text-sm font-medium uppercase tracking-widest mb-1">
+    <main className="min-h-screen px-4 pb-28 pt-20 md:px-6 md:pb-12 md:pt-24 xl:px-10">
+      <div className="mb-10">
+        <p className="mb-1 text-sm text-[var(--app-muted)]">
           {now.toLocaleDateString("en-US", {
             weekday: "long",
             month: "long",
             day: "numeric",
           })}
         </p>
-        <h1 className="text-3xl font-bold text-gray-800">
-          {greeting}, {displayName} 👋
+        <h1 className="text-2xl font-semibold tracking-[-0.02em] text-[var(--app-text)]">
+          {greeting}, {displayName}
         </h1>
-        <p className="text-gray-500 mt-1 text-sm">
+        <p className="mt-1 text-sm text-[var(--app-muted)]">
           You have{" "}
-          <span className="text-green-500 font-semibold">
+          <span className="font-medium text-[var(--app-text)]">
             {isLoading ? "…" : notes.length} notes
           </span>{" "}
           across{" "}
-          <span className="text-green-500 font-semibold">
+          <span className="font-medium text-[var(--app-text)]">
             {folders.length} folders
           </span>
           .
         </p>
-      </motion.div>
+      </div>
 
-      <SectionHeader label="Recent Folders" to="/folders" />
+      <SectionHeader label="Recent folders" to="/folders" />
       <section className={`flex flex-wrap mb-10 ${compactMode ? "gap-1.5" : "gap-3"}`}>
         {recentFolders.length === 0 ? (
-          <p className="text-sm text-gray-400 py-2">No folders yet.</p>
+          <p className="py-2 text-sm text-[var(--app-muted)]">No folders yet.</p>
         ) : (
-          recentFolders.map((folder, i) => (
-            <motion.div
-              key={folder.id}
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 5 }}
-              transition={{ duration: 0.3, delay: i * 0.06 }}
-            >
+          recentFolders.map((folder) => (
+            <div key={folder.id}>
               <FolderCard
                 colorScheme={folder.colorScheme}
                 count={folder.noteCount}
                 title={folder.name}
               />
-            </motion.div>
+            </div>
           ))
         )}
       </section>
 
-      <SectionHeader label="Recent Notes" to="/notes" />
+      <SectionHeader label="Recent notes" to="/notes" />
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
+        <div className="flex min-h-40 items-center justify-center rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)]">
           <Loader2
-            className="animate-spin text-green-400"
+            className="animate-spin text-[var(--app-muted)]"
             size={24}
             strokeWidth={1.5}
           />
         </div>
       ) : recentNotes.length === 0 ? (
-        <p className="text-gray-400 text-sm py-8 text-center">
-          No notes yet.{" "}
+        <div className="flex min-h-44 flex-col items-start justify-center rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)] p-6">
+          <h3 className="text-base font-semibold text-[var(--app-text)]">Start your first note</h3>
+          <p className="mt-1 max-w-md text-sm text-[var(--app-muted)]">
+            Capture an idea now. It will stay available here and sync when you are online.
+          </p>
           <button
-            className="text-green-500 font-medium hover:underline"
+            className="mt-5 h-9 rounded-[var(--app-radius-control)] bg-[var(--app-primary)] px-4 text-sm font-medium text-white hover:opacity-90"
+            type="button"
             onClick={() => navigate("/create")}
           >
-            Create one →
+            Create a note
           </button>
-        </p>
+        </div>
       ) : (
         <section className={`grid ${gridCols} ${compactMode ? "gap-1.5" : "gap-3"}`}>
-          {recentNotes.map((note, i) => (
-            <motion.div
+          {recentNotes.map((note) => (
+            <div
               key={note.id}
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 5 }}
-              transition={{ duration: 0.3, delay: i * 0.05 }}
               onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
@@ -150,7 +140,7 @@ const HomePage: React.FC = () => {
                 updatedAt={note.updatedAt}
                 onEdit={() => navigate(`/notes/${note.id}`)}
               />
-            </motion.div>
+            </div>
           ))}
         </section>
       )}

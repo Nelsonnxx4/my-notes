@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useNotes } from "@/hooks/queries/useNotes";
 import { useSyncStatus } from "@/contexts/SyncStatusContext";
+import { listenForCommandPaletteOpen } from "@/lib/appEvents";
 import { sanitizeNoteHtml } from "@/lib/sanitizeHtml";
 
 interface PaletteItem {
@@ -95,6 +96,7 @@ export default function CommandPalette() {
   };
 
   useEffect(() => {
+    const stopListening = listenForCommandPaletteOpen(() => setIsOpen(true));
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
@@ -106,7 +108,10 @@ export default function CommandPalette() {
       }
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      stopListening();
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [navigate]);
 
   useEffect(() => {
