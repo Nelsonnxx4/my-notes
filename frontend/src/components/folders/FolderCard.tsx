@@ -18,29 +18,22 @@ const FolderCard: React.FC<FolderCardProps> = ({
   count,
   colorScheme,
 }) => {
-  const { bg, text, border, icon } = colorScheme;
-
   return (
     <div
-      className={`
-        group flex flex-col justify-between gap-3
-        min-w-35 min-h-35 md:min-w-50 md:min-h-50 p-4 rounded-md
-        border cursor-pointer
-        transition-all duration-150 hover:shadow-sm hover:brightness-95
-        ${bg} ${border}
-      `}
+      className="group flex min-h-32 min-w-35 cursor-pointer flex-col justify-between gap-3 rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)] p-4 hover:border-[var(--app-control)] md:min-w-48"
+      data-folder-tone={colorScheme.bg}
     >
       <FolderIcon
-        className={`${icon} transition-transform duration-150 group-hover:scale-105`}
-        size={40}
+        className="text-[var(--app-muted)]"
+        size={30}
         strokeWidth={1.2}
       />
 
       <div className="flex flex-col gap-0.5">
-        <span className={`font-semibold text-sm leading-tight ${text}`}>
+        <span className="text-sm font-semibold leading-tight text-[var(--app-text)]">
           {title}
         </span>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-[var(--app-faint)]">
           {count} {count === 1 ? "note" : "notes"}
         </span>
       </div>

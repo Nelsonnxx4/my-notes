@@ -24,6 +24,7 @@
 }
 
 :root {
+  interpolate-size: allow-keywords;
   --app-ground: #f6f7f6;
   --app-surface: #ffffff;
   --app-raised: #f1f2f1;
@@ -38,9 +39,31 @@
   --app-positive: #247b50;
   --app-negative: #b42318;
   --app-focus: #1d5fbf;
+  --app-focus-soft: #e8f0fb;
+  --app-danger-soft: #fff1f0;
   --app-radius-card: 8px;
   --app-radius-control: 6px;
   --app-gap: 16px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --app-ground: #111312;
+  --app-surface: #181b19;
+  --app-raised: #202421;
+  --app-active: #292e2a;
+  --app-border: #303531;
+  --app-rule: #252925;
+  --app-control: #424943;
+  --app-text: #f4f6f4;
+  --app-muted: #abb2ac;
+  --app-faint: #8b938c;
+  --app-primary: #f4f6f4;
+  --app-positive: #63c58f;
+  --app-negative: #ff7b72;
+  --app-focus: #78aef2;
+  --app-focus-soft: #172b45;
+  --app-danger-soft: #351c1b;
 }
 
 body {
@@ -55,6 +78,105 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+button {
+  transition: scale 150ms ease-out;
+}
+
+button:active {
+  scale: 0.97;
+}
+
+button.no-press:active {
+  scale: 1;
+}
+
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+.ui-enter {
+  animation: ui-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: center;
+}
+
+.ui-enter-late {
+  animation-delay: 70ms;
+}
+
+@keyframes ui-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.field-shake {
+  animation: field-shake 360ms ease-out;
+}
+
+@keyframes field-shake {
+  0% { transform: translateX(0); }
+  16% { transform: translateX(-10px); }
+  32% { transform: translateX(10px); }
+  48% { transform: translateX(-6px); }
+  64% { transform: translateX(6px); }
+  80% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+.auth-field-error input {
+  border-color: var(--app-negative);
+  background: var(--app-danger-soft);
+  color: var(--app-text);
+}
+
+.ui-accordion {
+  height: 0;
+  overflow: clip;
+  opacity: 0;
+  visibility: hidden;
+  transition: height 280ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease-out,
+    visibility 0s linear 280ms;
+}
+
+.ui-accordion[data-open="true"] {
+  height: auto;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.ui-tooltip {
+  pointer-events: none;
+  position: absolute;
+  z-index: 80;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) scale(0.97);
+  transform-origin: bottom center;
+  opacity: 0;
+  white-space: nowrap;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-control);
+  background: var(--app-text);
+  padding: 0.3rem 0.45rem;
+  color: var(--app-ground);
+  font-size: 0.6875rem;
+  line-height: 1;
+  transition: opacity 130ms ease-out, transform 130ms ease-out;
+}
+
+.ui-tooltip[data-open="true"] {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 :focus-visible {
@@ -75,6 +197,10 @@ textarea {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  button:active {
+    scale: 1;
   }
 }
 

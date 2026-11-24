@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button, Form } from "@heroui/react";
@@ -6,6 +6,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 
 import { GoogleIcon } from "@/assets/icons";
 import { loginApi, registerApi, googleAuthApi } from "@/api/auth.api";
+import BrandMark from "@/components/BrandMark";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthPageProps {
@@ -14,26 +15,40 @@ interface AuthPageProps {
 
 const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
   const isSignUp = mode === "signup";
-
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fieldError, setFieldError] = useState<"email" | "password" | null>(
+    null,
+  );
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams] = useSearchParams();
-
+  const passwordFieldRef = useRef<HTMLDivElement>(null);
   const { setCredentials } = useAuth();
   const navigate = useNavigate();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-  const validate = (): boolean => {
+  const markPasswordInvalid = () => {
+    setFieldError("password");
+    const field = passwordFieldRef.current;
+
+    if (!field) return;
+    field.classList.remove("field-shake");
+    void field.offsetWidth;
+    field.classList.add("field-shake");
+  };
+
+  const validate = () => {
     if (!email.trim()) {
       setFormError("Email is required.");
+      setFieldError("email");
 
       return false;
     }
     if (!password || password.length < 6) {
       setFormError("Password must be at least 6 characters.");
+      markPasswordInvalid();
 
       return false;
     }
@@ -41,9 +56,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setFormError(null);
+    setFieldError(null);
     if (!validate()) return;
 
     setIsLoading(true);
@@ -54,9 +70,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
 
       setCredentials(result);
       navigate("/home", { replace: true });
-    } catch (err: any) {
+    } catch (error: any) {
+      if (!isSignUp) markPasswordInvalid();
       setFormError(
-        err?.response?.data?.message ??
+        error?.response?.data?.message ??
           "Something went wrong. Please try again.",
       );
     } finally {
@@ -74,10 +91,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
 
         setCredentials(result);
         navigate("/home", { replace: true });
-      } catch (err: any) {
-        console.error("Google backend auth failed:", err);
+      } catch (error: any) {
         setFormError(
-          err?.response?.data?.message ??
+          error?.response?.data?.message ??
             "Google sign-in failed. Please try again or use email.",
         );
       } finally {
@@ -85,16 +101,14 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
       }
     },
     onError: (errorResponse) => {
-      console.error("Google OAuth failed:", errorResponse);
       setFormError(
         errorResponse.error_description ??
           "Google sign-in failed. Please try again or use email.",
       );
     },
-    onNonOAuthError: (nonOAuthError) => {
-      console.error("Google sign-in popup failed:", nonOAuthError);
+    onNonOAuthError: (error) => {
       setFormError(
-        nonOAuthError.type === "popup_closed"
+        error.type === "popup_closed"
           ? "Google sign-in was closed before it finished."
           : "Google sign-in popup could not open. Please disable popup blockers and try again.",
       );
@@ -103,50 +117,52 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
 
   const startGoogleLogin = () => {
     setFormError(null);
-
     if (!googleClientId) {
       setFormError("Google sign-in is not configured for this app.");
+
       return;
     }
-
     handleGoogleLogin();
   };
 
-  return (
-    <main className="grid min-h-screen md:grid-cols-2">
-      <section className="flex flex-col items-center justify-center px-8 py-12 bg-white">
-        <div className="w-full max-w-sm mb-4">
-          <div className="flex flex-col items-start justify-between">
-            <video
-              aria-label="Not-lify bee animation"
-              className="h-8 w-8"
-              src="/icons8-bee.gif"
-            >
-              <track default kind="captions" src="/icons8-bee.vtt" />
-            </video>
-            <h1 className="text-xl font-semibold text-gray-600">Not-lify</h1>
-          </div>
-        </div>
+  const clearFieldError = () => {
+    setFormError(null);
+    setFieldError(null);
+  };
 
-        <div className="flex flex-col items-start justify-start w-full max-w-sm">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+  return (
+    <main className="grid min-h-screen bg-[var(--app-ground)] lg:grid-cols-[minmax(28rem,0.82fr)_1.18fr]">
+      <section className="flex min-h-screen flex-col bg-[var(--app-surface)] px-5 py-6 sm:px-10 lg:px-14">
+        <Link
+          className="flex w-fit items-center gap-2 text-sm font-semibold tracking-[-0.01em] text-[var(--app-text)]"
+          to="/"
+        >
+          <BrandMark className="h-8 w-8" />
+          Not-lify
+        </Link>
+
+        <div className="ui-enter my-auto w-full max-w-sm py-12">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--app-focus)]">
+            {isSignUp ? "Create your workspace" : "Return to your workspace"}
+          </p>
+          <h1 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--app-text)]">
             {isSignUp ? "Create your account" : "Welcome back"}
           </h1>
-          <p className="text-sm text-gray-500 mb-8">
+          <p className="mb-8 mt-3 max-w-xs text-sm leading-6 text-[var(--app-muted)]">
             {isSignUp
-              ? "Sign up and start taking notes — free forever."
-              : "Sign in to continue to your notes."}
+              ? "A quiet place for notes that remain useful, even when you are offline."
+              : "Pick up exactly where your last thought stopped."}
           </p>
 
           {searchParams.get("error") && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 mb-5">
+            <div className="mb-5 flex items-center gap-2 rounded-[var(--app-radius-control)] border border-[var(--app-negative)] bg-[var(--app-danger-soft)] p-3 text-sm text-[var(--app-negative)]">
               <AlertCircle className="shrink-0" size={16} />
               Google sign-in failed. Please try again or use email.
             </div>
           )}
 
           <Button
-            className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl bg-white text-gray-700 text-sm font-medium py-2.5 transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm cursor-pointer"
+            className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--app-radius-control)] border border-[var(--app-border)] bg-[var(--app-surface)] text-sm font-medium text-[var(--app-text)] hover:bg-[var(--app-raised)]"
             isDisabled={isLoading}
             onPress={startGoogleLogin}
           >
@@ -154,8 +170,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             Continue with Google
           </Button>
 
-          <div className="flex justify-center items-center my-6">
-            <span className="text-sm text-gray-400 whitespace-nowrap">
+          <div className="my-6 flex items-center gap-3 before:h-px before:flex-1 before:bg-[var(--app-rule)] after:h-px after:flex-1 after:bg-[var(--app-rule)]">
+            <span className="whitespace-nowrap text-xs text-[var(--app-faint)]">
               or continue with email
             </span>
           </div>
@@ -163,64 +179,82 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           {formError && (
             <div
               aria-live="polite"
-              className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4 w-full"
+              className="mb-4 flex w-full items-start gap-2 rounded-[var(--app-radius-control)] border border-[var(--app-negative)] bg-[var(--app-danger-soft)] p-3 text-sm text-[var(--app-negative)]"
             >
               <AlertCircle className="mt-0.5 shrink-0" size={16} />
               <span>{formError}</span>
             </div>
           )}
 
-          <Form className="w-full flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="relative w-full">
+          <Form className="flex w-full flex-col gap-4" onSubmit={handleSubmit}>
+            <div
+              className={
+                fieldError === "email"
+                  ? "auth-field-error relative w-full"
+                  : "relative w-full"
+              }
+            >
               <label className="sr-only" htmlFor="email">
                 Email
               </label>
               <input
                 required
-                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2"
+                aria-invalid={fieldError === "email"}
+                className="h-11 w-full rounded-[var(--app-radius-control)] border border-[var(--app-control)] bg-[var(--app-surface)] px-3 text-sm text-[var(--app-text)] outline-none placeholder:text-[var(--app-faint)] hover:border-[var(--app-muted)] focus:border-[var(--app-focus)]"
                 id="email"
                 placeholder="Email address"
                 type="email"
                 value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setFormError(null);
-                  setEmail(e.target.value);
+                onChange={(event) => {
+                  clearFieldError();
+                  setEmail(event.target.value);
                 }}
               />
             </div>
 
-            <div className="relative w-full">
+            <div
+              ref={passwordFieldRef}
+              className={
+                fieldError === "password"
+                  ? "auth-field-error relative w-full"
+                  : "relative w-full"
+              }
+              onAnimationEnd={() =>
+                passwordFieldRef.current?.classList.remove("field-shake")
+              }
+            >
               <label className="sr-only" htmlFor="password">
                 Password
               </label>
               <input
                 required
-                className="w-full border border-gray-200 shadow-sm rounded-md bg-white hover:border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-300 outline-none p-2 pr-11"
+                aria-invalid={fieldError === "password"}
+                className="h-11 w-full rounded-[var(--app-radius-control)] border border-[var(--app-control)] bg-[var(--app-surface)] px-3 pr-11 text-sm text-[var(--app-text)] outline-none placeholder:text-[var(--app-faint)] hover:border-[var(--app-muted)] focus:border-[var(--app-focus)]"
                 id="password"
                 placeholder={
                   isSignUp ? "At least 6 characters" : "Your password"
                 }
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setFormError(null);
-                  setPassword(e.target.value);
+                onChange={(event) => {
+                  clearFieldError();
+                  setPassword(event.target.value);
                 }}
               />
               <button
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-[var(--app-radius-control)] text-[var(--app-faint)] hover:bg-[var(--app-raised)] hover:text-[var(--app-text)]"
                 type="button"
-                onClick={() => setShowPassword((v) => !v)}
+                onClick={() => setShowPassword((visible) => !visible)}
               >
                 {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
 
             {!isSignUp && (
-              <div className="text-right mt-1.5">
+              <div className="mt-1.5 text-right">
                 <a
-                  className="text-xs text-gray-500 hover:text-gray-800 hover:underline transition-colors"
+                  className="text-xs text-[var(--app-muted)] hover:text-[var(--app-text)] hover:underline"
                   href="mailto:support@not-lify.com?subject=Password reset"
                 >
                   Forgot password?
@@ -229,7 +263,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             )}
 
             <Button
-              className="w-full rounded-md py-2.5 bg-green-600 text-white text-sm font-semibold shadow-sm transition-all duration-150 hover:bg-green-600/85 hover:shadow-md disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+              className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-[var(--app-radius-control)] bg-[var(--app-primary)] text-sm font-semibold text-[var(--app-ground)] hover:opacity-90 disabled:opacity-50"
               isDisabled={isLoading}
               type="submit"
             >
@@ -238,10 +272,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
             </Button>
           </Form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="mt-6 text-center text-sm text-[var(--app-muted)]">
             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <Link
-              className="text-gray-800 font-semibold hover:underline"
+              className="font-semibold text-[var(--app-text)] hover:underline"
               to={isSignUp ? "/auth/login" : "/auth/signup"}
             >
               {isSignUp ? "Sign in" : "Sign up free"}
@@ -249,35 +283,55 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
           </p>
 
           {isSignUp && (
-            <p className="text-center text-xs text-gray-400 leading-relaxed mt-4">
+            <p className="mt-4 text-center text-xs leading-relaxed text-[var(--app-faint)]">
               By signing up you agree to our{" "}
-              <Link className="underline hover:text-gray-600" to="/terms">
+              <Link
+                className="underline hover:text-[var(--app-text)]"
+                to="/terms"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link className="underline hover:text-gray-600" to="/privacy">
+              <Link
+                className="underline hover:text-[var(--app-text)]"
+                to="/privacy"
+              >
                 Privacy Policy
               </Link>
               .
             </p>
           )}
         </div>
+
+        <p className="text-xs text-[var(--app-faint)]">
+          Private by default · Available offline
+        </p>
       </section>
 
-      <section className="hidden md:flex flex-col items-center justify-center bg-gray-50 px-12 py-16 border-l border-gray-100">
-        <img
-          alt="Illustration of a person organising notes"
-          className="w-full max-w-md"
-          src="/illustrations/login-illustration.svg"
-        />
-        <div className="mt-10 text-center max-w-sm">
-          <h2 className="text-2xl font-bold text-gray-900 leading-snug">
-            Your second mind, always ready.
-          </h2>
-          <p className="mt-3 text-sm text-gray-500 leading-relaxed">
-            Capture thoughts, ideas, and tasks in seconds. Not-lify keeps
-            everything organised so you never lose a good idea again.
-          </p>
+      <section className="relative hidden overflow-hidden border-l border-[var(--app-border)] bg-[var(--app-raised)] px-12 py-16 lg:flex lg:items-center lg:justify-center">
+        <div className="ui-enter ui-enter-late w-full max-w-xl">
+          <div className="mb-7 flex items-center justify-between text-xs text-[var(--app-muted)]">
+            <span>THE WRITING LEDGER</span>
+            <span>SYNCED WHEN READY</span>
+          </div>
+          <div className="relative border border-[var(--app-control)] bg-[var(--app-surface)] p-8">
+            <span className="absolute inset-y-8 left-0 w-0.5 bg-[var(--app-focus)]" />
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--app-faint)]">
+              Last open thought
+            </p>
+            <h2 className="mt-5 max-w-md text-4xl font-semibold leading-[1.08] tracking-[-0.045em] text-[var(--app-text)]">
+              Ideas stay close enough to continue.
+            </h2>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-[var(--app-muted)]">
+              Resume a note, capture a fragment, and let organisation happen
+              around the writing.
+            </p>
+            <div className="mt-12 grid grid-cols-3 border-t border-[var(--app-rule)] pt-5 text-xs text-[var(--app-muted)]">
+              <span>01 Capture</span>
+              <span>02 Connect</span>
+              <span>03 Continue</span>
+            </div>
+          </div>
         </div>
       </section>
     </main>

@@ -18,7 +18,10 @@ const NotesPage = () => {
   const { search, filters } = useNoteFilters();
   const { data: allNotes = [], isLoading } = useNotes(
     search || filters.tagId !== undefined
-      ? { ...(search && { q: search }), ...(filters.tagId !== undefined && { tag: filters.tagId }) }
+      ? {
+          ...(search && { q: search }),
+          ...(filters.tagId !== undefined && { tag: filters.tagId }),
+        }
       : undefined,
   );
   const { compactMode, gridLayout } = useAppearance();
@@ -87,17 +90,17 @@ const NotesPage = () => {
           {notes.map((note, i) => (
             <motion.div
               key={note.id}
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.3, delay: i * 0.04 }}
               onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
-                noteId={note.id}
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
-                isPinned={note.isPinned}
                 isFavorite={note.isFavorite}
+                isPinned={note.isPinned}
+                noteId={note.id}
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}

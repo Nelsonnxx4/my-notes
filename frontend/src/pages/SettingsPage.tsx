@@ -32,32 +32,32 @@ const SettingRow: React.FC<{
   onClick: () => void;
 }> = ({ icon: Icon, label, description, active, onClick }) => (
   <button
-    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-150 text-left group
+    className={`group flex w-full items-center gap-3 rounded-[var(--app-radius-card)] border px-3 py-3 text-left
       ${
         active
-          ? "bg-green-50 border border-green-300"
-          : "hover:bg-gray-50 border border-transparent"
+          ? "border-[var(--app-control)] bg-[var(--app-active)]"
+          : "border-transparent hover:bg-[var(--app-raised)]"
       }`}
     onClick={onClick}
   >
     <span
-      className={`flex items-center justify-center h-8 w-8 rounded-lg shrink-0 transition-colors
-        ${active ? "bg-green-400 text-white" : "bg-gray-100 text-gray-500 group-hover:bg-gray-200"}`}
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--app-radius-control)]
+        ${active ? "bg-[var(--app-text)] text-[var(--app-ground)]" : "bg-[var(--app-raised)] text-[var(--app-muted)]"}`}
     >
       <Icon size={15} strokeWidth={1.8} />
     </span>
     <span className="flex flex-col flex-1 min-w-0">
-      <span
-        className={`text-sm font-medium ${active ? "text-green-700" : "text-gray-700"}`}
-      >
+      <span className="text-sm font-medium text-[var(--app-text)]">
         {label}
       </span>
       {description && (
-        <span className="text-xs text-gray-400 truncate">{description}</span>
+        <span className="truncate text-xs text-[var(--app-faint)]">
+          {description}
+        </span>
       )}
     </span>
     <ChevronRight
-      className={`shrink-0 transition-colors ${active ? "text-green-400" : "text-gray-300 group-hover:text-gray-400"}`}
+      className="shrink-0 text-[var(--app-faint)]"
       size={14}
       strokeWidth={2}
     />
@@ -101,10 +101,17 @@ const PANELS: Record<Section, React.ReactNode> = {
 const SettingsPage: React.FC = () => {
   const [active, setActive] = useState<Section>("account");
   const [showPanel, setShowPanel] = useState(false);
+  const [direction, setDirection] = useState(1);
 
   const activeNav = NAV.find((n) => n.id === active)!;
 
   function handleNavClick(id: Section) {
+    setDirection(
+      Math.sign(
+        NAV.findIndex((item) => item.id === id) -
+          NAV.findIndex((item) => item.id === active),
+      ) || 1,
+    );
     setActive(id);
     setShowPanel(true);
   }
@@ -112,22 +119,24 @@ const SettingsPage: React.FC = () => {
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="mb-8"
-        initial={{ opacity: 0, y: -6 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         transition={{ duration: 0.35 }}
       >
-        <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
-        <p className="text-sm text-gray-400 mt-0.5">
+        <h1 className="text-2xl font-semibold tracking-[-0.03em] text-[var(--app-text)]">
+          Settings
+        </h1>
+        <p className="mt-1 text-sm text-[var(--app-muted)]">
           Manage your account and app preferences.
         </p>
       </motion.div>
 
       <div className="flex flex-col md:flex-row gap-6 items-start">
         <motion.aside
-          animate={{ opacity: 1, x: 0 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
           className={`w-full md:w-56 shrink-0 space-y-1 ${showPanel ? "hidden md:block" : "block"}`}
-          initial={{ opacity: 0, x: -8 }}
+          initial={{ opacity: 0, scale: 0.97 }}
           transition={{ duration: 0.35, delay: 0.05 }}
         >
           <SectionTitle>Preferences</SectionTitle>
@@ -145,23 +154,23 @@ const SettingsPage: React.FC = () => {
 
         <motion.section
           key={active}
-          animate={{ opacity: 1, y: 0 }}
-          className={`flex-1 w-full md:min-w-0 bg-white border border-gray-100 rounded-none md:rounded-2xl p-5 md:p-6 shadow-sm -mx-4 md:mx-0 ${
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          className={`-mx-4 w-full flex-1 border border-[var(--app-border)] bg-[var(--app-surface)] p-5 md:mx-0 md:min-w-0 md:rounded-[var(--app-radius-card)] md:p-6 ${
             showPanel ? "block" : "hidden md:block"
           }`}
-          initial={{ opacity: 0, y: 6 }}
-          transition={{ duration: 0.25 }}
+          initial={{ opacity: 0, scale: 0.97, x: direction * 28 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         >
           <button
-            className="md:hidden flex items-center gap-1 text-sm text-gray-500 mb-4 -ml-1 hover:text-gray-700 transition"
+            className="mb-4 -ml-1 flex items-center gap-1 text-sm text-[var(--app-muted)] hover:text-[var(--app-text)] md:hidden"
             onClick={() => setShowPanel(false)}
           >
             <ChevronLeft size={16} strokeWidth={2} />
             Back
           </button>
 
-          <div className="flex items-center gap-3 mb-2 pb-4 border-b border-gray-100">
-            <span className="flex items-center justify-center h-9 w-9 rounded-xl bg-green-400">
+          <div className="mb-2 flex items-center gap-3 border-b border-[var(--app-rule)] pb-4">
+            <span className="flex h-9 w-9 items-center justify-center rounded-[var(--app-radius-control)] bg-[var(--app-text)]">
               <activeNav.icon
                 className="text-white"
                 size={16}
@@ -169,10 +178,12 @@ const SettingsPage: React.FC = () => {
               />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-gray-800">
+              <h2 className="text-base font-semibold text-[var(--app-text)]">
                 {activeNav.label}
               </h2>
-              <p className="text-xs text-gray-400">{activeNav.description}</p>
+              <p className="text-xs text-[var(--app-faint)]">
+                {activeNav.description}
+              </p>
             </div>
           </div>
 

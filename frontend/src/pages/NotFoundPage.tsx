@@ -9,9 +9,9 @@ const NotFoundPage = () => {
   return (
     <main className="min-h-screen bg-[#F7F7FA] flex flex-col items-center justify-center px-6 text-center">
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="flex flex-col items-center"
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
         <div className="relative mb-6">
@@ -36,7 +36,7 @@ const NotFoundPage = () => {
           <code className="text-xs bg-gray-100 text-gray-500 rounded px-1.5 py-0.5 font-mono">
             {pathname}
           </code>{" "}
-          doesn't exist. It may have been moved or the link is wrong.
+          doesn&apos;t exist. It may have been moved or the link is wrong.
         </p>
 
         <div className="flex items-center gap-3">

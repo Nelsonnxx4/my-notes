@@ -21,9 +21,9 @@ const ArchivePage: React.FC = () => {
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="mb-8"
-        initial={{ opacity: 0, y: -8 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         transition={{ duration: 0.35 }}
       >
         <div className="flex items-center gap-2 mb-1">
@@ -47,22 +47,24 @@ const ArchivePage: React.FC = () => {
           <p className="text-gray-400 text-sm">No archived notes.</p>
         </div>
       ) : (
-        <section className={`grid ${GRID_COLS[gridLayout]} ${compactMode ? "gap-1.5" : "gap-3"}`}>
+        <section
+          className={`grid ${GRID_COLS[gridLayout]} ${compactMode ? "gap-1.5" : "gap-3"}`}
+        >
           {notes.map((note: Note, i: number) => (
             <motion.div
               key={note.id}
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.3, delay: i * 0.04 }}
               onClick={() => navigate(`/notes/${note.id}`)}
             >
               <NoteCard
-                noteId={note.id}
                 color={hashColor(note.title)}
                 content={note.content ?? ""}
-                isFavorite={note.isFavorite}
                 isArchived={note.isArchived}
+                isFavorite={note.isFavorite}
                 isPinned={note.isPinned}
+                noteId={note.id}
                 tags={note.tags}
                 title={note.title}
                 updatedAt={note.updatedAt}

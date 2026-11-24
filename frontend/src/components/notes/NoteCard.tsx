@@ -1,7 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { Archive, ArchiveRestore, MoreHorizontalIcon, Pencil, Pin, Star, StarOff, Trash2 } from "lucide-react";
+import {
+  Archive,
+  ArchiveRestore,
+  MoreHorizontalIcon,
+  Pencil,
+  Pin,
+  Star,
+  StarOff,
+  Trash2,
+} from "lucide-react";
 
-import { useDeleteNote, useArchiveNote, useUnarchiveNote } from "@/hooks/mutations/useNoteActions";
+import {
+  useDeleteNote,
+  useArchiveNote,
+  useUnarchiveNote,
+} from "@/hooks/mutations/useNoteActions";
 import { useToggleFavorite } from "@/hooks/useFavorites";
 import { Tag } from "@/types";
 
@@ -50,36 +63,49 @@ const NoteCard: React.FC<NoteCardProps> = ({
   const { mutate: archiveNote } = useArchiveNote();
   const { mutate: unarchiveNote } = useUnarchiveNote();
   const { mutate: toggleFavorite } = useToggleFavorite();
+  const plainText = content
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
   useEffect(() => {
     if (!menuOpen) return;
     const handleClick = (e: MouseEvent) => {
       if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
     };
+
     document.addEventListener("mousedown", handleClick);
+
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
   return (
     <article
-      className={`relative flex flex-col min-w-60 h-[22.5rem] rounded-2xl border border-gray-300 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg cursor-default ${color}`}
+      className="group relative flex h-72 min-w-60 cursor-default flex-col overflow-hidden rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)] p-4 hover:border-[var(--app-control)]"
+      data-note-tone={color}
     >
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700">
+      <span className="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-[var(--app-focus)]" />
+      <div className="mb-7 flex items-center justify-between">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--app-faint)]">
           {tags && tags.length > 0 ? `#${tags[0].name}` : "Note"}
-        </h3>
+        </p>
 
-        <div ref={menuRef} className="relative flex items-center gap-1 text-gray-700">
-          {isPinned && (
-            <Pin className="text-slate-600" size={14} strokeWidth={1.5} />
-          )}
+        <div
+          ref={menuRef}
+          className="relative flex items-center gap-1 text-[var(--app-muted)]"
+        >
+          {isPinned && <Pin size={14} strokeWidth={1.5} />}
           {isFavorite && (
-            <Star className="text-yellow-500" size={14} strokeWidth={1.5} />
+            <Star
+              className="text-[var(--app-focus)]"
+              size={14}
+              strokeWidth={1.5}
+            />
           )}
 
           <button
             aria-label="Note options"
-            className="rounded-full p-1 hover:bg-black/10 transition"
+            className="rounded-[var(--app-radius-control)] p-1 hover:bg-[var(--app-raised)]"
             type="button"
             onClick={(e) => {
               e.stopPropagation();
@@ -90,9 +116,9 @@ const NoteCard: React.FC<NoteCardProps> = ({
           </button>
 
           {menuOpen && (
-            <div className="absolute top-8 right-0 z-30 min-w-36 rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+            <div className="ui-enter absolute right-0 top-8 z-30 min-w-36 rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)] py-1 shadow-lg">
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-[var(--app-text)] hover:bg-[var(--app-raised)]"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -105,7 +131,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               </button>
 
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-[var(--app-text)] hover:bg-[var(--app-raised)]"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -127,7 +153,7 @@ const NoteCard: React.FC<NoteCardProps> = ({
               </button>
 
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-[var(--app-text)] hover:bg-[var(--app-raised)]"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -148,10 +174,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
                 )}
               </button>
 
-              <div className="my-1 border-t border-gray-100" />
+              <div className="my-1 border-t border-[var(--app-rule)]" />
 
               <button
-                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-[var(--app-negative)] hover:bg-[var(--app-danger-soft)]"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -167,16 +193,16 @@ const NoteCard: React.FC<NoteCardProps> = ({
         </div>
       </div>
 
-      <div className="relative flex flex-col bg-white rounded-2xl p-4 flex-1 overflow-hidden">
-        <h3 className="mb-3 text-lg font-semibold text-slate-900 line-clamp-2">
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <h3 className="mb-3 line-clamp-2 text-lg font-semibold tracking-[-0.02em] text-[var(--app-text)]">
           {title}
         </h3>
-        <p className="line-clamp-5 text-sm leading-6 text-slate-700">
-          {content}
+        <p className="line-clamp-5 text-sm leading-6 text-[var(--app-muted)]">
+          {plainText || "No preview yet."}
         </p>
-        <div className="mt-5 absolute bottom-2 flex items-baseline justify-between w-[calc(100%-2rem)] text-xs text-slate-600">
+        <div className="absolute inset-x-0 bottom-0 mt-5 flex items-baseline justify-between border-t border-[var(--app-rule)] pt-3 text-xs text-[var(--app-faint)]">
           <span>{updatedAt ? timeAgo(updatedAt) : ""}</span>
-          <span className="rounded-full bg-white/80 px-3 py-1">Updated</span>
+          <span>Updated</span>
         </div>
       </div>
     </article>

@@ -117,9 +117,9 @@ const FolderPage: React.FC = () => {
               return (
                 <motion.div
                   key={folder.id}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  initial={{ opacity: 0, scale: 0.97 }}
                   transition={{ duration: 0.3, delay: i * 0.04 }}
                 >
                   <FolderCard
@@ -133,8 +133,8 @@ const FolderPage: React.FC = () => {
           </AnimatePresence>
 
           <motion.div
-            animate={{ opacity: 1, y: 0 }}
-            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.3, delay: folders.length * 0.04 }}
           >
             {isAdding ? (
@@ -186,7 +186,7 @@ const FolderPage: React.FC = () => {
             ) : (
               <button
                 aria-label="New folder"
-                className="flex flex-col justify-center items-center p-4 bg-gray-100 min-w-35 min-h-35 md:min-w-50 md:min-h-50 border border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-all duration-150"
+                className="flex min-h-35 min-w-35 cursor-pointer flex-col items-center justify-center rounded-[var(--app-radius-card)] border border-dashed border-[var(--app-control)] bg-[var(--app-raised)] p-4 text-[var(--app-muted)] transition-colors duration-150 hover:border-[var(--app-muted)] hover:bg-[var(--app-surface)] md:min-h-50 md:min-w-50"
                 type="button"
                 onClick={() => setIsAdding(true)}
               >

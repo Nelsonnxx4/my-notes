@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FilePlus2, FolderKanban, Keyboard, ListFilter, Settings, Wifi } from "lucide-react";
+import {
+  FilePlus2,
+  FolderKanban,
+  Keyboard,
+  ListFilter,
+  Settings,
+  Wifi,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { useNotes } from "@/hooks/queries/useNotes";
@@ -17,7 +24,9 @@ interface PaletteItem {
 
 function noteText(html: string | null) {
   const node = document.createElement("div");
+
   node.innerHTML = sanitizeNoteHtml(html ?? "");
+
   return node.textContent?.replace(/\s+/g, " ").trim() ?? "";
 }
 
@@ -59,7 +68,9 @@ export default function CommandPalette() {
       },
       {
         id: "sync",
-        label: pendingCount ? `Sync ${pendingCount} queued change${pendingCount === 1 ? "" : "s"}` : "Sync now",
+        label: pendingCount
+          ? `Sync ${pendingCount} queued change${pendingCount === 1 ? "" : "s"}`
+          : "Sync now",
         hint: state === "offline" ? "Offline" : undefined,
         icon: Wifi,
         run: () => void flush(),
@@ -76,7 +87,10 @@ export default function CommandPalette() {
     const matchingNotes = notes
       .filter((note) => {
         if (!normalizedQuery) return false;
-        return `${note.title} ${noteText(note.content)}`.toLowerCase().includes(normalizedQuery);
+
+        return `${note.title} ${noteText(note.content)}`
+          .toLowerCase()
+          .includes(normalizedQuery);
       })
       .slice(0, 6)
       .map<PaletteItem>((note) => ({
@@ -107,7 +121,9 @@ export default function CommandPalette() {
         navigate("/create");
       }
     };
+
     window.addEventListener("keydown", onKeyDown);
+
     return () => {
       stopListening();
       window.removeEventListener("keydown", onKeyDown);
@@ -118,6 +134,7 @@ export default function CommandPalette() {
     if (!isOpen) return;
     setActiveIndex(0);
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus());
+
     return () => window.cancelAnimationFrame(frame);
   }, [isOpen]);
 
@@ -129,23 +146,26 @@ export default function CommandPalette() {
   };
 
   return (
-    <div
-      aria-label="Command palette"
-      aria-modal="true"
-      className="fixed inset-0 z-[100] flex items-start justify-center bg-black/30 px-4 pt-[12vh]"
-      role="dialog"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) close();
-      }}
-    >
-      <div className="w-full max-w-xl overflow-hidden rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)]">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-[12vh]">
+      <button
+        aria-label="Close command palette"
+        className="no-press absolute inset-0 h-full w-full cursor-default bg-black/30"
+        type="button"
+        onClick={close}
+      />
+      <div
+        aria-label="Command palette"
+        aria-modal="true"
+        className="ui-enter relative w-full max-w-xl overflow-hidden rounded-[var(--app-radius-card)] border border-[var(--app-border)] bg-[var(--app-surface)]"
+        role="dialog"
+      >
         <label className="sr-only" htmlFor="command-search">
           Search commands and notes
         </label>
         <input
           ref={inputRef}
-          id="command-search"
           className="h-12 w-full border-b border-[var(--app-border)] bg-transparent px-4 text-sm text-[var(--app-text)] outline-none placeholder:text-[var(--app-faint)]"
+          id="command-search"
           placeholder="Search notes or run a command"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -153,7 +173,9 @@ export default function CommandPalette() {
             if (event.key === "Escape") close();
             if (event.key === "ArrowDown") {
               event.preventDefault();
-              setActiveIndex((index) => Math.min(index + 1, Math.max(items.length - 1, 0)));
+              setActiveIndex((index) =>
+                Math.min(index + 1, Math.max(items.length - 1, 0)),
+              );
             }
             if (event.key === "ArrowUp") {
               event.preventDefault();
@@ -169,28 +191,43 @@ export default function CommandPalette() {
           {items.length ? (
             items.map((item, index) => {
               const Icon = item.icon;
+
               return (
                 <button
                   key={item.id}
                   aria-selected={activeIndex === index}
                   className={`flex min-h-11 w-full items-center gap-3 rounded-[var(--app-radius-control)] px-3 py-2 text-left ${
-                    activeIndex === index ? "bg-[var(--app-active)]" : "hover:bg-[var(--app-raised)]"
+                    activeIndex === index
+                      ? "bg-[var(--app-active)]"
+                      : "hover:bg-[var(--app-raised)]"
                   }`}
                   role="option"
                   type="button"
-                  onMouseEnter={() => setActiveIndex(index)}
                   onClick={() => select(item)}
+                  onMouseEnter={() => setActiveIndex(index)}
                 >
-                  <Icon className="shrink-0 text-[var(--app-muted)]" size={16} strokeWidth={1.6} />
+                  <Icon
+                    className="shrink-0 text-[var(--app-muted)]"
+                    size={16}
+                    strokeWidth={1.6}
+                  />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium text-[var(--app-text)]">{item.label}</span>
-                    {item.hint && <span className="block truncate text-xs text-[var(--app-muted)]">{item.hint}</span>}
+                    <span className="block truncate text-sm font-medium text-[var(--app-text)]">
+                      {item.label}
+                    </span>
+                    {item.hint && (
+                      <span className="block truncate text-xs text-[var(--app-muted)]">
+                        {item.hint}
+                      </span>
+                    )}
                   </span>
                 </button>
               );
             })
           ) : (
-            <p className="px-3 py-6 text-sm text-[var(--app-muted)]">No matching notes or commands.</p>
+            <p className="px-3 py-6 text-sm text-[var(--app-muted)]">
+              No matching notes or commands.
+            </p>
           )}
         </div>
         <div className="flex h-9 items-center gap-4 border-t border-[var(--app-rule)] px-4 text-xs text-[var(--app-faint)]">

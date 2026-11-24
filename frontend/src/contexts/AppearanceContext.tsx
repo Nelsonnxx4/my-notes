@@ -39,8 +39,20 @@ export function applyTheme(t: Theme) {
   const root = document.documentElement;
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDark = t === "dark" || (t === "system" && prefersDark);
+
   root.classList.toggle("dark", isDark);
   root.setAttribute("data-theme", isDark ? "dark" : "light");
+}
+
+function applyThemeWithoutTransitions(t: Theme) {
+  const root = document.documentElement;
+
+  root.classList.add("theme-switching");
+  applyTheme(t);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => root.classList.remove("theme-switching"));
+  });
 }
 
 function applyFontSize(s: FontSize) {
@@ -69,28 +81,31 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     () => localStorage.getItem("app:lineNumbers") === "true",
   );
   const [gridLayout, setGridLayoutState] = useState<GridLayout>(
-    () => (localStorage.getItem("app:gridLayout") as GridLayout) ?? "comfortable",
+    () =>
+      (localStorage.getItem("app:gridLayout") as GridLayout) ?? "comfortable",
   );
 
   // Apply on mount — index.html script prevents flash, this is a safety net
   useEffect(() => {
     applyTheme(theme);
     applyFontSize(fontSize);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // React to OS dark-mode changes when theme is "system"
   useEffect(() => {
     if (theme !== "system") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = () => applyTheme("system");
+    const handler = () => applyThemeWithoutTransitions("system");
+
     mq.addEventListener("change", handler);
+
     return () => mq.removeEventListener("change", handler);
   }, [theme]);
 
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
     localStorage.setItem("app:theme", t);
-    applyTheme(t);
+    applyThemeWithoutTransitions(t);
   }, []);
 
   const setFontSize = useCallback((s: FontSize) => {
@@ -143,7 +158,9 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
 
 export function useAppearance() {
   const ctx = useContext(AppearanceContext);
+
   if (!ctx)
     throw new Error("useAppearance must be used within AppearanceProvider");
+
   return ctx;
 }

@@ -109,9 +109,9 @@ const TagsPage: React.FC = () => {
   return (
     <main className="min-h-screen px-4 md:px-6 xl:px-10 pt-20 pb-28 md:pt-32">
       <motion.div
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="mb-8"
-        initial={{ opacity: 0, y: -8 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         transition={{ duration: 0.35 }}
       >
         <div className="flex items-center gap-2 mb-1">
@@ -149,59 +149,49 @@ const TagsPage: React.FC = () => {
         </button>
       </div>
 
-      <AnimatePresence>
-        {showInput && (
-          <motion.div
-            animate={{ opacity: 1, height: "auto" }}
-            className="overflow-hidden mb-6"
-            exit={{ opacity: 0, height: 0 }}
-            initial={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50">
-              <input
-                ref={inputRef}
-                className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-                maxLength={30}
-                placeholder="Tag name…"
-                type="text"
-                value={newTagName}
-                onChange={(e) => setNewTagName(e.target.value)}
-                onKeyDown={handleKeyDown}
+      <div className="ui-accordion mb-6" data-open={showInput}>
+        <div className="flex flex-col items-start gap-3 rounded-[var(--app-radius-card)] border border-[var(--app-control)] bg-[var(--app-surface)] p-4 sm:flex-row sm:items-center">
+          <input
+            ref={inputRef}
+            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
+            maxLength={30}
+            placeholder="Tag name…"
+            type="text"
+            value={newTagName}
+            onChange={(e) => setNewTagName(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {TAG_COLORS.map((c, i) => (
+              <button
+                key={i}
+                aria-label="color button"
+                className={`h-6 w-6 rounded-full ${c.dot} transition-[opacity,scale,box-shadow] duration-150 ${selectedColorIdx === i ? "scale-110 ring-2 ring-gray-500 ring-offset-1" : "opacity-60 hover:opacity-100"}`}
+                onClick={() => setSelectedColorIdx(i)}
               />
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {TAG_COLORS.map((c, i) => (
-                  <button
-                    key={i}
-                    aria-label="color button"
-                    className={`h-6 w-6 rounded-full ${c.dot} transition-all ${selectedColorIdx === i ? "ring-2 ring-offset-1 ring-gray-500 scale-110" : "opacity-60 hover:opacity-100"}`}
-                    onClick={() => setSelectedColorIdx(i)}
-                  />
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white text-sm font-medium transition flex items-center gap-1.5"
-                  disabled={!newTagName.trim() || isCreating}
-                  onClick={addTag}
-                >
-                  {isCreating && <Loader2 className="animate-spin" size={12} />}
-                  Add
-                </button>
-                <button
-                  className="px-3 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 text-sm transition"
-                  onClick={() => {
-                    setShowInput(false);
-                    setNewTagName("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button
+              className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 disabled:opacity-40 text-white text-sm font-medium transition flex items-center gap-1.5"
+              disabled={!newTagName.trim() || isCreating}
+              onClick={addTag}
+            >
+              {isCreating && <Loader2 className="animate-spin" size={12} />}
+              Add
+            </button>
+            <button
+              className="px-3 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 text-sm transition"
+              onClick={() => {
+                setShowInput(false);
+                setNewTagName("");
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
 
       {isLoading && (
         <div className="flex justify-center py-24">
@@ -215,9 +205,9 @@ const TagsPage: React.FC = () => {
 
       {!isLoading && filteredTags.length === 0 && (
         <motion.div
-          animate={{ opacity: 1 }}
+          animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center justify-center py-20 text-center"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 0, scale: 0.97 }}
         >
           <Tag className="h-10 w-10 text-gray-200 mb-3" strokeWidth={1} />
           <p className="text-gray-400 text-sm">
@@ -243,9 +233,9 @@ const TagsPage: React.FC = () => {
                   key={tag.id}
                   layout
                   animate={{ opacity: 1, scale: 1 }}
-                  className={`relative group flex flex-col gap-2 p-4 rounded-xl border cursor-pointer transition-all select-none ${c.bg} ${c.border} ${isActive ? "ring-2 ring-offset-1 ring-green-400 shadow-md" : "hover:shadow-sm"}`}
-                  exit={{ opacity: 0, scale: 0.88 }}
-                  initial={{ opacity: 0, scale: 0.92 }}
+                  className={`group relative flex cursor-pointer select-none flex-col gap-2 rounded-xl border p-4 transition-[border-color,background-color,box-shadow] duration-150 ${c.bg} ${c.border} ${isActive ? "ring-2 ring-green-400 ring-offset-1 shadow-md" : "hover:shadow-sm"}`}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  initial={{ opacity: 0, scale: 0.97 }}
                   transition={{ duration: 0.2 }}
                   onClick={() => setActiveTagId(isActive ? null : tag.id)}
                 >
